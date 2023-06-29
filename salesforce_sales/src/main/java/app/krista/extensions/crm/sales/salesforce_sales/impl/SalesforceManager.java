@@ -49,8 +49,9 @@ public final class SalesforceManager {
             }
             return values;
         } catch (IllegalAccessException cause) {
-            throw new IllegalArgumentException(cause.getMessage());
+            System.err.println(cause.getMessage());
         }
+        return Map.of();
     }
 
     public String getRecordById(String id, String sobject) {
@@ -84,8 +85,9 @@ public final class SalesforceManager {
             final OAuthRequest request = getoAuthRequest(Verb.GET, null, salesforceToken, url);
             return getRequestResponse(salesforceToken, request);
         } catch (IOException cause) {
-            throw new IllegalArgumentException(cause.getMessage(), cause);
+            System.err.println(cause.getMessage());
         }
+        return "";
     }
 
     public String getMe() {
@@ -166,8 +168,9 @@ public final class SalesforceManager {
             }
             return response.getBody();
         } catch (IOException | InterruptedException | ExecutionException cause) {
-            throw new IllegalArgumentException("Failed to get record " + cause.getMessage());
+            System.err.println("Failed to get record " + cause.getMessage());
         }
+        return "";
     }
 
     public String getLatestNPostsByOpportunityId(String opportunityId, int numberOfPosts) {
