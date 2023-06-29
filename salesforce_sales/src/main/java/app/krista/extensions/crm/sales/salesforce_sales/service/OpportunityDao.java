@@ -1,7 +1,9 @@
 package app.krista.extensions.crm.sales.salesforce_sales.service;
 
+import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.LatestPosts;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -112,5 +114,5 @@ public interface OpportunityDao {
      */
     List<Map<String, Object>> getCurrentQuaterQuota();
 
-    List<Map<String, Object>> getLatestPosts(String opportunityId, int numberOfPosts) throws JsonProcessingException;
+    List<LatestPosts> getLatestPosts(String opportunityId, int numberOfPosts) throws IOException;
 }

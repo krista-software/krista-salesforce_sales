@@ -3,6 +3,7 @@ package app.krista.extensions.crm.sales.salesforce_sales.catalog;
 import app.krista.extension.impl.anno.CatalogRequest;
 import app.krista.extension.impl.anno.Domain;
 import app.krista.extension.impl.anno.Field;
+import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.LatestPosts;
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.Opportunity;
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.User;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.OpportunityDaoImpl;
@@ -10,9 +11,11 @@ import app.krista.extensions.crm.sales.salesforce_sales.impl.OpportunityImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.UserDaoImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.model.SFOpportunity;
 import app.krista.extensions.crm.sales.salesforce_sales.model.WhenAnImportantOpportunityStatusChangesResponse;
+import app.krista.model.field.util.FieldValues;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import javax.inject.Inject;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -209,14 +212,14 @@ public final class OpportunityManagementArea {
 
     @CatalogRequest(
             id = "localDomainRequest_e4b6fee9-1510-4d9d-8486-12ea92d3f6fa",
-            name = "Get The Latest Posts For Opportunity",
+            name = "Get Latest Posts For Opportunity",
             description = "This request will retrieve the latest posts from Salesforce Sales Opportunity feed.",
             area = "Opportunity Management",
             type = CatalogRequest.Type.QUERY_SYSTEM)
-    @Field.Desc(name = "Latest Posts", type = "[ { Actor Name: Text, Post Message: RichText } ]", required = false)
-    public List<Map<String, Object>> getLatestPostsForOpportunity(
-            @Field(name = "Opportunity Id", type = "Text") String opportunityId,
-            @Field(name = "Number Of Posts", type = "Number", required = false) Double numberOfPosts) {
+    @Field.Desc(name = "Posts", type = "[ Entity(Latest Posts) ]", required = false)
+    public List<LatestPosts> getLatestPostsForOpportunity(
+            @Field.Text(name = "Opportunity Id", required = true, attributes = {}, options = {}) String opportunityId,
+            @Field(name = "Number Of Posts", type = "Number", required = false, attributes = {}, options = {}) Double numberOfPosts) {
         try {
             int maxNumberOfPosts = 100;
             if (numberOfPosts != null && Double.isFinite(numberOfPosts)) {
@@ -226,10 +229,9 @@ public final class OpportunityManagementArea {
                 }
             }
             return opportunityDao.getLatestPosts(opportunityId, maxNumberOfPosts);
-        } catch (IllegalArgumentException cause) {
-            throw new IllegalArgumentException(cause.getMessage(), cause);
-        } catch (JsonProcessingException cause) {
-            throw new RuntimeException(cause.getMessage(), cause);
+        } catch (IllegalArgumentException | IOException cause) {
+            System.err.println("Failed to get Latest Posts" + cause.getMessage());
         }
+        return List.of();
     }
 }

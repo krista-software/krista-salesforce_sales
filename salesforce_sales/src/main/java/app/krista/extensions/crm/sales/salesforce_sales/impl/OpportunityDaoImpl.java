@@ -1,6 +1,8 @@
 package app.krista.extensions.crm.sales.salesforce_sales.impl;
 
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.CatalogTypes;
+import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.LatestPosts;
+import app.krista.extensions.crm.sales.salesforce_sales.catalog.stores.MediaClient;
 import app.krista.extensions.crm.sales.salesforce_sales.model.Quota;
 import app.krista.extensions.crm.sales.salesforce_sales.model.RegionWiseSummary;
 import app.krista.extensions.crm.sales.salesforce_sales.model.SFAggOpportunityOwnerTotal;
@@ -14,11 +16,17 @@ import app.krista.extensions.crm.sales.salesforce_sales.util.SalesforceListRespo
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.scribejava.core.model.Response;
 import com.google.gson.reflect.TypeToken;
 import org.jvnet.hk2.annotations.Service;
 
 import javax.inject.Inject;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,6 +38,18 @@ public class OpportunityDaoImpl implements OpportunityDao {
     public static final String OPPORTUNITY = "Opportunity";
     public static final String QUERY_FIELDS = "id, Name, StageName, NextStep, Amount, ACV__c, AccountId, Account.Name, ContactId, Pricebook2Id, type, LeadSource, Partner__c, Competition__c, closeDate, probability, Description, " +
             "ExpectedRevenue, LastModifiedDate, createdDate, ownerid, owner.Name";
+    public static final String ELEMENTS = "elements";
+    public static final String FEED_ELEMENT_TYPE = "feedElementType";
+    public static final String ACTOR = "actor";
+    public static final String NAME = "name";
+    public static final String BODY = "body";
+    public static final String MESSAGE_SEGMENTS = "messageSegments";
+    public static final String TYPE = "type";
+    public static final String INLINE_IMAGE = "InlineImage";
+    public static final String DOWNLOAD_URL = "downloadUrl";
+    public static final String ITEMS = "items";
+    public static final String CAPABILITIES = "capabilities";
+    public static final String FILES = "files";
     private final SalesforceManager salesforceManager;
     private final PriceBookDaoImpl priceBookDao;
     private final UserDaoImpl userDao;
@@ -195,30 +215,163 @@ public class OpportunityDaoImpl implements OpportunityDao {
     }
 
     @Override
-    public List<Map<String, Object>> getLatestPosts(String opportunityId, int numberOfPosts) throws JsonProcessingException {
+    public List<LatestPosts> getLatestPosts(String opportunityId, int numberOfPosts) throws IOException {
         String response = salesforceManager.getLatestNPostsByOpportunityId(opportunityId, numberOfPosts);
 
         ObjectMapper mapper = new ObjectMapper();
         JsonNode rootNode = mapper.readTree(response);
-        JsonNode elementsNode = rootNode.get("elements");
+        JsonNode elementsNode = rootNode.get(ELEMENTS);
 
-        List<Map<String, Object>> feedPosts = new ArrayList<>();
-        Map<String, Object> post = new LinkedHashMap<>(2);
+        List<LatestPosts> feedPosts = new ArrayList<>();
         for (JsonNode elementNode : elementsNode) {
-            String feedElementType = elementNode.get("feedElementType").asText();
-            if (feedElementType.equalsIgnoreCase("FeedItem")) {
-                JsonNode actorNode = elementNode.get("actor");
-                if (actorNode != null) {
-                    post.put("Actor Name", actorNode.get("name").asText());
-                }
-                JsonNode bodyNode = elementNode.get("body");
-                if (bodyNode != null) {
-                    post.put("Post Message", bodyNode.get("text").asText());
-                }
+            LatestPosts post = parseElementToPost(elementNode);
+            if (post != null) {
                 feedPosts.add(post);
             }
-            post = new HashMap<>();
         }
         return feedPosts;
+    }
+
+    private LatestPosts parseElementToPost(JsonNode elementNode) throws IOException {
+        String feedElementType = elementNode.get(FEED_ELEMENT_TYPE).asText();
+        if (!feedElementType.equalsIgnoreCase("FeedItem")) {
+            return null;
+        }
+
+        LatestPosts post = new LatestPosts();
+        post.actorName = getActorName(elementNode);
+        post.postMessage = getPostMessage(elementNode);
+        post.files = getFiles(elementNode);
+        return post;
+    }
+
+    private String getActorName(JsonNode elementNode) {
+        JsonNode actorNode = elementNode.get(ACTOR);
+        return actorNode != null ? actorNode.get(NAME).asText() : null;
+    }
+
+    private String getPostMessage(JsonNode elementNode) {
+        JsonNode bodyNode = elementNode.get(BODY);
+        if (bodyNode != null && bodyNode.has(MESSAGE_SEGMENTS)) {
+            StringBuilder textBuilder = new StringBuilder();
+            for (JsonNode segmentNode : bodyNode.get(MESSAGE_SEGMENTS)) {
+                if ("Text".equals(segmentNode.get(TYPE).asText())) {
+                    textBuilder.append(segmentNode.get("text").asText());
+                }
+            }
+            return textBuilder.toString();
+        }
+        return null;
+    }
+
+
+    private List<app.krista.model.base.File> getFiles(JsonNode elementNode) throws IOException {
+        List<app.krista.model.base.File> files = new ArrayList<>();
+
+        // Add inline images
+        JsonNode bodyNode = elementNode.get(BODY);
+        if (bodyNode != null && bodyNode.has(MESSAGE_SEGMENTS)) {
+            for (JsonNode segmentNode : bodyNode.get(MESSAGE_SEGMENTS)) {
+                if (isInlineImage(segmentNode)) {
+                    files.add(downloadFile(segmentNode.get("url").asText()));
+                }
+            }
+        }
+
+        // Add attached files
+        JsonNode filesNode = elementNode.get(CAPABILITIES).get(FILES);
+        if (filesNode != null) {
+            for (JsonNode fileNode : filesNode.get(ITEMS)) {
+                files.add(downloadFile(fileNode.get(DOWNLOAD_URL).asText()));
+            }
+        }
+
+        return files;
+    }
+
+    private boolean isInlineImage(JsonNode segmentNode) {
+        return segmentNode.has(TYPE) && segmentNode.get(TYPE).asText().equals(INLINE_IMAGE);
+    }
+
+    private app.krista.model.base.File downloadFile(String downloadUrl) throws IOException {
+        Response fileResponse = salesforceManager.getFileResponse(downloadUrl);
+        MediaClient mediaClient = MediaClient.getInstance();
+        String contentType = fileResponse.getHeader("Content-Type");
+        String fileExtension = getFileExtensionFromContentType(contentType);
+
+        File localFile = saveToLocalTempDir(fileResponse.getStream(), fileExtension);
+        uploadFileToMediaClient(localFile);
+
+        return new app.krista.model.base.File(localFile.length(), localFile.getName(),
+                fileExtension, mediaClient.getMediaID(localFile.getName()));
+    }
+
+    private File saveToLocalTempDir(InputStream inputStream, String fileExtension) throws IOException {
+        String filePath = MediaClient.TEMP_DIR + File.separator + MediaClient.getNextMediaId(fileExtension);
+        File localFile = new File(filePath);
+        Files.copy(inputStream, localFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        return localFile;
+    }
+
+    private void uploadFileToMediaClient(File file) {
+        MediaClient mediaClient = MediaClient.getInstance();
+        String mediaId = mediaClient.getMediaID(file.getName());
+        mediaClient.upload(mediaClient.createMediaUrl(mediaId), file);
+    }
+
+    private String getFileExtensionFromContentType(String contentType) {
+        if (contentType != null && !contentType.isBlank()) {
+            String normalizedContentType = contentType.split(";")[0]; // get the part before ";"
+
+            switch (normalizedContentType) {
+                case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+                    return "xlsx";
+                case "image/jpeg":
+                    return "jpeg";
+                case "application/pdf":
+                    return "pdf";
+                case "image/png":
+                    return "png";
+                case "image/gif":
+                    return "gif";
+                case "image/svg+xml":
+                    return "svg";
+                case "application/msword":
+                    return "doc";
+                case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+                    return "docx";
+                case "application/vnd.ms-excel":
+                    return "xls";
+                case "text/csv":
+                    return "csv";
+                case "text/plain":
+                    return "txt";
+                case "application/rtf":
+                    return "rtf";
+                case "image/bmp":
+                    return "bmp";
+                case "image/tiff":
+                    return "tiff";
+                case "application/vnd.ms-powerpoint":
+                    return "ppt";
+                case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+                    return "pptx";
+                case "application/zip":
+                    return "zip";
+                case "application/x-rar-compressed":
+                    return "rar";
+                case "application/java-archive":
+                    return "jar";
+                case "application/javascript":
+                    return "js";
+                case "text/html":
+                    return "html";
+                case "text/css":
+                    return "css";
+                case "application/octet-stream":
+                    return "bin";
+            }
+        }
+        return null;
     }
 }

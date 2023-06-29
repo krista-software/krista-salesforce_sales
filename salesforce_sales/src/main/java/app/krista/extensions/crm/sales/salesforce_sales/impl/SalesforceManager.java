@@ -7,6 +7,7 @@ import app.krista.extensions.crm.sales.salesforce_sales.model.SFEmail;
 import app.krista.extensions.crm.sales.salesforce_sales.util.Constants;
 import com.github.scribejava.apis.salesforce.SalesforceToken;
 import com.github.scribejava.core.model.OAuthRequest;
+import com.github.scribejava.core.model.Response;
 import com.github.scribejava.core.model.Verb;
 import org.jvnet.hk2.annotations.Service;
 
@@ -59,8 +60,9 @@ public final class SalesforceManager {
             final OAuthRequest request = getoAuthRequest(Verb.GET, null, salesforceToken, url);
             return getRequestResponse(salesforceToken, request);
         } catch (IOException cause) {
-            throw new IllegalArgumentException("Failed to get record by id");
+            System.err.println("Failed to get record by id" + cause.getMessage());
         }
+        return "";
     }
 
     public String updateRecord(String id, String body, String sobject) {
@@ -70,8 +72,9 @@ public final class SalesforceManager {
             final OAuthRequest request = getoAuthRequest(Verb.POST, body, salesforceToken, url);
             return getRequestResponse(salesforceToken, request);
         } catch (IOException cause) {
-            throw new IllegalArgumentException("Failed to update record " + cause.getCause());
+            System.err.println("Failed to update record " + cause.getCause());
         }
+        return "";
     }
 
     public String getRecordByQuery(String query) {
@@ -92,8 +95,9 @@ public final class SalesforceManager {
             final OAuthRequest request = getoAuthRequest(Verb.GET, null, salesforceToken, url);
             return getRequestResponse(salesforceToken, request);
         } catch (IOException cause) {
-            throw new IllegalArgumentException("Failed to get user details " + cause.getMessage());
+            System.err.println("Failed to get user details " + cause.getMessage());
         }
+        return "";
     }
 
     public void sendEmail(String recepients, String subj, String body) {
@@ -105,7 +109,7 @@ public final class SalesforceManager {
             final OAuthRequest request = getoAuthRequest(Verb.POST, Constants.GSON.toJson(emailBody), salesforceToken, url);
             getRequestResponse(salesforceToken, request);
         } catch (IOException cause) {
-            throw new IllegalArgumentException("Failed to get user details " + cause.getMessage());
+            System.err.println("Failed to get user details " + cause.getMessage());
         }
     }
 
@@ -116,8 +120,9 @@ public final class SalesforceManager {
             final OAuthRequest request = getoAuthRequest(Verb.POST, body, salesforceToken, url);
             return getRequestResponse(salesforceToken, request);
         } catch (IOException cause) {
-            throw new IllegalArgumentException("Failed to create record " + cause.getMessage());
+            System.err.println("Failed to create record " + cause.getMessage());
         }
+        return "";
     }
 
     public String getObjects(String sObject) {
@@ -127,8 +132,9 @@ public final class SalesforceManager {
             final OAuthRequest request = getoAuthRequest(Verb.GET, null, salesforceToken, url);
             return getRequestResponse(salesforceToken, request);
         } catch (IOException cause) {
-            throw new IllegalArgumentException(cause.getMessage());
+            System.err.println(cause.getMessage());
         }
+        return "";
     }
 
     public void deleteRecordById(String id, String sobject) {
@@ -138,7 +144,7 @@ public final class SalesforceManager {
             final OAuthRequest request = getoAuthRequest(Verb.DELETE, null, salesforceToken, url);
             getRequestResponse(salesforceToken, request);
         } catch (IOException cause) {
-            throw new IllegalArgumentException("Failed to delete asset " + cause.getMessage());
+            System.err.println("Failed to delete asset " + cause.getMessage());
         }
     }
 
@@ -172,7 +178,33 @@ public final class SalesforceManager {
             final OAuthRequest request = getoAuthRequest(Verb.GET, null, salesforceToken, url);
             return getRequestResponse(salesforceToken, request);
         } catch (IOException cause) {
-            throw new IllegalArgumentException("Failed to get opportunity feed posts. " + cause. getMessage(), cause);
+            System.err.println("Failed to get opportunity feed posts. " + cause. getMessage());
         }
+        return "";
+    }
+
+    public Response getFileResponse(String downloadUrl) {
+        try {
+            SalesforceToken salesforceToken = tokenProvider.getSalesforceToken();
+            String url = salesforceToken.getInstanceUrl() + downloadUrl;
+            final OAuthRequest request = getoAuthRequest(Verb.GET, null, salesforceToken, url);
+            return getResponse(salesforceToken, request);
+        } catch (IOException | ExecutionException | InterruptedException cause) {
+            System.err.println("Failed to get file response" + cause.getMessage());
+        }
+        return null;
+    }
+
+    private Response getResponse(SalesforceToken salesforceToken, OAuthRequest request) throws IOException, ExecutionException, InterruptedException {
+        salesAttributes.getOauthService().signRequest(salesforceToken, request);
+        try (com.github.scribejava.core.model.Response response = salesAttributes.getOauthService().execute(request)) {
+            if (response.getCode() >= 400) {
+                throw new IllegalArgumentException("Bad Request, Please enter correct required data. The error is " + response.getBody());
+            }
+            return response;
+        } catch (IOException | InterruptedException | ExecutionException cause) {
+            System.err.println("Failed to get record " + cause.getMessage());
+        }
+        return null;
     }
 }

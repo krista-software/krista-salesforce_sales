@@ -2,10 +2,10 @@
 
 ## Version 2.0.3
 
-- **Developer Name** : Vara Prasad Kolli
-- **Krista Service APIs Java** : 1.0.70
-- **Global Catalog Version** : 1.0.31
-- **Appliance Release Version** : 3.1.7
+- **Developer Name** : Pulkit Jareda
+- **Krista Service APIs Java** : 1.0.72
+- **Global Catalog Version** : 1.0.32
+- **Appliance Release Version** : 3.1.8
 
 ## Resolved Bugs
 

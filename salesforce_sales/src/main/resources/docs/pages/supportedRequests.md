@@ -26,7 +26,6 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |-----------------------|--------------------|
 | All Products In Quote | List&lt;FreeForm>  |
 
-
 #### Update Quote By Quote Id
 
 - **Description**: This request updates the quote for a specific quote Id with details.
@@ -45,7 +44,6 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|--------------------|
 | Updated Quote      | Quote              |
 
-
 #### Get Quote Details
 
 - **Description**: This request fetches all the details of a quote.
@@ -63,7 +61,6 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|--------------------|
 | Quote Details      | Quote              |
 
-
 #### Get All Quote Status
 
 - **Description**: This request fetches all the statuses of a quote.
@@ -74,7 +71,6 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 | **Parameter Name** | **Parameter Type** |
 |--------------------|--------------------|
 | Statuses           | List&lt;Text&gt;   |
-
 
 #### Update Quote Status By Id
 
@@ -94,7 +90,6 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|--------------------|
 | New Status         | Text               |
 
-
 #### Get The Latest Quote From Opportunity
 
 - **Description**: This request returns the quote for an Opportunity Id.
@@ -112,10 +107,10 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|--------------------|
 | Quote              | Quote              |
 
-
 #### Get Quote Line Item By Quote Id
 
-- **Description**: This request returns the Quote Line items with important fields such as quantity, sales price and discount.
+- **Description**: This request returns the Quote Line items with important fields such as quantity, sales price and
+  discount.
 - **Input Parameters**:
 
 | **Parameter Name** | **Parameter Type** | **Mandatory** | **Example**                                             |
@@ -131,7 +126,6 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 | **Parameter Name** | **Parameter Type** |
 |--------------------|--------------------|
 | Quote Line Item    | List&lt;FreeForm>  |
-
 
 ### Weekly Summary Area
 
@@ -157,7 +151,6 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|--------------------|
 | Expected Revenue   | Text               |
 
-
 ### Assets Management Area
 
 #### Update An Asset
@@ -180,7 +173,6 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|--------------------|
 | Asset              | Asset              |
 
-
 #### Delete An Asset
 
 - **Description**: This request deletes the asset for an Asset Id.
@@ -198,13 +190,12 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|--------------------|
 | Status             | Yes/No             |
 
-
-
 ### Opportunity Management Area
 
 #### Get Opportunities
 
-- **Description**: This request returns the list of opportunities filtered by a SQL query or the list of last day's opportunities.
+- **Description**: This request returns the list of opportunities filtered by a SQL query or the list of last day's
+  opportunities.
 - **Input Parameters**:
 
 | **Parameter Name** | **Parameter Type** | **Mandatory** | **Example**                                                                                 |
@@ -218,11 +209,10 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|----------------------|
 | Opportunities      | List&lt;Opportunity> |
 
-
 #### Update Opportunity Status By Name
 
 - **Description**: This request updates the status of all the opportunities filtered by a name.
-- **Input Parameters**: 
+- **Input Parameters**:
 
 | **Parameter Name** | **Parameter Type** | **Mandatory** | **Example**      |
 |--------------------|--------------------|---------------|------------------|
@@ -251,8 +241,6 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |-----------------------|----------------------|
 | Updated Opportunities | List&lt;Opportunity> |
 
-
-
 #### Update An Opportunity
 
 - **Description**: This request modifies an opportunity with the given input parameters.
@@ -275,7 +263,6 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |---------------------|--------------------|
 | Updated Opportunity | Opportunity        |
 
-
 #### Get My Details
 
 - **Description**: This request will return the currently logged-in user's profile details.
@@ -287,7 +274,6 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|--------------------|
 | User               | User               |
 
-
 #### Get The Latest Posts For Opportunity
 
 - **Description**: This request will retrieve the latest N number of posts from Salesforce Sales Opportunity feed.
@@ -298,11 +284,11 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 | Opportunity Id     | Text               | Yes           | 0035g00000hUxJPAA0 |
 | Number Of Posts    | Number             | No            | 5                  |
 
-- **Output Parameters**:
+- **Output Parameters**: Latest Posts is an Entity.
 
-| **Parameter Name** | **Parameter Type**  |
-|--------------------|---------------------|
-| Latest Posts       | List&lt;MultiField> |
+| **Parameter Name** | **Parameter Type** |
+|--------------------|--------------------|
+| Posts              | List<Latest Posts> |
 
 * Please note that, Maximum 100 latest posts will be provided, even if the input for "Number Of Posts" is higher.
 
@@ -319,45 +305,47 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 
 - **Steps To Create Alert In Salesforce Sale**
 
-  - Navigate to the Setup icon and then click **Setup**.
-    ![Setup](../_media/setup.png)
+    - Navigate to the Setup icon and then click **Setup**.
+      ![Setup](../_media/setup.png)
 
-  - On the SETUP Home page, under the **Process Automation** menu on the left panel, under the **Workflow Actions**, click **Outbound Messages**.
-    ![Outbound Messages](../_media/outboundMessages.png)
+    - On the SETUP Home page, under the **Process Automation** menu on the left panel, under the **Workflow Actions**,
+      click **Outbound Messages**.
+      ![Outbound Messages](../_media/outboundMessages.png)
 
-  - On the **Outbound Messages** page, click on **New Outbound Message**.
+    - On the **Outbound Messages** page, click on **New Outbound Message**.
 
-  - Select **Opportunity** object and then click on **Next**.
+    - Select **Opportunity** object and then click on **Next**.
 
-  - On the next page enter **Name**.
+    - On the next page enter **Name**.
 
-  - Enter **Endpoint URL**
-    - Go to the Detail's page of the extension and copy the Routing id from there. After that, append **'/rest/salesforcesales/opportunityChanged'** at the end of the routing id (This is your endpoint uri)
-      ![Routing Id Reference](../_media/routingId.png)
+    - Enter **Endpoint URL**
+        - Go to the Detail's page of the extension and copy the Routing id from there. After that, append **'
+          /rest/salesforcesales/opportunityChanged'** at the end of the routing id (This is your endpoint uri)
+          ![Routing Id Reference](../_media/routingId.png)
 
-  - Select **Opportunity fields to send** as **Amount**, **ID**, **Name**, and **StageName**, and then click **Save**.
+    - Select **Opportunity fields to send** as **Amount**, **ID**, **Name**, and **StageName**, and then click **Save**.
 
-    ![Create Outbound Message](../_media/createOutboundMessage.png)
+      ![Create Outbound Message](../_media/createOutboundMessage.png)
 
-  - Now create **Workflow Rule**.
+    - Now create **Workflow Rule**.
 
-  - On the SETUP Home page, under the **Process Automation** menu on the left panel, click **Workflow Rules**.
-    ![Setup](../_media/workflowRules.png)
+    - On the SETUP Home page, under the **Process Automation** menu on the left panel, click **Workflow Rules**.
+      ![Setup](../_media/workflowRules.png)
 
-  - On the **Workflow Rules**, click **New Role** and select **Continue with Workflow Rules**.
+    - On the **Workflow Rules**, click **New Role** and select **Continue with Workflow Rules**.
 
-  - On the workflow rule page, select **Opportunity** as object then click **Next**.
+    - On the workflow rule page, select **Opportunity** as object then click **Next**.
 
-  - On the next page add **Rule Name**, **Evaluation Criteria**, and **Rule Criteria** and then click **Save and Next**.
+    - On the next page add **Rule Name**, **Evaluation Criteria**, and **Rule Criteria** and then click **Save and Next
+      **.
 
-  - On the next page click **Add Workflow Action** and select **Select Existing Action**.
+    - On the next page click **Add Workflow Action** and select **Select Existing Action**.
 
-  - On the next page select **Outbound Message** under the **Choose Action Type**.
+    - On the next page select **Outbound Message** under the **Choose Action Type**.
 
-  - And select your created Outbound Message under **Available Actions** and click Add arrow, and then click **Save**
+    - And select your created Outbound Message under **Available Actions** and click Add arrow, and then click **Save**
 
-  - Now click on **Done** button
-
+    - Now click on **Done** button
 
 ### Leads Management Area
 
@@ -372,7 +360,8 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 | Owner Id           | Text               | Yes if Field is By User   | 0035g00000hUxJPAA0 |
 | Start Date Time    | Date               | Yes if Field is New Leads | 5 Jun 2022 17:00   |
 
-- Note: Obtain the Owner Id from the Lead Entity Search Request. The supported options for a field are: **By User** and **New Leads**
+- Note: Obtain the Owner Id from the Lead Entity Search Request. The supported options for a field are: **By User** and
+  **New Leads**
 
 - **Output Parameters**:
 
@@ -380,12 +369,12 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|--------------------|
 | Leads              | List&lt;Lead>      |
 
-
 ### Actions Area
 
 #### Send A Mail
 
-- **Description**: This request sends an email to the comma-separated email addresses. These emails have a subject and content body.
+- **Description**: This request sends an email to the comma-separated email addresses. These emails have a subject and
+  content body.
 - **Input Parameters**:
 
 | **Parameter Name** | **Parameter Type** | **Mandatory** | **Example**                  |
@@ -400,10 +389,10 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|--------------------|
 | Status             | Yes/No             |
 
-
 #### Send Verification Mail
 
-- **Description**: This request sends a verification email to the comma-separated email addresses. These emails have a subject and content body.
+- **Description**: This request sends a verification email to the comma-separated email addresses. These emails have a
+  subject and content body.
 - **Input Parameters**
 
 | **Parameter Name** | **Parameter Type** | **Mandatory** | **Example**                  |
@@ -418,12 +407,12 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|--------------------|
 | Verification Code  | Text               |
 
-
 ### Reporting Area
 
 #### Sales Quota For The Quarter
 
-- **Description**: This request will return sales quota details with the owner's name, and amount for the current quarter.
+- **Description**: This request will return sales quota details with the owner's name, and amount for the current
+  quarter.
 - **Input Parameters**: No Input Parameters Required
 
 - **Output Parameters**:
@@ -431,7 +420,6 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 | **Parameter Name** | **Parameter Type**  |
 |--------------------|---------------------|
 | Sales Quota        | List&lt;MultiField> |
-
 
 #### Total Potential Opportunity Value For Quarter
 
@@ -459,10 +447,10 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|--------------------|
 | Response           | FreeForm           |
 
-
 #### Value Of Opportunities Closed For Current Quarter
 
-- **Description**: This request returns the values of opportunities closed for the current quarter. If the owner Ids are provided, you can filter the corresponding values.
+- **Description**: This request returns the values of opportunities closed for the current quarter. If the owner Ids are
+  provided, you can filter the corresponding values.
 - **Input Parameters**:
 
 | **Parameter Name** | **Parameter Type** | **Mandatory** | **Example**        |
@@ -475,21 +463,21 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|----------------------|
 | Quarter Revenue    | List&lt;Opportunity> |
 
-
 #### YTD Sales Revenue Closed
 
-- **Description**: This request returns the total amount of the values of opportunities closed for the current calendar year. If the owner Ids are provided, you can filter the corresponding values.
+- **Description**: This request returns the total amount of the values of opportunities closed for the current calendar
+  year. If the owner Ids are provided, you can filter the corresponding values.
 - **Input Parameters**:
 
 | **Parameter Name** | **Parameter Type** | **Mandatory** | **Example**        |
 |--------------------|--------------------|---------------|--------------------|
 | Owner Id           | Text               | No            | 0035g00000hUxJPAA0 |
+
 - **Output Parameters**:
 
 | **Parameter Name** | **Parameter Type** |
 |--------------------|--------------------|
 | Quarter Revenue    | List&lt;FreeForm>  |
-
 
 #### Get Opportunities Summary
 
@@ -502,10 +490,10 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|---------------------|
 | Opportunities      | List&lt;MultiField> |
 
-
 #### Sales Pipeline Summary
 
-- **Description**: This request returns a list of upcoming sales opportunities in a pipeline. It has details such as stage name, average, and total.
+- **Description**: This request returns a list of upcoming sales opportunities in a pipeline. It has details such as
+  stage name, average, and total.
 - **Input Parameters**: No Input Parameters Required
 
 - **Output Parameters**:
@@ -514,13 +502,12 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |------------------------|---------------------------------|
 | Sales Pipeline Summary | List&lt;Sales Pipeline Summary> |
 
-
-
 ### Forecasting Area
 
 #### Get Sales Forecast For A Specific Quarter
 
-- **Description**: This request returns the amount of sales forecast for a particular quarter. You can filter the results with a query.
+- **Description**: This request returns the amount of sales forecast for a particular quarter. You can filter the
+  results with a query.
 - **Input Parameters**:
 
 | **Parameter Name** | **Parameter Type** | **Mandatory** | **Example**                                                           |
@@ -536,8 +523,6 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|--------------------|
 | Forecast           | List&lt;FreeForm>  |
 
-
-
 ## Entity Requests
 
 ### The following Entity Requests are supported
@@ -545,8 +530,8 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 #### Opportunity
 
 * Search Opportunity
-  * Description: Returns list of opportunities.
-  * Input Parameters:
+    * Description: Returns list of opportunities.
+    * Input Parameters:
 
 | **Parameter Name** | **Parameter Type** | **Mandatory** | **Example**             |
 |--------------------|--------------------|---------------|-------------------------|
@@ -567,20 +552,18 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|----------------------|
 | Opportunity        | List&lt;Opportunity> |
 
-
 * Get Opportunity
-  * Description: Returns selected opportunity.
-  * Input Parameters: NA
-  * Output Parameters:
+    * Description: Returns selected opportunity.
+    * Input Parameters: NA
+    * Output Parameters:
 
 | **Parameter Name** | **Parameter Type** |
 |--------------------|--------------------|
 | Opportunity        | Opportunity        |
 
-
 * Create Opportunity
-  * Description: Returns created opportunity.
-  * Input Parameters:
+    * Description: Returns created opportunity.
+    * Input Parameters:
 
 | **Parameter Name** | **Parameter Type** | **Mandatory** | **Example**             |
 |--------------------|--------------------|---------------|-------------------------|
@@ -605,12 +588,9 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|--------------------|
 | Opportunity        | Opportunity        |
 
-
-
-
 * Update Opportunity
-  * Description: Returns updated opportunity.
-  * Input Parameters:
+    * Description: Returns updated opportunity.
+    * Input Parameters:
 
 | **Parameter Name** | **Parameter Type** | **Mandatory** | **Example**             |
 |--------------------|--------------------|---------------|-------------------------|
@@ -635,12 +615,11 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|--------------------|
 | Opportunity        | Opportunity        |
 
-
 #### Asset
 
 * Search Asset
-  * Description: Returns list of asset.
-  * Input Parameters:
+    * Description: Returns list of asset.
+    * Input Parameters:
 
 | **Parameter Name** | **Parameter Type** | **Mandatory** | **Example**        |
 |--------------------|--------------------|---------------|--------------------|
@@ -653,21 +632,18 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|--------------------|
 | Asset              | List&lt;Asset>     |
 
-
 * Get Asset
-  * Description: Returns selected asset.
-  * Input Parameters: NA
-  * Output Parameters:
-
+    * Description: Returns selected asset.
+    * Input Parameters: NA
+    * Output Parameters:
 
 | **Parameter Name** | **Parameter Type** |
 |--------------------|--------------------|
 | Asset              | Asset              |
 
-
 * Create Asset
-  * Description: Returns created asset.
-  * Input Parameters:
+    * Description: Returns created asset.
+    * Input Parameters:
 
 | **Parameter Name**    | **Parameter Type** | **Mandatory** | **Example**             |
 |-----------------------|--------------------|---------------|-------------------------|
@@ -689,12 +665,11 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|--------------------|
 | Asset              | Asset              |
 
-
 #### Lead
 
 * Search Lead
-  * Description: Returns list of lead.
-  * Input Parameters:
+    * Description: Returns list of lead.
+    * Input Parameters:
 
 | **Parameter Name** | **Parameter Type** | **Mandatory** | **Example**        |
 |--------------------|--------------------|---------------|--------------------|
@@ -708,20 +683,18 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|--------------------|
 | Lead               | List&lt;Lead>      |
 
-
 * Get Lead
-  * Description: Returns selected lead.
-  * Input Parameters: NA
-  * Output Parameters:
+    * Description: Returns selected lead.
+    * Input Parameters: NA
+    * Output Parameters:
 
 | **Parameter Name** | **Parameter Type** |
 |--------------------|--------------------|
 | Lead               | Lead               |
 
-
 * Create Lead
-  * Description: Returns created lead.
-  * Input Parameters:
+    * Description: Returns created lead.
+    * Input Parameters:
 
 | **Parameter Name**       | **Parameter Type** | **Mandatory** | **Example**             |
 |--------------------------|--------------------|---------------|-------------------------|
@@ -755,10 +728,9 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|--------------------|
 | Lead               | Lead               |
 
-
 * Update Lead
-  * Description: Returns updated lead.
-  * Input Parameters:
+    * Description: Returns updated lead.
+    * Input Parameters:
 
 | **Parameter Name**       | **Parameter Type** | **Mandatory** | **Example**             |
 |--------------------------|--------------------|---------------|-------------------------|
@@ -792,12 +764,11 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|--------------------|
 | Lead               | Lead               |
 
-
 #### Account
 
 * Search Account
-  * Description: Returns list of account.
-  * Input Parameters:
+    * Description: Returns list of account.
+    * Input Parameters:
 
 | **Parameter Name** | **Parameter Type** | **Mandatory** | **Example**  |
 |--------------------|--------------------|---------------|--------------|
@@ -809,20 +780,18 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|--------------------|
 | Account            | List&lt;Account>   |
 
-
 * Get Account
-  * Description: Returns selected account.
-  * Input Parameters: NA
-  * Output Parameters:
+    * Description: Returns selected account.
+    * Input Parameters: NA
+    * Output Parameters:
 
 | **Parameter Name** | **Parameter Type** |
 |--------------------|--------------------|
 | Account            | Account            |
 
-
 * Create Account
-  * Description: Returns created account.
-  * Input Parameters:
+    * Description: Returns created account.
+    * Input Parameters:
 
 | **Parameter Name**   | **Parameter Type** | **Mandatory** | **Example**             |
 |----------------------|--------------------|---------------|-------------------------|
@@ -862,10 +831,9 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|--------------------|
 | Account            | Account            |
 
-
 * Update Account
-  * Description: Returns updated account.
-  * Input Parameters:
+    * Description: Returns updated account.
+    * Input Parameters:
 
 | **Parameter Name**   | **Parameter Type** | **Mandatory** | **Example**             |
 |----------------------|--------------------|---------------|-------------------------|
@@ -905,12 +873,11 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|--------------------|
 | Account            | Account            |
 
-
 #### Event
 
 * Search Event
-  * Description: Returns list of event.
-  * Input Parameters:
+    * Description: Returns list of event.
+    * Input Parameters:
 
 | **Parameter Name** | **Parameter Type** | **Mandatory** | **Example**        |
 |--------------------|--------------------|---------------|--------------------|
@@ -923,20 +890,18 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|--------------------|
 | Event              | List&lt;Event>     |
 
-
 * Get Event
-  * Description: Returns selected event.
-  * Input Parameters: NA
-  * Output Parameters:
+    * Description: Returns selected event.
+    * Input Parameters: NA
+    * Output Parameters:
 
 | **Parameter Name** | **Parameter Type** |
 |--------------------|--------------------|
 | Event              | Event              |
 
-
 * Create Event
-  * Description: Returns created event.
-  * Input Parameters:
+    * Description: Returns created event.
+    * Input Parameters:
 
 | **Parameter Name** | **Parameter Type** | **Mandatory** | **Example**             |
 |--------------------|--------------------|---------------|-------------------------|
@@ -959,10 +924,9 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|--------------------|
 | Event              | Event              |
 
-
 * Update Event
-  * Description: Returns updated event.
-  * Input Parameters:
+    * Description: Returns updated event.
+    * Input Parameters:
 
 | **Parameter Name** | **Parameter Type** | **Mandatory** | **Example**             |
 |--------------------|--------------------|---------------|-------------------------|
@@ -985,12 +949,11 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|--------------------|
 | Event              | Event              |
 
-
 #### User
 
 * Search User
-  * Description: Returns list of user.
-  * Input Parameters:
+    * Description: Returns list of user.
+    * Input Parameters:
 
 | **Parameter Name** | **Parameter Type** | **Mandatory** | **Example**    |
 |--------------------|--------------------|---------------|----------------|
@@ -1004,20 +967,18 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|--------------------|
 | User               | List&lt;User>      |
 
-
 * Get User
-  * Description: Returns selected user.
-  * Input Parameters: NA
-  * Output Parameters:
+    * Description: Returns selected user.
+    * Input Parameters: NA
+    * Output Parameters:
 
 | **Parameter Name** | **Parameter Type** |
 |--------------------|--------------------|
 | User               | User               |
 
-
 * Create User
-  * Description: Returns created user.
-  * Input Parameters:
+    * Description: Returns created user.
+    * Input Parameters:
 
 | **Parameter Name** | **Parameter Type** | **Mandatory** | **Example**        |
 |--------------------|--------------------|---------------|--------------------|
@@ -1038,12 +999,11 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|--------------------|
 | User               | User               |
 
-
 #### Quote
 
 * Search Quote
-  * Description: Returns list of quote.
-  * Input Parameters:
+    * Description: Returns list of quote.
+    * Input Parameters:
 
 | **Parameter Name** | **Parameter Type** | **Mandatory** | **Example**        |
 |--------------------|--------------------|---------------|--------------------|
@@ -1058,20 +1018,18 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|--------------------|
 | Quote              | List&lt;Quote>     |
 
-
 * Get Quote
-  * Description: Returns selected quote.
-  * Input Parameters: NA
-  * Output Parameters:
+    * Description: Returns selected quote.
+    * Input Parameters: NA
+    * Output Parameters:
 
 | **Parameter Name** | **Parameter Type** |
 |--------------------|--------------------|
 | Quote              | Quote              |
 
-
 * Create Quote
-  * Description: Returns created quote.
-  * Input Parameters:
+    * Description: Returns created quote.
+    * Input Parameters:
 
 | **Parameter Name** | **Parameter Type** | **Mandatory** | **Example**             |
 |--------------------|--------------------|---------------|-------------------------|
@@ -1101,10 +1059,9 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|--------------------|
 | Quote              | Quote              |
 
-
 * Update Quote
-  * Description: Returns updated quote.
-  * Input Parameters:
+    * Description: Returns updated quote.
+    * Input Parameters:
 
 | **Parameter Name** | **Parameter Type** | **Mandatory** | **Example**             |
 |--------------------|--------------------|---------------|-------------------------|
@@ -1134,12 +1091,11 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|--------------------|
 | Quote              | Quote              |
 
-
 #### Pricebook Entry
 
 * Search Pricebook Entry
-  * Description: Returns list of pricebook entry.
-  * Input Parameters:
+    * Description: Returns list of pricebook entry.
+    * Input Parameters:
 
 | **Parameter Name** | **Parameter Type** | **Mandatory** | **Example**          |
 |--------------------|--------------------|---------------|----------------------|
@@ -1151,20 +1107,18 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|--------------------------|
 | Pricebook Entry    | List&lt;Pricebook Entry> |
 
-
 * Get PricebookEntry
-  * Description: Returns selected pricebook entry.
-  * Input Parameters: NA
-  * Output Parameters:
+    * Description: Returns selected pricebook entry.
+    * Input Parameters: NA
+    * Output Parameters:
 
 | **Parameter Name** | **Parameter Type** |
 |--------------------|--------------------|
 | Pricebook Entry    | Pricebook Entry    |
 
-
 * Create Pricebook Entry
-  * Description: Returns created pricebook entry.
-  * Input Parameters:
+    * Description: Returns created pricebook entry.
+    * Input Parameters:
 
 | **Parameter Name** | **Parameter Type** | **Mandatory** | **Example**             |
 |--------------------|--------------------|---------------|-------------------------|
@@ -1183,10 +1137,9 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|--------------------|
 | Pricebook Entry    | Pricebook Entry    |
 
-
 * Update Pricebook Entry
-  * Description: Returns updated pricebook entry.
-  * Input Parameters:
+    * Description: Returns updated pricebook entry.
+    * Input Parameters:
 
 | **Parameter Name** | **Parameter Type** | **Mandatory** | **Example**             |
 |--------------------|--------------------|---------------|-------------------------|
@@ -1199,7 +1152,7 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 | Last Modified Date | Date               | No            | 2022-07-11T05&#58;27:43 |
 | Unit Price         | Currency           | Yes           | 5555                    |
 
-  * Output Parameters:
+* Output Parameters:
 
 | **Parameter Name** | **Parameter Type** |
 |--------------------|--------------------|

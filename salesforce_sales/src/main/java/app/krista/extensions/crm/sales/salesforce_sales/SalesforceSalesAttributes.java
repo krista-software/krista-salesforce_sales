@@ -3,6 +3,7 @@ package app.krista.extensions.crm.sales.salesforce_sales;
 import app.krista.extension.executor.Invoker;
 import app.krista.extension.request.RoutingInfo;
 import app.krista.extension.request.protos.http.HttpProtocol;
+import app.krista.extension.util.InvokerAttributes;
 import com.github.scribejava.apis.SalesforceApi;
 import com.github.scribejava.core.builder.ServiceBuilder;
 import com.github.scribejava.core.oauth.OAuth20Service;
@@ -20,18 +21,14 @@ public final class SalesforceSalesAttributes {
     public static final String PASSWORD = "password";
     public static final String SECURITY_TOKEN = "securityToken";
     public static final String SANDBOX = "sandbox";
-    private final String clientId;
-    private final String clientSecret;
-    private final String userName;
-    private final String password;
-    private final String securityToken;
     private final String routingUrl;
-    private final Boolean isSandbox;
+    private String clientId;
+    private String clientSecret;
+    private String userName;
+    private String password;
+    private String securityToken;
+    private Boolean isSandbox;
     private OAuth20Service oAuthService;
-
-    public static SalesforceSalesAttributes create(Invoker invoker, Map<String, Object> attributes) {
-        return new SalesforceSalesAttributes(invoker.getRoutingInfo().getRoutingURL(HttpProtocol.PROTOCOL_NAME, RoutingInfo.Type.APPLIANCE), attributes);
-    }
 
     @Inject
     public SalesforceSalesAttributes(Invoker invoker) {
@@ -57,6 +54,10 @@ public final class SalesforceSalesAttributes {
         this.securityToken = securityToken;
         this.routingUrl = routingUrl;
         this.isSandbox = isSandbox;
+    }
+
+    public static SalesforceSalesAttributes create(Invoker invoker, Map<String, Object> attributes) {
+        return new SalesforceSalesAttributes(invoker.getRoutingInfo().getRoutingURL(HttpProtocol.PROTOCOL_NAME, RoutingInfo.Type.APPLIANCE), attributes);
     }
 
     public String getClientId() {
@@ -95,5 +96,13 @@ public final class SalesforceSalesAttributes {
                     .build(isSandbox() ? SalesforceApi.sandbox() : SalesforceApi.instance());
         }
         return oAuthService;
+    }
+    public void update(Map<String, Object> newAttributes) {
+        clientId = InvokerAttributes.getStringOrNull(newAttributes, CLIENT_ID);
+        clientSecret = InvokerAttributes.getStringOrNull(newAttributes, CLIENT_SECRET);
+        userName = InvokerAttributes.getStringOrNull(newAttributes, USER_NAME);
+        password = InvokerAttributes.getStringOrNull(newAttributes, PASSWORD);
+        securityToken = InvokerAttributes.getStringOrNull(newAttributes, SECURITY_TOKEN);
+        isSandbox = InvokerAttributes.getBooleanOrNull(newAttributes, SANDBOX);
     }
 }
