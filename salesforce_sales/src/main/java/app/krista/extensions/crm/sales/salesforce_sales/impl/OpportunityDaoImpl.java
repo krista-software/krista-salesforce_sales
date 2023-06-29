@@ -1,0 +1,224 @@
+package app.krista.extensions.crm.sales.salesforce_sales.impl;
+
+import app.krista.extensions.crm.sales.salesforce_sales.catalog.CatalogTypes;
+import app.krista.extensions.crm.sales.salesforce_sales.model.Quota;
+import app.krista.extensions.crm.sales.salesforce_sales.model.RegionWiseSummary;
+import app.krista.extensions.crm.sales.salesforce_sales.model.SFAggOpportunityOwnerTotal;
+import app.krista.extensions.crm.sales.salesforce_sales.model.SFOpportunity;
+import app.krista.extensions.crm.sales.salesforce_sales.service.Opportunity;
+import app.krista.extensions.crm.sales.salesforce_sales.service.OpportunityDao;
+import app.krista.extensions.crm.sales.salesforce_sales.service.PriceBook;
+import app.krista.extensions.crm.sales.salesforce_sales.service.User;
+import app.krista.extensions.crm.sales.salesforce_sales.util.DatePlus;
+import app.krista.extensions.crm.sales.salesforce_sales.util.SalesforceListResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.reflect.TypeToken;
+import org.jvnet.hk2.annotations.Service;
+
+import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.GSON;
+
+@Service
+public class OpportunityDaoImpl implements OpportunityDao {
+
+    public static final String OPPORTUNITY = "Opportunity";
+    public static final String QUERY_FIELDS = "id, Name, StageName, NextStep, Amount, ACV__c, AccountId, Account.Name, ContactId, Pricebook2Id, type, LeadSource, Partner__c, Competition__c, closeDate, probability, Description, " +
+            "ExpectedRevenue, LastModifiedDate, createdDate, ownerid, owner.Name";
+    private final SalesforceManager salesforceManager;
+    private final PriceBookDaoImpl priceBookDao;
+    private final UserDaoImpl userDao;
+
+    @Inject
+    public OpportunityDaoImpl(SalesforceManager salesforceManager, PriceBookDaoImpl priceBookDao, UserDaoImpl userDao) {
+        this.salesforceManager = salesforceManager;
+        this.priceBookDao = priceBookDao;
+        this.userDao = userDao;
+    }
+
+    @Override
+    public Opportunity getOpportunityById(String id) {
+        return getOpportunitiesByQuery("id = '" + id + "'").stream().findFirst().orElseThrow(IllegalArgumentException::new);
+    }
+
+    @Override
+    public List<Opportunity> getOpportunities(long size, long page) {
+        return getOpportunitiesByQuery("Select " + QUERY_FIELDS + " from Opportunity ORDER BY Name LIMIT " + size + " OFFSET " + Math.max((page - 1) * size, 0));
+    }
+
+    @Override
+    public List<Opportunity> getOpportunitiesByQuery(String query) {
+        if (!query.toLowerCase(Locale.ROOT).startsWith("select")) {
+            query = "Select " + QUERY_FIELDS + " from Opportunity where " + query;
+        }
+        String response = salesforceManager.getRecordByQuery(query);
+        SalesforceListResponse<SFOpportunity> oppList =
+                GSON.fromJson(response, new TypeToken<SalesforceListResponse<SFOpportunity>>() {
+                }.getType());
+        if (oppList.records.size() > 0) {
+            return oppList.records.stream().map(OpportunityImpl::new).collect(Collectors.toList());
+        } else {
+            throw new IllegalArgumentException("No records found");
+        }
+    }
+
+    @Override
+    public List<Opportunity> getNewOpportunitiesByLastDays(Double days) {
+        return getOpportunitiesByQuery("CreatedDate = LAST_N_DAYS:" + new BigDecimal(days));
+    }
+
+    //Todo Need to add RegionWiseSummary entity
+    @Override
+    public List<Map<String, Object>> getOpportunitiesRegionWise() {
+        List<Opportunity> opportunitiesByOwnerId = getOpportunitiesByQuery("select ownerId, SUM(AMOUNT) Amount from Opportunity group by ownerId");
+        Map<String, RegionWiseSummary> regionRecordMap = new HashMap<>();
+        for (Opportunity opportunity : opportunitiesByOwnerId) {
+            User user = userDao.getUserById(opportunity.getOwnerId());
+            String country = user.getCountry();
+            RegionWiseSummary alreadyAdded = regionRecordMap.get(country);
+            if (alreadyAdded != null) {
+                alreadyAdded.amount += opportunity.getAmount();
+            } else {
+                RegionWiseSummary record = new RegionWiseSummary();
+                record.region = country;
+                record.amount = opportunity.getAmount();
+                regionRecordMap.put(country, record);
+            }
+        }
+        return regionRecordMap.values().stream().sequential().map(RegionWiseSummary::toMap).collect(Collectors.toList());
+    }
+
+    @Override
+    public void updateOpportunity(Opportunity opportunity) {
+        if (opportunity.getId() == null || opportunity.getId().isEmpty())
+            throw new IllegalArgumentException("Opportunity Id cant be empty");
+        SFOpportunity updatedOpportunity = SFOpportunity.from(CatalogTypes.fromSFOpportunity(opportunity));
+        SFOpportunity oldOpportunity = SFOpportunity.from(CatalogTypes.fromSFOpportunity(getOpportunityById(updatedOpportunity.id)));
+        Map<String, Object> diff = salesforceManager.getDifference(oldOpportunity, updatedOpportunity);
+        salesforceManager.updateRecord(updatedOpportunity.id, GSON.toJson(diff), OPPORTUNITY);
+    }
+
+    @Override
+    public void updateOpportunityStatus(String name, String status) {
+        getOpportunitiesByQuery("name LIKE '%" + name + "%'").forEach(opportunity -> {
+            SFOpportunity updatedOpportunity = SFOpportunity.from(CatalogTypes.fromSFOpportunity(opportunity));
+            updatedOpportunity.stageName = status;
+            SFOpportunity oldOpportunity = SFOpportunity.from(CatalogTypes.fromSFOpportunity(getOpportunityById(updatedOpportunity.id)));
+            Map<String, Object> diff = salesforceManager.getDifference(oldOpportunity, updatedOpportunity);
+            salesforceManager.updateRecord(updatedOpportunity.id, GSON.toJson(diff), OPPORTUNITY);
+        });
+    }
+
+    @Override
+    public void addOpportunity(Map<String, Object> entityAttributeField) {
+        SFOpportunity opportunity1 = SFOpportunity.from(entityAttributeField);
+        if (opportunity1.Pricebook2Id == null) {
+            PriceBook priceBook = priceBookDao.getPriceBook();
+            if (priceBook.getId() != null)
+                opportunity1.Pricebook2Id = priceBook.getId();
+        }
+        salesforceManager.createRecord(GSON.toJson(opportunity1), OPPORTUNITY);
+    }
+
+    @Override
+    public Double getTotalAmountClosedThisQuarter() {
+        List<SFAggOpportunityOwnerTotal> list = getRevenueByQuery("SELECT SUM(AMOUNT) Total from Opportunity where IsClosed = false AND CloseDate=THIS_QUARTER GROUP BY STAGENAME");
+        return list.isEmpty() ? 0.0 : Math.round(list.stream().map(r -> r.Total != null ? r.Total : 0.0).mapToDouble(Double::doubleValue).sum());
+    }
+
+    @Override
+    public Double getRevenue(boolean isClosed) {
+        List<SFAggOpportunityOwnerTotal> list = getRevenueByQuery("SELECT SUM(ExpectedRevenue) Total from Opportunity where IsClosed = " + isClosed + " AND CloseDate=THIS_QUARTER GROUP BY STAGENAME");
+        return list.isEmpty() ? 0.0 : Math.round(list.stream().map(r -> r.Total != null ? r.Total : 0.0).mapToDouble(Double::doubleValue).sum());
+    }
+
+    @Override
+    public List<Object> getExpectedRevenueOfQuarters(List<String> quarters, String query) {
+        List<Object> results = new ArrayList<>();
+        for (String quarter : quarters) {
+            Map<String, Object> map = new HashMap<>();
+            String sOQLQuery = query != null ? query : "Select sum(ExpectedRevenue) Total from Opportunity where (closeDate >= qstartdate and closeDate <= qendDate)";
+            DatePlus.QuarterDates quarterDates = DatePlus.getQuarterDates(quarter);
+            sOQLQuery = sOQLQuery.replace("qstartdate", quarterDates.startDate);
+            sOQLQuery = sOQLQuery.replace("qendDate", quarterDates.endDate);
+            List<SFAggOpportunityOwnerTotal> list = getRevenueByQuery(sOQLQuery.trim());
+            map.put("Quarter Name", quarter);
+            if (list.isEmpty()) {
+                map.put("Total Revenue", "NA");
+            } else {
+                Double val = list.stream().map(r -> r.Total).collect(Collectors.toList()).get(0);
+                map.put("Total Revenue", val != null ? val : 0);
+            }
+            results.add(map);
+        }
+        return results;
+    }
+
+    @Override
+    public List<Object> getYTDClosedSumByOwnerId(String ownerId) {
+        List<SFAggOpportunityOwnerTotal> sfAggOpportunityOwnerTotal = getRevenueByQuery("SELECT ownerid, owner.name, SUM(AMOUNT) Total from Opportunity where IsClosed = true AND CALENDAR_YEAR(CloseDate) = " + Calendar.getInstance().get(Calendar.YEAR) + " GROUP BY ownerid, owner.name Having ownerid = '" + ownerId + "'");
+        return sfAggOpportunityOwnerTotal != null ? sfAggOpportunityOwnerTotal.stream().map(SFAggOpportunityOwnerTotal::toMap).collect(Collectors.toList()) : List.of();
+    }
+
+    @Override
+    public List<Object> getYTDClosedSum() {
+        List<SFAggOpportunityOwnerTotal> sfAggOpportunityOwnerTotal = getRevenueByQuery("SELECT ownerid, owner.name, SUM(AMOUNT) Total from Opportunity where IsClosed = true AND CALENDAR_YEAR(CloseDate) = " + Calendar.getInstance().get(Calendar.YEAR) + " GROUP BY ownerid, owner.name ");
+        return sfAggOpportunityOwnerTotal != null ? sfAggOpportunityOwnerTotal.stream().map(SFAggOpportunityOwnerTotal::toMap).collect(Collectors.toList()) : List.of();
+    }
+
+    @Override
+    public List getQuaterClosedSumByOwnerId(String ownerId) {
+        List<SFAggOpportunityOwnerTotal> sfAggOpportunityOwnerTotal = getRevenueByQuery("SELECT ownerid, owner.name,SUM(AMOUNT) Total from Opportunity where IsClosed = true AND CloseDate=THIS_QUARTER GROUP BY ownerid, owner.name  Having ownerid = '" + ownerId + "'");
+        return sfAggOpportunityOwnerTotal != null ? sfAggOpportunityOwnerTotal.stream().map(SFAggOpportunityOwnerTotal::toMap).collect(Collectors.toList()) : List.of();
+    }
+
+    @Override
+    public List<Map<String, Object>> getCurrentQuaterQuota() {
+        String res = salesforceManager.getRecordByQuery("SELECT QuotaOwner.Name, QuotaAmount FROM ForecastingQuota where startdate = THIS_QUARTER");
+        SalesforceListResponse<Quota> oppList =
+                GSON.fromJson(res, new TypeToken<SalesforceListResponse<Quota>>() {
+                }.getType());
+        return oppList.records.stream().map(Quota::to).collect(Collectors.toList());
+    }
+
+    private List<SFAggOpportunityOwnerTotal> getRevenueByQuery(String query) {
+        String response = salesforceManager.getRecordByQuery(query);
+        SalesforceListResponse<SFAggOpportunityOwnerTotal> oppList =
+                GSON.fromJson(response, new TypeToken<SalesforceListResponse<SFAggOpportunityOwnerTotal>>() {
+                }.getType());
+        return oppList.records;
+    }
+
+    @Override
+    public List<Map<String, Object>> getLatestPosts(String opportunityId, int numberOfPosts) throws JsonProcessingException {
+        String response = salesforceManager.getLatestNPostsByOpportunityId(opportunityId, numberOfPosts);
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode rootNode = mapper.readTree(response);
+        JsonNode elementsNode = rootNode.get("elements");
+
+        List<Map<String, Object>> feedPosts = new ArrayList<>();
+        Map<String, Object> post = new LinkedHashMap<>(2);
+        for (JsonNode elementNode : elementsNode) {
+            String feedElementType = elementNode.get("feedElementType").asText();
+            if (feedElementType.equalsIgnoreCase("FeedItem")) {
+                JsonNode actorNode = elementNode.get("actor");
+                if (actorNode != null) {
+                    post.put("Actor Name", actorNode.get("name").asText());
+                }
+                JsonNode bodyNode = elementNode.get("body");
+                if (bodyNode != null) {
+                    post.put("Post Message", bodyNode.get("text").asText());
+                }
+                feedPosts.add(post);
+            }
+            post = new HashMap<>();
+        }
+        return feedPosts;
+    }
+}
