@@ -41,10 +41,11 @@ public class SalesforceSalesRequestAuthenticator implements RequestAuthenticator
             if ("/salesforcesales/callback".equals(httpRequest.getUri().getPath())) {
                 httpRequest.bufferBody();
                 MultivaluedMap<String, String> queryParameters = httpRequest.getQueryParameters();
-                if (queryParameters == null || queryParameters.get("state") == null || queryParameters.get("state").get(0) == null) {
+                List<String> stateParam = queryParameters == null ? null : queryParameters.get("state");
+                if (stateParam == null || stateParam.get(0) == null) {
                     return null;
                 }
-                String state = String.valueOf(queryParameters.get("state").get(0));
+                String state = String.valueOf(stateParam.get(0));
                 String[] parts = state.split("&");
                 return parts[0];
             } else {
