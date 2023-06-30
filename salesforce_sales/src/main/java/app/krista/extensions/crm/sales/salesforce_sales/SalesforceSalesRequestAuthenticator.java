@@ -38,7 +38,7 @@ public class SalesforceSalesRequestAuthenticator implements RequestAuthenticator
     public String getAuthenticatedAccountId(ProtoRequest protoRequest) {
         try {
             HttpRequest httpRequest = (HttpRequest) protoRequest;
-            if (httpRequest.getUri().getPath().equals("/salesforcesales/callback")) {
+            if ("/salesforcesales/callback".equals(httpRequest.getUri().getPath())) {
                 httpRequest.bufferBody();
                 MultivaluedMap<String, String> queryParameters = httpRequest.getQueryParameters();
                 if (queryParameters == null || queryParameters.get("state") == null || queryParameters.get("state").get(0) == null) {
