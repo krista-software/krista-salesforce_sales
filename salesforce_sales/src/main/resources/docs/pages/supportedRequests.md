@@ -286,9 +286,9 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 
 - **Output Parameters**: Latest Posts is an Entity.
 
-| **Parameter Name** | **Parameter Type** |
-|--------------------|--------------------|
-| Posts              | List<Latest Posts> |
+| **Parameter Name** | **Parameter Type**    |
+|--------------------|-----------------------|
+| Posts              | List&lt;Latest Posts> |
 
 * Please note that, Maximum 100 latest posts will be provided, even if the input for "Number Of Posts" is higher.
 
