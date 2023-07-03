@@ -1,6 +1,6 @@
-# Connecting with Salesforce Sales Extension
+# Configuring the Krista Salesforce Sales Module Extension
 
-### Steps for connection
+### Configuration Steps
 
 * Username, Password, Client ID, Client Secret and Security Token:
   * In order to make connection, you have to provide username, password, client id, client secret and security token in setup parameters.

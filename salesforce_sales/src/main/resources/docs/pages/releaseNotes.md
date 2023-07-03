@@ -1,4 +1,4 @@
-# Release Notes - Salesforce Sale Module Extension
+# Release Notes - Krista Salesforce Sale Module Extension
 
 ## Version 2.0.3
 

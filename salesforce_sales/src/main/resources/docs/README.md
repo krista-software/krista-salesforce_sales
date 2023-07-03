@@ -1,16 +1,18 @@
 [comment]: <> (Home Page)
 
-# Home Page #
+# Krista Salesforce Sales Module Extension
+
+## Home Page
 
 ### Salesforce Sales Module Extension
-This Krista Salesforce Sales Module extension connects to **Salesforce** system and its Sales module to performs various operations.
+This Krista Salesforce Sales Module extension connects to Salesforce system and its Sales module to performs various operations.
 
 * ### Overview
   * [Overview](pages/overview.md)
 * ### Obtaining User and OAuth2.0 Credentials
   * [Obtaining User and OAuth2.0 Credentials](pages/obtainingUserAndOAuth2.0Credentials.md)
-* ### Connecting Krista Salesforce Sales Module Extension
-  * [Connecting Krista Salesforce Sales Module Extension](pages/connectionWithSalesforceSale.md)
+* ### Configuring the Krista Salesforce Sales Module Extension
+  * [Configuring the Krista Salesforce Sales Module Extension](pages/connectionWithSalesforceSale.md)
 * ### Supported Requests
   * [Supported Requests](pages/supportedRequests.md)
 * ### Release Notes

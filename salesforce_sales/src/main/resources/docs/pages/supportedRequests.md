@@ -524,8 +524,7 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 | Forecast           | List&lt;FreeForm>  |
 
 ## Entity Requests
-
-### The following Entity Requests are supported
+Krista Salesforce Sales Module Extension supports the following entity requests:
 
 #### Opportunity
 

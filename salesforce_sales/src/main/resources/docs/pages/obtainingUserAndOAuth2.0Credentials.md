@@ -34,7 +34,7 @@
 
 ### Obtaining Client ID and Client Secret for OAuth2.0
 
-* Go to the login page of the salesforce portal. [Click Here](https://login.salesforce.com/)
+* Go to the login page of the salesforce portal [Click Here](https://login.salesforce.com/).
 
 
 * Navigate to the Setup icon and then click **Setup**.
@@ -61,16 +61,16 @@
 
 
 * Enter the **Callback URL** details corresponding to your extension.
-  * Go to the Detail's page of the extension and copy the Routing id from there. After that, append **'/rest/salesforcesales/callback'** at the end of the routing id (This is you redirect uri)
+  * Go to the Detail's page of the extension and copy the Routing id from there. After that, append **'/rest/salesforcesales/callback'** at the end of the routing id(This is you redirect uri).
 
   ![Routing Id Reference](../_media/routingId.png)
 
 
 * In **Selected OAuth Scopes**, add the following scope entries:
-  * Access the identity URL service (id, profile, email, address, phone)
-  * Access unique user identifiers (openid)
-  * Manage user data via APIs (api)
-  * Perform requests at any time (refresh_token, offline_access)
+  * Access the identity URL service. (id, profile, email, address, phone)
+  * Access unique user identifiers. (openid)
+  * Manage user data via APIs. (api)
+  * Perform requests at any time. (refresh_token, offline_access)
 
 
 * Select the **Require Secret for Web Server Flow** checkbox.
@@ -119,7 +119,7 @@
 
 * Navigate to **App Manager** in setup page and select created app.
 
-* On the App Info page, click **Manage Consumer Details**
+* On the App Info page, click **Manage Consumer Details**.
 
   ![Manage Consumer Details](../_media/manageConsumerDetails.png)
 
