@@ -7,6 +7,7 @@ import app.krista.extensions.crm.sales.salesforce_sales.impl.stores.RefreshToken
 import app.krista.extensions.crm.sales.salesforce_sales.impl.stores.SalesforceSaleAttributeStore;
 import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.Notifications;
 import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.XMlResponseParser;
+import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.sObject;
 import app.krista.extensions.util.EventHandler;
 import app.krista.ksdk.authentication.AuthorizationListener;
 import app.krista.ksdk.context.AuthorizationContext;
@@ -81,18 +82,20 @@ public final class AuthenticationResource {
     @POST
     @Path("/opportunityChanged")
     public Response handleAmountChangedEvent(String xml) throws Exception {
-        System.out.println("Opportunity Alert is called.." + xml);
         JAXBElement<Notifications> notifications = XMlResponseParser.parseXmlResponse(xml);
         if (notifications != null) {
-            String id = notifications.getValue().getNotification().getSObject().Id;
-            Double amount = notifications.getValue().getNotification().getSObject().Amount;
-            String stageName = notifications.getValue().getNotification().getSObject().StageName;
-            String name = notifications.getValue().getNotification().getSObject().Name;
+            sObject notificationSObject = notifications.getValue().getNotification().getSObject();
+            String id = notificationSObject.Id;
+            Double amount = notificationSObject.Amount;
+            String stageName = notificationSObject.StageName;
+            String name = notificationSObject.Name;
+
             FreeForm freeForm = new FreeForm();
             freeForm.put("Id", "Text", id);
             freeForm.put("Amount", "Text", amount);
             freeForm.put("StageName", "Text", stageName);
             freeForm.put("Name", "Text", name);
+
             eventHandler.handleEvent("opportunityChanged", freeForm);
         }
 

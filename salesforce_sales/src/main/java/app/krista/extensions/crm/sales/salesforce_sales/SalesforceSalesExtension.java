@@ -56,10 +56,10 @@ public final class SalesforceSalesExtension {
     @InvokerRequest(InvokerRequest.Type.VALIDATE_ATTRIBUTES)
     public void validateConnection(Map<String, Object> connectionAttributes) throws IOException {
         SalesforceSalesAttributes salesforceSalesAttributes = SalesforceSalesAttributes.create(invoker, connectionAttributes);
-        validation(salesforceSalesAttributes);
+        validateSalesAttributes(salesforceSalesAttributes);
     }
 
-    private void validation(SalesforceSalesAttributes salesforceSalesAttributes) throws IOException {
+    private void validateSalesAttributes(SalesforceSalesAttributes salesforceSalesAttributes) throws IOException {
         if (salesforceSalesAttributes.getUserName() == null || salesforceSalesAttributes.getUserName().isBlank() ||
                 salesforceSalesAttributes.getPassword() == null || salesforceSalesAttributes.getPassword().isBlank() ||
                 salesforceSalesAttributes.getSecurityToken() == null || salesforceSalesAttributes.getSecurityToken().isBlank()) {
@@ -71,7 +71,7 @@ public final class SalesforceSalesExtension {
 
     @InvokerRequest(InvokerRequest.Type.TEST_CONNECTION)
     public void testConnection() throws IOException {
-        validation(salesforceSalesAttributes);
+        validateSalesAttributes(salesforceSalesAttributes);
     }
 
     @InvokerRequest(InvokerRequest.Type.INVOKER_UPDATED)
