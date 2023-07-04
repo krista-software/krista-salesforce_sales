@@ -66,7 +66,7 @@ public final class AuthenticationResource {
             refreshTokenStore.put(key + "&" + tokenProvider.getSalesforceSalesAttributes().getClientId() + tokenProvider.getSalesforceSalesAttributes().getClientSecret(), accessToken.getRefreshToken());
             if (context.isAuthenticated()) {
                 authorizationListener.authorized();
-                return "User authenticated successfully. Please close the dialog.";
+                return "User authenticated successfully.";
             }
             return "User authenticated successfully. Save the changes.";
         } catch (Exception cause) {

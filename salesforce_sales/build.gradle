@@ -44,8 +44,8 @@ configurations {
 
 dependencies {
 
-    annotationProcessor 'app.krista:extension-impl-anno-processors:1.0.72'
-    implementation 'app.krista:krista-apis:1.0.72'
+    annotationProcessor 'app.krista:extension-impl-anno-processors:1.0.73'
+    implementation 'app.krista:krista-apis:1.0.73'
     implementation 'org.glassfish.hk2:hk2-api:3.0.3'
     implementation 'com.github.scribejava:scribejava-apis:8.3.3'
     implementation 'com.googlecode.libphonenumber:libphonenumber:5.5'
