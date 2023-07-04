@@ -614,6 +614,10 @@ Krista Salesforce Sales Module Extension supports the following entity requests:
 |--------------------|--------------------|
 | Opportunity        | Opportunity        |
 
+* Delete Opportunity Entry
+  * Description: Deletes the Opportunity entry for given Id.
+  * Input Parameters: key
+
 #### Asset
 
 * Search Asset
@@ -663,6 +667,11 @@ Krista Salesforce Sales Module Extension supports the following entity requests:
 | **Parameter Name** | **Parameter Type** |
 |--------------------|--------------------|
 | Asset              | Asset              |
+
+* Delete Asset Entry
+  * Description: Deletes the Asset entry for given Id.
+  * Input Parameters: key
+
 
 #### Lead
 
@@ -762,6 +771,11 @@ Krista Salesforce Sales Module Extension supports the following entity requests:
 | **Parameter Name** | **Parameter Type** |
 |--------------------|--------------------|
 | Lead               | Lead               |
+
+* Delete Lead Entry
+  * Description: Deletes the Lead entry for given Id.
+  * Input Parameters: key
+
 
 #### Account
 
@@ -872,6 +886,10 @@ Krista Salesforce Sales Module Extension supports the following entity requests:
 |--------------------|--------------------|
 | Account            | Account            |
 
+* Delete Account Entry
+  * Description: Deletes the Account entry for given Id.
+  * Input Parameters: key
+
 #### Event
 
 * Search Event
@@ -948,6 +966,10 @@ Krista Salesforce Sales Module Extension supports the following entity requests:
 |--------------------|--------------------|
 | Event              | Event              |
 
+* Delete Event Entry
+  * Description: Deletes the Event entry for given Id.
+  * Input Parameters: key
+
 #### User
 
 * Search User
@@ -997,6 +1019,10 @@ Krista Salesforce Sales Module Extension supports the following entity requests:
 | **Parameter Name** | **Parameter Type** |
 |--------------------|--------------------|
 | User               | User               |
+
+* Delete User Entry
+  * Description: Deletes the User entry for given Id.
+  * Input Parameters: key
 
 #### Quote
 
@@ -1090,6 +1116,10 @@ Krista Salesforce Sales Module Extension supports the following entity requests:
 |--------------------|--------------------|
 | Quote              | Quote              |
 
+* Delete Quote Entry
+  * Description: Deletes the Quote entry for given Id.
+  * Input Parameters: key
+
 #### Pricebook Entry
 
 * Search Pricebook Entry
@@ -1156,3 +1186,7 @@ Krista Salesforce Sales Module Extension supports the following entity requests:
 | **Parameter Name** | **Parameter Type** |
 |--------------------|--------------------|
 | Pricebook Entry    | Pricebook Entry    |
+
+* Delete Pricebook Entry
+    * Description: Deletes the given Id pricebook entry.
+    * Input Parameters: key
