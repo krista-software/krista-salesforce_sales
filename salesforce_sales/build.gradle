@@ -1,0 +1,81 @@
+apply plugin: 'java-library'
+jar.archiveBaseName = "salessforce_sales-extension"
+group 'app.krista.extensions.crm.sales'
+version '2.0.4'
+
+
+if (rootProject.file('builder.txt').canRead()) {
+    ext.builder = rootProject.file('builder.txt').text.trim()
+} else {
+    ext.builder = "0"
+}
+
+task updateVersion {
+    doFirst {
+        project.ext.newbuilder = Integer.parseInt(project.ext.builder) + 1
+        print "Building extension version: " + version.toString()+ "-" + project.ext.newbuilder
+        rootProject.file('builder.txt').text = project.ext.newbuilder
+        System.clearProperty("extensionVersion")
+        System.setProperty("extensionVersion", version.toString() + "-" + project.ext.newbuilder)
+    }
+}
+compileJava.dependsOn clean
+compileJava.dependsOn updateVersion
+
+System.setProperty("extensionVersion", version.toString())
+
+sourceCompatibility = '11'
+targetCompatibility = '11'
+
+repositories {
+    mavenLocal()
+    maven {
+        url "https://packages.cicd.in.antbrains.com/artifactory/libs-release"
+    }
+    mavenCentral()
+}
+
+configurations {
+    implementation {
+        canBeConsumed = false
+        canBeResolved = true
+    }
+}
+
+dependencies {
+
+    annotationProcessor 'app.krista:extension-impl-anno-processors:1.0.73'
+    implementation 'app.krista:krista-apis:1.0.73'
+    implementation 'org.glassfish.hk2:hk2-api:3.0.3'
+    implementation 'com.github.scribejava:scribejava-apis:8.3.3'
+    implementation 'com.googlecode.libphonenumber:libphonenumber:5.5'
+    implementation 'org.glassfish.jersey.media:jersey-media-multipart:2.35'
+}
+
+task createSourceDir(type: Exec) {
+    dependsOn processResources
+    commandLine "mkdir", "-p", "$projectDir/build/classes/java/main/META-INF/project"
+}
+
+task copyGradleFile(type: Exec) {
+    dependsOn createSourceDir
+    commandLine "cp", "$projectDir/build.gradle", "$projectDir/build/classes/java/main/META-INF/project/build.gradle"
+}
+
+task includeSources(type: Exec) {
+    dependsOn copyGradleFile
+    commandLine "cp", "-r", "$projectDir/src", "$projectDir/build/classes/java/main/META-INF/project/src"
+}
+
+jar {
+    manifest {
+    }
+    from {
+        configurations.implementation.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
+    duplicatesStrategy = "exclude"
+}
+
