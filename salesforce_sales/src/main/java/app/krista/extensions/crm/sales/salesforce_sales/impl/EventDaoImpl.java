@@ -74,4 +74,8 @@ public class EventDaoImpl implements EventDao {
             return List.of();
         }
     }
+
+    public void deleteEvent(String key) {
+        salesforceManager.deleteRecordById(key, EVENT);
+    }
 }

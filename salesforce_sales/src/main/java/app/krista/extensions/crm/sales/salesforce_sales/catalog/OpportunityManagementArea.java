@@ -47,7 +47,6 @@ public final class OpportunityManagementArea {
     public List<Opportunity> getOpportunities(
             @Field(name = "SOQL Query", type = "Text", required = false) String sOQLQuery,
             @Field(name = "Last Days", type = "Number", required = false) Double lastDays) {
-
         try {
             if (sOQLQuery != null && !sOQLQuery.isEmpty()) {
                 return opportunityDao.getOpportunitiesByQuery(sOQLQuery).stream().map(CatalogTypes::fromSFOpportunity).collect(Collectors.toList());
@@ -73,6 +72,12 @@ public final class OpportunityManagementArea {
     public Boolean updateOpportunityStatusByName(
             @Field(name = "Opportunity Name", type = "Text") String opportunityName,
             @Field(name = "Status", type = "Text") String status) {
+        if (opportunityName == null || opportunityName.isBlank()) {
+            throw new IllegalArgumentException("Opportunity Name cannot be empty");
+        }
+        if (status == null || status.isBlank()) {
+            throw new IllegalArgumentException("Status cannot be empty");
+        }
         try {
             opportunityDao.updateOpportunityStatus(opportunityName, status);
             return true;

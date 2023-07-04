@@ -29,6 +29,9 @@ public class PricebookEntryStore implements EntityStore<PricebookEntry> {
 
     @Override
     public PricebookEntry create(Map<String, Object> entityAttributeField) {
+        if (entityAttributeField == null || entityAttributeField.isEmpty()) {
+            System.err.println("Entity attribute field map cannot be null or empty");
+        }
         try {
             priceBookEntryDao.addPriceBookEntry(entityAttributeField);
             return PricebookEntry.fromFields(entityAttributeField);
@@ -41,6 +44,9 @@ public class PricebookEntryStore implements EntityStore<PricebookEntry> {
 
     @Override
     public PricebookEntry get(String primaryKey) {
+        if (primaryKey == null || primaryKey.isEmpty()) {
+            System.err.println("Primary key cannot be null or empty");
+        }
         try {
             return CatalogTypes.fromSFPriceBookEntry(priceBookEntryDao.getPriceBookEntryById(primaryKey));
         } catch (IllegalArgumentException cause) {
@@ -52,6 +58,9 @@ public class PricebookEntryStore implements EntityStore<PricebookEntry> {
 
     @Override
     public PricebookEntry update(PricebookEntry pricebookEntry) {
+        if (pricebookEntry == null) {
+            System.err.println("Price book Entry cannot be null");
+        }
         try {
             priceBookEntryDao.updatePriceBookEntry(new PriceBookEntryImpl(SFPricebookEntry.from(pricebookEntry)));
             return pricebookEntry;
@@ -63,8 +72,11 @@ public class PricebookEntryStore implements EntityStore<PricebookEntry> {
     }
 
     @Override
-    public void delete(String s) {
-
+    public void delete(String key) {
+        if (key == null || key.isEmpty()) {
+            throw new IllegalArgumentException("Delete identifier cannot be null or empty");
+        }
+        priceBookEntryDao.deletePriceBook(key);
     }
 
     @Override
@@ -79,6 +91,9 @@ public class PricebookEntryStore implements EntityStore<PricebookEntry> {
 
     @Override
     public List<PricebookEntry> search(SearchQuery searchQuery, long pageIndex, int pageSize) throws IOException {
+        if (searchQuery == null || searchQuery.getSearchConditions() == null || searchQuery.getSearchConditions().isEmpty()) {
+            System.err.println("Search conditions cannot be null or empty");
+        }
         List<SearchCondition> conditions = searchQuery.getSearchConditions();
         try {
             List<PricebookEntry> pricebookEntries = new ArrayList<>();

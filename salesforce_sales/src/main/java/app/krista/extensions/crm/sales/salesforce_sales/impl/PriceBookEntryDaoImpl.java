@@ -69,4 +69,8 @@ public class PriceBookEntryDaoImpl implements PriceBookEntryDao {
             return List.of();
         }
     }
+
+    public void deletePriceBook(String key) {
+        salesforceManager.deleteRecordById(key, PRICEBOOK_ENTRY);
+    }
 }

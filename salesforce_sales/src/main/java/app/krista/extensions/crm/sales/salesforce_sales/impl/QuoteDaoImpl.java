@@ -174,4 +174,8 @@ public class QuoteDaoImpl implements QuoteDao {
         }
         return false;
     }
+
+    public void deleteQuote(String key) {
+        salesforceManager.deleteRecordById(key, QUOTE);
+    }
 }

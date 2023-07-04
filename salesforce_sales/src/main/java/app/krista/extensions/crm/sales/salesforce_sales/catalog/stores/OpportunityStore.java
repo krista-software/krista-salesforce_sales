@@ -30,6 +30,9 @@ public class OpportunityStore implements EntityStore<Opportunity> {
 
     @Override
     public Opportunity create(Map<String, Object> entityAttributeField) {
+        if (entityAttributeField == null || entityAttributeField.isEmpty()) {
+            System.err.println("Entity attribute field map cannot be null or empty");
+        }
         try {
             opportunityDao.addOpportunity(entityAttributeField);
             return Opportunity.fromFields(entityAttributeField);
@@ -42,6 +45,9 @@ public class OpportunityStore implements EntityStore<Opportunity> {
 
     @Override
     public Opportunity get(String primaryKey) {
+        if (primaryKey == null || primaryKey.isEmpty()) {
+            System.err.println("Primary key cannot be null or empty");
+        }
         try {
             return CatalogTypes.fromSFOpportunity(opportunityDao.getOpportunityById(primaryKey));
         } catch (IllegalArgumentException cause) {
@@ -53,6 +59,9 @@ public class OpportunityStore implements EntityStore<Opportunity> {
 
     @Override
     public Opportunity update(Opportunity opportunity) {
+        if (opportunity == null) {
+            System.err.println("Opportunity cannot be null");
+        }
         try {
             opportunityDao.updateOpportunity(new OpportunityImpl(SFOpportunity.from(opportunity)));
             return opportunity;
@@ -64,8 +73,11 @@ public class OpportunityStore implements EntityStore<Opportunity> {
     }
 
     @Override
-    public void delete(String s) {
-
+    public void delete(String key) {
+        if (key == null || key.isEmpty()) {
+            throw new IllegalArgumentException("Delete identifier cannot be null or empty");
+        }
+        opportunityDao.deleteOpportunity(key);
     }
 
     @Override
@@ -80,6 +92,9 @@ public class OpportunityStore implements EntityStore<Opportunity> {
 
     @Override
     public List<Opportunity> search(SearchQuery searchQuery, long pageIndex, int pageSize) throws IOException {
+        if (searchQuery == null || searchQuery.getSearchConditions() == null || searchQuery.getSearchConditions().isEmpty()) {
+            System.err.println("Search conditions cannot be null or empty");
+        }
         List<SearchCondition> conditions = searchQuery.getSearchConditions();
         try {
             List<Opportunity> opportunities;

@@ -33,6 +33,9 @@ public final class AssetsManagementArea {
     @Field(name = "Status", type = "Switch", required = false)
     public Boolean deleteAnAsset(
             @Field(name = "Id", type = "Text") String id) {
+        if (id == null || id.trim().isEmpty()) {
+            throw new IllegalArgumentException("ID must not be empty.");
+        }
         try {
             assetDao.deleteAssetById(id);
             return true;
@@ -57,7 +60,12 @@ public final class AssetsManagementArea {
             @Field(name = "Account Id", type = "Text") String accountId,
             @Field(name = "Is Competitor Product", type = "Switch") Boolean isCompetitorProduct,
             @Field(name = "Name", type = "Text") String name) {
-
+        if (id == null || id.trim().isEmpty()) {
+            throw new IllegalArgumentException("ID must not be empty.");
+        }
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Name must not be empty.");
+        }
         try {
             Asset updateAsset = new Asset();
             updateAsset.id = id;

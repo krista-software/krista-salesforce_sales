@@ -232,6 +232,12 @@ public class OpportunityDaoImpl implements OpportunityDao {
         return feedPosts;
     }
 
+    public void deleteOpportunity(String key){
+        salesforceManager.deleteRecordById(key, OPPORTUNITY);
+    }
+
+
+
     private LatestPosts parseElementToPost(JsonNode elementNode) throws IOException {
         String feedElementType = elementNode.get(FEED_ELEMENT_TYPE).asText();
         if (!feedElementType.equalsIgnoreCase("FeedItem")) {

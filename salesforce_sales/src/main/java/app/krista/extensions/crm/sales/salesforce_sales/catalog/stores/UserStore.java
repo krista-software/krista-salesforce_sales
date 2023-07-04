@@ -29,6 +29,9 @@ public class UserStore implements EntityStore<User> {
 
     @Override
     public User create(Map<String, Object> entityAttributeField) {
+        if (entityAttributeField == null || entityAttributeField.isEmpty()) {
+            System.err.println("Entity attribute field map cannot be null or empty");
+        }
         try {
             userDaoImpl.addUser(entityAttributeField);
             return User.fromFields(entityAttributeField);
@@ -41,6 +44,9 @@ public class UserStore implements EntityStore<User> {
 
     @Override
     public User get(String primaryKey) {
+        if (primaryKey == null || primaryKey.isEmpty()) {
+            System.err.println("Primary key cannot be null or empty");
+        }
         try {
             return CatalogTypes.fromSFUser(userDaoImpl.getUserById(primaryKey));
         } catch (IllegalArgumentException cause) {
@@ -56,8 +62,11 @@ public class UserStore implements EntityStore<User> {
     }
 
     @Override
-    public void delete(String s) {
-
+    public void delete(String key) {
+        if (key == null || key.isEmpty()) {
+            throw new IllegalArgumentException("Delete identifier cannot be null or empty");
+        }
+        userDaoImpl.deleteUser(key);
     }
 
     @Override
@@ -72,6 +81,9 @@ public class UserStore implements EntityStore<User> {
 
     @Override
     public List<User> search(SearchQuery searchQuery, long pageIndex, int pageSize) throws IOException {
+        if (searchQuery == null || searchQuery.getSearchConditions() == null || searchQuery.getSearchConditions().isEmpty()) {
+            System.err.println("Search conditions cannot be null or empty");
+        }
         List<SearchCondition> conditions = searchQuery.getSearchConditions();
         try {
             String name = getStringConditionValue(conditions, "Name");

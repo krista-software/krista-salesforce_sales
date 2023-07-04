@@ -35,6 +35,9 @@ public final class LeadsManagementArea {
             @Field.Desc(name = "Field", type = "PickOne(By User|New Leads)") String field,
             @Field(name = "Owner Id", type = "Text", required = false) String ownerId,
             @Field(name = "Start Date Time", type = "Date", required = false) Long startDateTime) {
+        if (field == null || field.isBlank()) {
+            throw new IllegalArgumentException("Field cannot be empty");
+        }
         try {
             if (field.equalsIgnoreCase("By User")) {
                 if (ownerId == null || ownerId.isBlank()) {

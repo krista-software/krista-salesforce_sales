@@ -30,6 +30,9 @@ public class QuoteStore implements EntityStore<Quote> {
 
     @Override
     public Quote create(Map<String, Object> entityAttributeField) {
+        if (entityAttributeField == null || entityAttributeField.isEmpty()) {
+            System.err.println("Entity attribute field map cannot be null or empty");
+        }
         try {
             quoteDao.addQuote(entityAttributeField);
             return Quote.fromFields(entityAttributeField);
@@ -42,6 +45,9 @@ public class QuoteStore implements EntityStore<Quote> {
 
     @Override
     public Quote get(String primaryKey) {
+        if (primaryKey == null || primaryKey.isEmpty()) {
+            System.err.println("Primary key cannot be null or empty");
+        }
         try {
             return CatalogTypes.fromSFQuote(quoteDao.getQuoteById(primaryKey));
         } catch (IllegalArgumentException cause) {
@@ -53,6 +59,9 @@ public class QuoteStore implements EntityStore<Quote> {
 
     @Override
     public Quote update(Quote quote) {
+        if (quote == null) {
+            System.err.println("Quote cannot be null");
+        }
         try {
             quoteDao.updateQuote(new QuoteImpl(SFQuote.from(quote)));
             return quote;
@@ -64,8 +73,11 @@ public class QuoteStore implements EntityStore<Quote> {
     }
 
     @Override
-    public void delete(String s) {
-
+    public void delete(String key) {
+        if (key == null || key.isEmpty()) {
+            throw new IllegalArgumentException("Delete identifier cannot be null or empty");
+        }
+        quoteDao.deleteQuote(key);
     }
 
     @Override
@@ -80,6 +92,9 @@ public class QuoteStore implements EntityStore<Quote> {
 
     @Override
     public List<Quote> search(SearchQuery searchQuery, long pageIndex, int pageSize) throws IOException {
+        if (searchQuery == null || searchQuery.getSearchConditions() == null || searchQuery.getSearchConditions().isEmpty()) {
+            System.err.println("Search conditions cannot be null or empty");
+        }
         List<SearchCondition> conditions = searchQuery.getSearchConditions();
         try {
             String name = getConditionValue(conditions, "Name");

@@ -5,6 +5,7 @@ import app.krista.extensions.crm.sales.salesforce_sales.model.SFAccount;
 import app.krista.extensions.crm.sales.salesforce_sales.service.Account;
 import app.krista.extensions.crm.sales.salesforce_sales.service.AccountDao;
 import app.krista.extensions.crm.sales.salesforce_sales.util.SalesforceListResponse;
+import com.github.scribejava.apis.salesforce.SalesforceToken;
 import com.google.gson.reflect.TypeToken;
 import org.jvnet.hk2.annotations.Service;
 
@@ -69,5 +70,9 @@ public class AccountDaoImpl implements AccountDao {
         } else {
             return List.of();
         }
+    }
+
+    public void deleteAccount(String key) {
+        salesforceManager.deleteRecordById(key, ACCOUNT);
     }
 }

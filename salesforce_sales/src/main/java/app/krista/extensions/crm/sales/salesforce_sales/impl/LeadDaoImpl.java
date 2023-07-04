@@ -77,4 +77,7 @@ public class LeadDaoImpl implements LeadDao {
         salesforceManager.updateRecord(updatedLead.id, GSON.toJson(diff), LEAD);
     }
 
+    public void deleteLead(String key) {
+        salesforceManager.deleteRecordById(key, LEAD);
+    }
 }

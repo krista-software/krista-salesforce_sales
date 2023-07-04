@@ -115,4 +115,6 @@ public interface OpportunityDao {
     List<Map<String, Object>> getCurrentQuaterQuota();
 
     List<LatestPosts> getLatestPosts(String opportunityId, int numberOfPosts) throws IOException;
+
+    void deleteOpportunity(String key);
 }

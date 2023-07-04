@@ -27,6 +27,9 @@ public class AssetStore implements EntityStore<Asset> {
 
     @Override
     public Asset create(Map<String, Object> entityAttributeField) {
+        if (entityAttributeField == null || entityAttributeField.isEmpty()) {
+            System.err.println("Entity attribute field map cannot be null or empty");
+        }
         try {
             assetDao.addAsset(entityAttributeField);
             return Asset.fromFields(entityAttributeField);
@@ -39,6 +42,9 @@ public class AssetStore implements EntityStore<Asset> {
 
     @Override
     public Asset get(String primaryKey) {
+        if (primaryKey == null || primaryKey.isEmpty()) {
+            System.err.println("Primary key cannot be null or empty");
+        }
         try {
             return CatalogTypes.fromSFAsset(assetDao.getAssetById(primaryKey));
         } catch (IllegalArgumentException cause) {
@@ -54,8 +60,11 @@ public class AssetStore implements EntityStore<Asset> {
     }
 
     @Override
-    public void delete(String s) {
-
+    public void delete(String key) {
+        if (key == null || key.isEmpty()) {
+            throw new IllegalArgumentException("Delete identifier cannot be null or empty");
+        }
+        assetDao.deleteAssetById(key);
     }
 
     @Override
@@ -70,6 +79,9 @@ public class AssetStore implements EntityStore<Asset> {
 
     @Override
     public List<Asset> search(SearchQuery searchQuery, long pageIndex, int pageSize) throws IOException {
+        if (searchQuery == null || searchQuery.getSearchConditions() == null || searchQuery.getSearchConditions().isEmpty()) {
+            System.err.println("Search conditions cannot be null or empty");
+        }
         List<SearchCondition> conditions = searchQuery.getSearchConditions();
         try {
             List<Asset> assets = new ArrayList<>();

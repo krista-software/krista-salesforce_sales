@@ -31,6 +31,9 @@ public class LeadStore implements EntityStore<Lead> {
 
     @Override
     public Lead create(Map<String, Object> entityAttributeField) {
+        if (entityAttributeField == null || entityAttributeField.isEmpty()) {
+            System.err.println("Entity attribute field map cannot be null or empty");
+        }
         try {
             leadDao.addLead(entityAttributeField);
             return Lead.fromFields(entityAttributeField);
@@ -43,6 +46,9 @@ public class LeadStore implements EntityStore<Lead> {
 
     @Override
     public Lead get(String primaryKey) {
+        if (primaryKey == null || primaryKey.isEmpty()) {
+            System.err.println("Primary key cannot be null or empty");
+        }
         try {
             return CatalogTypes.fromSFLead(leadDao.getLeadById(primaryKey));
         } catch (IllegalArgumentException cause) {
@@ -54,6 +60,9 @@ public class LeadStore implements EntityStore<Lead> {
 
     @Override
     public Lead update(Lead lead) {
+        if (lead == null) {
+            System.err.println("Lead cannot be null");
+        }
         try {
             leadDao.updateLead(new LeadImpl(SFLead.from(lead)));
             return lead;
@@ -65,8 +74,11 @@ public class LeadStore implements EntityStore<Lead> {
     }
 
     @Override
-    public void delete(String s) {
-
+    public void delete(String key) {
+        if (key == null || key.isEmpty()) {
+            throw new IllegalArgumentException("Delete identifier cannot be null or empty");
+        }
+        leadDao.deleteLead(key);
     }
 
     @Override
@@ -81,6 +93,9 @@ public class LeadStore implements EntityStore<Lead> {
 
     @Override
     public List<Lead> search(SearchQuery searchQuery, long pageIndex, int pageSize) throws IOException {
+        if (searchQuery == null || searchQuery.getSearchConditions() == null || searchQuery.getSearchConditions().isEmpty()) {
+            System.err.println("Search conditions cannot be null or empty");
+        }
         List<SearchCondition> conditions = searchQuery.getSearchConditions();
         try {
             String name = getStringConditionValue(conditions, "Name");

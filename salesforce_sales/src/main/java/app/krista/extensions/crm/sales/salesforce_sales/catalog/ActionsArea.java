@@ -4,6 +4,7 @@ import app.krista.extension.impl.anno.CatalogRequest;
 import app.krista.extension.impl.anno.Domain;
 import app.krista.extension.impl.anno.Field;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.SalesforceManager;
+import app.krista.extensions.crm.sales.salesforce_sales.util.Constants;
 
 import javax.inject.Inject;
 import java.text.DecimalFormat;
@@ -34,6 +35,7 @@ public final class ActionsArea {
             @Field(name = "Email Addresses", type = "Text") String emailAddresses,
             @Field(name = "Subject", type = "Text") String subject,
             @Field(name = "Body", type = "Paragraph") String body) {
+        Constants.validation(emailAddresses, subject, body);
         try {
             salesforceManager.sendEmail(emailAddresses, subject, body);
             return true;
@@ -55,6 +57,7 @@ public final class ActionsArea {
             @Field(name = "Email Addresses", type = "Text") String emailAddresses,
             @Field(name = "Subject", type = "Text") String subject,
             @Field(name = "Body", type = "Paragraph") String body) {
+        Constants.validation(emailAddresses, subject, body);
         try {
             String otp = new DecimalFormat("000000").format(new Random().nextInt(999999));
             boolean isOtpAdded = false;

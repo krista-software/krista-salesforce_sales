@@ -59,4 +59,8 @@ public class UserDaoImpl implements UserDao {
     public void addUser(Map<String, Object> entityAttributeField) {
         salesforceManager.createRecord(GSON.toJson(SFUser.from(entityAttributeField)), USER);
     }
+
+    public void deleteUser(String key) {
+        salesforceManager.deleteRecordById(key, USER);
+    }
 }

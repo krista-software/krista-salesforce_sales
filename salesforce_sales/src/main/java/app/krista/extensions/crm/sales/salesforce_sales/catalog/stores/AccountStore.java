@@ -29,6 +29,9 @@ public class AccountStore implements EntityStore<Account> {
 
     @Override
     public Account create(Map<String, Object> entityAttributeField) {
+        if (entityAttributeField == null || entityAttributeField.isEmpty()) {
+            System.err.println("Entity attribute field map cannot be null or empty");
+        }
         try {
             accountDao.addAccount(entityAttributeField);
             return Account.fromFields(entityAttributeField);
@@ -41,6 +44,9 @@ public class AccountStore implements EntityStore<Account> {
 
     @Override
     public Account get(String primaryKey) {
+        if (primaryKey == null || primaryKey.isEmpty()) {
+            System.err.println("Primary key cannot be null or empty");
+        }
         try {
             return CatalogTypes.fromSFAccount(accountDao.getAccountById(primaryKey));
         } catch (IllegalArgumentException cause) {
@@ -52,6 +58,9 @@ public class AccountStore implements EntityStore<Account> {
 
     @Override
     public Account update(Account account) {
+        if (account == null) {
+            System.err.println("Account cannot be null");
+        }
         try {
             accountDao.updateAccount(new AccountImpl(SFAccount.from(account)));
             return account;
@@ -63,8 +72,11 @@ public class AccountStore implements EntityStore<Account> {
     }
 
     @Override
-    public void delete(String s) {
-
+    public void delete(String key) {
+        if (key == null || key.isEmpty()) {
+            throw new IllegalArgumentException("Delete identifier cannot be null or empty");
+        }
+        accountDao.deleteAccount(key);
     }
 
     @Override
@@ -79,6 +91,9 @@ public class AccountStore implements EntityStore<Account> {
 
     @Override
     public List<Account> search(SearchQuery searchQuery, long pageIndex, int pageSize) throws IOException {
+        if (searchQuery == null || searchQuery.getSearchConditions() == null || searchQuery.getSearchConditions().isEmpty()) {
+            System.err.println("Search conditions cannot be null or empty");
+        }
         List<SearchCondition> conditions = searchQuery.getSearchConditions();
         try {
             List<Account> accounts = new ArrayList<>();

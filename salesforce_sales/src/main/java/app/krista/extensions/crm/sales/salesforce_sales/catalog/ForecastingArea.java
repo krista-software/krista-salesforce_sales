@@ -32,6 +32,9 @@ public final class ForecastingArea {
     public List<Object> getSalesForecastForASpecificQuarter(
             @Field(name = "Quarters", type = "Checkboxes") List<String> quarters,
             @Field(name = "Query", type = "Text", required = false) String query) {
+        if (query == null || query.trim().isEmpty()) {
+            throw new IllegalArgumentException("ID must not be empty.");
+        }
         try {
             return opportunityDao.getExpectedRevenueOfQuarters(quarters, query);
         } catch (IllegalArgumentException cause) {

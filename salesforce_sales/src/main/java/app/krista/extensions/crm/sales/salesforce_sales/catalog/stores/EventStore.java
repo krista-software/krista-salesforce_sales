@@ -29,6 +29,9 @@ public class EventStore implements EntityStore<Event> {
 
     @Override
     public Event create(Map<String, Object> entityAttributeField) {
+        if (entityAttributeField == null || entityAttributeField.isEmpty()) {
+            System.err.println("Entity attribute field map cannot be null or empty");
+        }
         try {
             eventDao.addEvent(entityAttributeField);
             return Event.fromFields(entityAttributeField);
@@ -41,6 +44,9 @@ public class EventStore implements EntityStore<Event> {
 
     @Override
     public Event get(String primaryKey) {
+        if (primaryKey == null || primaryKey.isEmpty()) {
+            System.err.println("Primary key cannot be null or empty");
+        }
         try {
             return CatalogTypes.fromSFEvent(eventDao.getEventById(primaryKey));
         } catch (IllegalArgumentException cause) {
@@ -52,6 +58,9 @@ public class EventStore implements EntityStore<Event> {
 
     @Override
     public Event update(Event event) {
+        if (event == null) {
+            System.err.println("Event cannot be null");
+        }
         try {
             eventDao.updateEvent(new EventImpl(SFEvent.from(event)));
             return event;
@@ -63,8 +72,12 @@ public class EventStore implements EntityStore<Event> {
     }
 
     @Override
-    public void delete(String s) {
-
+    public void delete(String key) {
+        if (key == null || key.isEmpty()) {
+            throw new IllegalArgumentException("Delete identifier cannot be null or empty");
+        }
+        eventDao.deleteEvent(key);
+        // not supported from API side
     }
 
     @Override
@@ -79,6 +92,9 @@ public class EventStore implements EntityStore<Event> {
 
     @Override
     public List<Event> search(SearchQuery searchQuery, long pageIndex, int pageSize) throws IOException {
+        if (searchQuery == null || searchQuery.getSearchConditions() == null || searchQuery.getSearchConditions().isEmpty()) {
+            System.err.println("Search conditions cannot be null or empty");
+        }
         List<SearchCondition> conditions = searchQuery.getSearchConditions();
         try {
             List<Event> events = new ArrayList<>();
