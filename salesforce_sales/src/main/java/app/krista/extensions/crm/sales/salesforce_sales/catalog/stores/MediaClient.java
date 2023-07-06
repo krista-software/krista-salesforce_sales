@@ -73,12 +73,8 @@ public final class MediaClient {
         else throw new ClientErrorException(response);
     }
 
-    // region Internal
-
-    public String getMediaID(String fileName) {
-        String fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1);
-        // when file does not contain any extension at the end
-        if (fileExtension.equals(fileName)) {
+    public String getMediaID(String fileExtension) {
+        if (fileExtension == null || fileExtension.isBlank()) {
             fileExtension = "txt";
         }
         return "doc_binary_" + UUID.randomUUID() + "." + fileExtension;

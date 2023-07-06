@@ -300,23 +300,27 @@ public class OpportunityDaoImpl implements OpportunityDao {
     }
 
     private app.krista.model.base.File downloadFile(String downloadUrl) throws IOException {
+
         Response fileResponse = salesforceManager.getFileResponse(downloadUrl);
         MediaClient mediaClient = MediaClient.getInstance();
-        String contentType = fileResponse.getHeader("Content-Type");
 
         String contentDisposition = fileResponse.getHeader("Content-Disposition");
         Pattern pattern = Pattern.compile("filename=\"(.*)\"");
         Matcher matcher = pattern.matcher(contentDisposition);
         String fileName = matcher.find() ? matcher.group(1) : "unknown";
 
-        String fileExtension = getFileExtensionFromContentType(contentType);
-
         File localFile = saveToLocalTempDir(fileResponse.getStream(), fileName);
-        String mediaId = mediaClient.getMediaID(localFile.getName());
+        String fileExtension = getFileExtension(localFile.getName());
+        String mediaId = mediaClient.getMediaID(fileExtension);
+
         uploadFileToMediaClient(localFile, mediaId);
 
         return new app.krista.model.base.File(localFile.length(), localFile.getName(),
                 fileExtension, mediaId);
+    }
+
+    private String getFileExtension(String fileName) {
+        return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
 
     private File saveToLocalTempDir(InputStream inputStream, String filePath) throws IOException {
@@ -330,59 +334,4 @@ public class OpportunityDaoImpl implements OpportunityDao {
         mediaClient.upload(mediaClient.createMediaUrl(mediaId), file);
     }
 
-    private String getFileExtensionFromContentType(String contentType) {
-        if (contentType != null && !contentType.isBlank()) {
-            String normalizedContentType = contentType.split(";")[0]; // get the part before ";"
-
-            switch (normalizedContentType) {
-                case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
-                    return "xlsx";
-                case "image/jpeg":
-                    return "jpeg";
-                case "application/pdf":
-                    return "pdf";
-                case "image/png":
-                    return "png";
-                case "image/gif":
-                    return "gif";
-                case "image/svg+xml":
-                    return "svg";
-                case "application/msword":
-                    return "doc";
-                case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-                    return "docx";
-                case "application/vnd.ms-excel":
-                    return "xls";
-                case "text/csv":
-                    return "csv";
-                case "text/plain":
-                    return "txt";
-                case "application/rtf":
-                    return "rtf";
-                case "image/bmp":
-                    return "bmp";
-                case "image/tiff":
-                    return "tiff";
-                case "application/vnd.ms-powerpoint":
-                    return "ppt";
-                case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
-                    return "pptx";
-                case "application/zip":
-                    return "zip";
-                case "application/x-rar-compressed":
-                    return "rar";
-                case "application/java-archive":
-                    return "jar";
-                case "application/javascript":
-                    return "js";
-                case "text/html":
-                    return "html";
-                case "text/css":
-                    return "css";
-                case "application/octet-stream":
-                    return "bin";
-            }
-        }
-        return null;
-    }
 }
