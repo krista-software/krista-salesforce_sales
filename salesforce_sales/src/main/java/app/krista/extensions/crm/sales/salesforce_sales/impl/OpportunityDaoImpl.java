@@ -13,7 +13,6 @@ import app.krista.extensions.crm.sales.salesforce_sales.service.PriceBook;
 import app.krista.extensions.crm.sales.salesforce_sales.service.User;
 import app.krista.extensions.crm.sales.salesforce_sales.util.DatePlus;
 import app.krista.extensions.crm.sales.salesforce_sales.util.SalesforceListResponse;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.scribejava.core.model.Response;
@@ -28,6 +27,8 @@ import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.GSON;
@@ -232,10 +233,9 @@ public class OpportunityDaoImpl implements OpportunityDao {
         return feedPosts;
     }
 
-    public void deleteOpportunity(String key){
+    public void deleteOpportunity(String key) {
         salesforceManager.deleteRecordById(key, OPPORTUNITY);
     }
-
 
 
     private LatestPosts parseElementToPost(JsonNode elementNode) throws IOException {
@@ -303,25 +303,30 @@ public class OpportunityDaoImpl implements OpportunityDao {
         Response fileResponse = salesforceManager.getFileResponse(downloadUrl);
         MediaClient mediaClient = MediaClient.getInstance();
         String contentType = fileResponse.getHeader("Content-Type");
+
+        String contentDisposition = fileResponse.getHeader("Content-Disposition");
+        Pattern pattern = Pattern.compile("filename=\"(.*)\"");
+        Matcher matcher = pattern.matcher(contentDisposition);
+        String fileName = matcher.find() ? matcher.group(1) : "unknown";
+
         String fileExtension = getFileExtensionFromContentType(contentType);
 
-        File localFile = saveToLocalTempDir(fileResponse.getStream(), fileExtension);
-        uploadFileToMediaClient(localFile);
+        File localFile = saveToLocalTempDir(fileResponse.getStream(), fileName);
+        String mediaId = mediaClient.getMediaID(localFile.getName());
+        uploadFileToMediaClient(localFile, mediaId);
 
         return new app.krista.model.base.File(localFile.length(), localFile.getName(),
-                fileExtension, mediaClient.getMediaID(localFile.getName()));
+                fileExtension, mediaId);
     }
 
-    private File saveToLocalTempDir(InputStream inputStream, String fileExtension) throws IOException {
-        String filePath = MediaClient.TEMP_DIR + File.separator + MediaClient.getNextMediaId(fileExtension);
+    private File saveToLocalTempDir(InputStream inputStream, String filePath) throws IOException {
         File localFile = new File(filePath);
         Files.copy(inputStream, localFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
         return localFile;
     }
 
-    private void uploadFileToMediaClient(File file) {
+    private void uploadFileToMediaClient(File file, String mediaId) {
         MediaClient mediaClient = MediaClient.getInstance();
-        String mediaId = mediaClient.getMediaID(file.getName());
         mediaClient.upload(mediaClient.createMediaUrl(mediaId), file);
     }
 

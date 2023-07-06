@@ -22,7 +22,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
 
 public final class MediaClient {
 
-    public static final String TEMP_DIR = "";
+    public static final String TEMP_DIR = "/tmp/krista/extensions/";
     private static MediaClient mediaClient;
     private final WebTarget webTarget;
 
