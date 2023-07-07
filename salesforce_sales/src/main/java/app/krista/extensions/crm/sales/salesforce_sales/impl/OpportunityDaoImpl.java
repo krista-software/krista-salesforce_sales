@@ -13,7 +13,6 @@ import app.krista.extensions.crm.sales.salesforce_sales.service.PriceBook;
 import app.krista.extensions.crm.sales.salesforce_sales.service.User;
 import app.krista.extensions.crm.sales.salesforce_sales.util.DatePlus;
 import app.krista.extensions.crm.sales.salesforce_sales.util.SalesforceListResponse;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.scribejava.core.model.Response;
@@ -28,6 +27,8 @@ import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.GSON;
@@ -232,10 +233,9 @@ public class OpportunityDaoImpl implements OpportunityDao {
         return feedPosts;
     }
 
-    public void deleteOpportunity(String key){
+    public void deleteOpportunity(String key) {
         salesforceManager.deleteRecordById(key, OPPORTUNITY);
     }
-
 
 
     private LatestPosts parseElementToPost(JsonNode elementNode) throws IOException {
@@ -300,84 +300,38 @@ public class OpportunityDaoImpl implements OpportunityDao {
     }
 
     private app.krista.model.base.File downloadFile(String downloadUrl) throws IOException {
+
         Response fileResponse = salesforceManager.getFileResponse(downloadUrl);
         MediaClient mediaClient = MediaClient.getInstance();
-        String contentType = fileResponse.getHeader("Content-Type");
-        String fileExtension = getFileExtensionFromContentType(contentType);
 
-        File localFile = saveToLocalTempDir(fileResponse.getStream(), fileExtension);
-        uploadFileToMediaClient(localFile);
+        String contentDisposition = fileResponse.getHeader("Content-Disposition");
+        Pattern pattern = Pattern.compile("filename=\"(.*)\"");
+        Matcher matcher = pattern.matcher(contentDisposition);
+        String fileName = matcher.find() ? matcher.group(1) : "unknown";
+
+        File localFile = saveToLocalTempDir(fileResponse.getStream(), fileName);
+        String fileExtension = getFileExtension(localFile.getName());
+        String mediaId = mediaClient.getMediaID(fileExtension);
+
+        uploadFileToMediaClient(localFile, mediaId);
 
         return new app.krista.model.base.File(localFile.length(), localFile.getName(),
-                fileExtension, mediaClient.getMediaID(localFile.getName()));
+                fileExtension, mediaId);
     }
 
-    private File saveToLocalTempDir(InputStream inputStream, String fileExtension) throws IOException {
-        String filePath = MediaClient.TEMP_DIR + File.separator + MediaClient.getNextMediaId(fileExtension);
+    private String getFileExtension(String fileName) {
+        return fileName.substring(fileName.lastIndexOf(".") + 1);
+    }
+
+    private File saveToLocalTempDir(InputStream inputStream, String filePath) throws IOException {
         File localFile = new File(filePath);
         Files.copy(inputStream, localFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
         return localFile;
     }
 
-    private void uploadFileToMediaClient(File file) {
+    private void uploadFileToMediaClient(File file, String mediaId) {
         MediaClient mediaClient = MediaClient.getInstance();
-        String mediaId = mediaClient.getMediaID(file.getName());
         mediaClient.upload(mediaClient.createMediaUrl(mediaId), file);
     }
 
-    private String getFileExtensionFromContentType(String contentType) {
-        if (contentType != null && !contentType.isBlank()) {
-            String normalizedContentType = contentType.split(";")[0]; // get the part before ";"
-
-            switch (normalizedContentType) {
-                case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
-                    return "xlsx";
-                case "image/jpeg":
-                    return "jpeg";
-                case "application/pdf":
-                    return "pdf";
-                case "image/png":
-                    return "png";
-                case "image/gif":
-                    return "gif";
-                case "image/svg+xml":
-                    return "svg";
-                case "application/msword":
-                    return "doc";
-                case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-                    return "docx";
-                case "application/vnd.ms-excel":
-                    return "xls";
-                case "text/csv":
-                    return "csv";
-                case "text/plain":
-                    return "txt";
-                case "application/rtf":
-                    return "rtf";
-                case "image/bmp":
-                    return "bmp";
-                case "image/tiff":
-                    return "tiff";
-                case "application/vnd.ms-powerpoint":
-                    return "ppt";
-                case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
-                    return "pptx";
-                case "application/zip":
-                    return "zip";
-                case "application/x-rar-compressed":
-                    return "rar";
-                case "application/java-archive":
-                    return "jar";
-                case "application/javascript":
-                    return "js";
-                case "text/html":
-                    return "html";
-                case "text/css":
-                    return "css";
-                case "application/octet-stream":
-                    return "bin";
-            }
-        }
-        return null;
-    }
 }

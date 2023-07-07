@@ -221,7 +221,7 @@ public final class OpportunityManagementArea {
             description = "This request will retrieve the latest posts from Salesforce Sales Opportunity feed.",
             area = "Opportunity Management",
             type = CatalogRequest.Type.QUERY_SYSTEM)
-    @Field.Desc(name = "Posts", type = "[ Entity(Latest Posts) ]", required = false)
+    @Field.Desc(name = "Latest Posts", type = "[ Entity(Latest Posts) ]", required = false)
     public List<LatestPosts> getLatestPostsForOpportunity(
             @Field.Text(name = "Opportunity Id", required = true, attributes = {}, options = {}) String opportunityId,
             @Field(name = "Number Of Posts", type = "Number", required = false, attributes = {}, options = {}) Double numberOfPosts) {
