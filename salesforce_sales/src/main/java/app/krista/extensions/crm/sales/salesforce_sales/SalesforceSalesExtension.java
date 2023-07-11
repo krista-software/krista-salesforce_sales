@@ -19,7 +19,7 @@ import java.util.Map;
 @Field.Text(value = SalesforceSalesAttributes.PASSWORD, isSecured = true, required = false)
 @Field.Text(value = SalesforceSalesAttributes.SECURITY_TOKEN, isSecured = true, required = false)
 @Field.Boolean(value = SalesforceSalesAttributes.SANDBOX, required = false)
-@Extension(version = "2.0.4-rc2")
+@Extension(version = "2.0.4")
 @StaticResource(path = "docs", file = "docs")
 public final class SalesforceSalesExtension {
 
