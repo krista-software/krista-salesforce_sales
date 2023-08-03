@@ -84,8 +84,7 @@ public class LeadDaoImpl implements LeadDao {
     public Map<String, Object> getLeadsUpdatedFields(String query) {
         String response = salesforceManager.getRecordByQuery(query);
         SFLeadHistory sfLeadHistory = gson.fromJson(response, SFLeadHistory.class);
-        Map<String, Object> mapArrayList = sfLeadHistory.toArrayList();
-        return mapArrayList;
+        return sfLeadHistory.toArrayList();
     }
 
     public void deleteLead(String key) {

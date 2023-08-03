@@ -21,7 +21,7 @@ public class AccountDaoImpl implements AccountDao {
 
     public static final String ACCOUNT = "Account";
     public static final Gson gson = new Gson();
-    private final String QUERY_FIELDS = "id, createdDate, phone, type, website, Name, ownership, AccountNumber, Industry, NumberOfEmployees, fax, sic, ownerId, createdById, cleanStatus, " +
+    private static final String QUERY_FIELDS = "id, createdDate, phone, type, website, Name, ownership, AccountNumber, Industry, NumberOfEmployees, fax, sic, ownerId, createdById, cleanStatus, " +
             "BillingStreet, BillingCity, BillingState, BillingCountry, BillingPostalCode, ShippingStreet, ShippingCity, ShippingState, ShippingPostalCode, ShippingCountry, AnnualRevenue, SLASerialNumber__c, SLAExpirationDate__c, CustomerPriority__c";
     private final SalesforceManager salesforceManager;
 
@@ -75,8 +75,7 @@ public class AccountDaoImpl implements AccountDao {
     public Map<String, Object> getAccountUpdatedFields(String query) {
         String response = salesforceManager.getRecordByQuery(query);
         SFAccountHistory sfAccountHistory = gson.fromJson(response, SFAccountHistory.class);
-        Map<String, Object> mapArrayList = sfAccountHistory.toArrayList();
-        return mapArrayList;
+        return sfAccountHistory.toArrayList();
     }
 
 

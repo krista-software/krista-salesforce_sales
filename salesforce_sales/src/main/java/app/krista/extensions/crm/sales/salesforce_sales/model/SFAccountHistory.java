@@ -1,16 +1,13 @@
 package app.krista.extensions.crm.sales.salesforce_sales.model;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class SFAccountHistory {
 
 
     public int totalSize;
     public boolean done;
-    public ArrayList<Record> records;
+    public List<Record> records;
 
     public Map<String, Object> toArrayList() {
         Map<String, Object> newRecord = new HashMap<>();
@@ -25,9 +22,6 @@ public class SFAccountHistory {
             }
         }
         return newRecord;
-
-
-
     }
 
 

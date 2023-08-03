@@ -26,12 +26,10 @@ import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.g
         ecosystemVersion = "c93e81ed-93eb-4f29-b36c-4186cabee3d1")
 public class AccountsManagementArea {
     private final AccountDaoImpl accountDao;
-    private final UserDaoImpl userDao;
 
     @Inject
-    private AccountsManagementArea(AccountDaoImpl accountDao, UserDaoImpl userDao) {
+    private AccountsManagementArea(AccountDaoImpl accountDao) {
         this.accountDao = accountDao;
-        this.userDao = userDao;
     }
 
     @CatalogRequest(

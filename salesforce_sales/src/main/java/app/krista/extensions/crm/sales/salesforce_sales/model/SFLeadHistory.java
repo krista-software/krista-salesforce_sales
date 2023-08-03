@@ -8,7 +8,7 @@ import java.util.Map;
 public class SFLeadHistory {
     public int totalSize;
     public boolean done;
-    public ArrayList<SFAccountHistory.Record> records;
+    public ArrayList<Record> records;
 
     public Map<String, Object> toArrayList() {
         Map<String, Object> newRecord = new HashMap<>();
@@ -23,14 +23,11 @@ public class SFLeadHistory {
             }
         }
         return newRecord;
-
-
-
     }
 
 
     public class Record {
-        public SFAccountHistory.Record.Attributes attributes;
+        public Attributes attributes;
         public String Id;
         public boolean IsDeleted;
         public String LeadId;

@@ -125,9 +125,7 @@ public class AccountImpl implements Account {
 
     @Override
     public PhoneNumber getPhone() {
-
         return app.krista.extensions.crm.sales.salesforce_sales.model.PhoneNumber.parsePhoneNumber(sfAccount.phone);
-
     }
 
     @Override

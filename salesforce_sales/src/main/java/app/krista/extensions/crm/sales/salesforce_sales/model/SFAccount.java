@@ -111,7 +111,6 @@ public final class SFAccount {
         account.ownerId = (String) entityAttributeField.get("Owner Id");
         account.shippingStreet = (String) entityAttributeField.get("Shipping Street");
         account.phone = entityAttributeField.get("Phone") != null ? entityAttributeField.get("Phone").toString() : "";
-
         account.sLASerialNumber = (String) entityAttributeField.get("SLA Serial Number");
         account.shippingState = (String) entityAttributeField.get("Shipping State");
         account.createdById = (String) entityAttributeField.get("Created By Id");

@@ -6,6 +6,7 @@ import app.krista.extensions.crm.sales.salesforce_sales.impl.connectores.Salesfo
 import app.krista.extensions.crm.sales.salesforce_sales.impl.stores.RefreshTokenStore;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.stores.SalesforceSaleAttributeStore;
 import app.krista.extensions.crm.sales.salesforce_sales.service.Lead;
+import app.krista.extensions.crm.sales.salesforce_sales.util.Constants;
 import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.Notifications;
 import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.XMlResponseParser;
 import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.account_notification.AccountNotifications;
@@ -28,13 +29,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.*;
+
 @Path("/")
 public final class AuthenticationResource {
-    public static final String CODE = "code";
-    public static final String STATE = "state";
-    public static final String TEXT = "Text";
-    public static final String DOUBLE = "Double";
-    public static final String LONG = "Long";
+
     private final RefreshTokenStore refreshTokenStore;
     private final EventHandler eventHandler;
     private final SalesforceSaleAttributeStore attributeStore;
@@ -54,7 +53,7 @@ public final class AuthenticationResource {
 
     @GET
     @Path("/callback")
-    public String getCallBack(@QueryParam(CODE) String code, @QueryParam(STATE) String state) {
+    public String getCallBack(@QueryParam(Constants.CODE) String code, @QueryParam(Constants.STATE) String state) {
         Objects.requireNonNull(code);
         String[] parts = state.split("#");
         if (parts[0].isBlank() || parts.length > 2) {
@@ -101,16 +100,21 @@ public final class AuthenticationResource {
             String stageName = notificationSObject.StageName;
             String name = notificationSObject.Name;
 
-            FreeForm freeForm = new FreeForm();
-            freeForm.put("Id", TEXT, id);
-            freeForm.put("Amount", TEXT, amount);
-            freeForm.put("StageName", TEXT, stageName);
-            freeForm.put("Name", TEXT, name);
+            FreeForm freeForm = getOppurtunityFreeForm(id, amount, stageName, name);
 
             eventHandler.handleEvent("opportunityChanged", freeForm);
         }
 
         return Response.ok().build();
+    }
+
+    private static FreeForm getOppurtunityFreeForm(String id, Double amount, String stageName, String name) {
+        FreeForm freeForm = new FreeForm();
+        freeForm.put("Id", TEXT, id);
+        freeForm.put("Amount", TEXT, amount);
+        freeForm.put("StageName", TEXT, stageName);
+        freeForm.put("Name", TEXT, name);
+        return freeForm;
     }
 
     @POST

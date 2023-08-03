@@ -1,7 +1,7 @@
 apply plugin: 'java-library'
 jar.archiveBaseName = "salessforce_sales-extension"
 group 'app.krista.extensions.crm.sales'
-version '2.0.5-rc1'
+version '2.0.5'
 
 
 if (rootProject.file('builder.txt').canRead()) {
@@ -44,8 +44,8 @@ configurations {
 
 dependencies {
 
-    annotationProcessor 'app.krista:extension-impl-anno-processors:1.0.73'
-    implementation 'app.krista:krista-apis:1.0.73'
+    annotationProcessor 'app.krista:extension-impl-anno-processors:1.0.79'
+    implementation 'app.krista:krista-apis:1.0.79'
     implementation 'org.glassfish.hk2:hk2-api:3.0.3'
     implementation 'com.github.scribejava:scribejava-apis:8.3.3'
     implementation 'com.googlecode.libphonenumber:libphonenumber:5.5'

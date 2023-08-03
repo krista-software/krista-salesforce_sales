@@ -28,18 +28,15 @@ import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.g
         ecosystemVersion = "db320c64-6f6f-4c9e-8daa-41d3f796d6a6")
 public final class LeadsManagementArea {
 
+    public static final String NAME = "Name";
     private final LeadDaoImpl leadDao;
-    private final UserDaoImpl userDao;
 
     @Inject
-    private LeadsManagementArea(LeadDaoImpl leadDao, UserDaoImpl userDao) {
+    private LeadsManagementArea(LeadDaoImpl leadDao) {
 
         this.leadDao = leadDao;
-        this.userDao = userDao;
-
     }
-//    java.util.concurrent.ExecutionException:
-//    ServerInternal:java.util.NoSuchElementException No area found for: Accounts Management
+
 
     @CatalogRequest(
             id = "localDomainRequest_48c208ec-65c5-4b2f-9ce4-52a6c7e26d4a",
@@ -94,15 +91,13 @@ public final class LeadsManagementArea {
 
                 String query = "SELECT Fields(ALL) FROM LeadHistory WHERE LeadId = '" +
                         eventData.get("Id") + "' ORDER BY CreatedDate DESC LIMIT 20";
-                Map<String, Object> fetched = leadDao.getLeadsUpdatedFields(query); //only uodated values
+                Map<String, Object> fetched = leadDao.getLeadsUpdatedFields(query);
 
                 if (fetched.size() != 1 || !fetched.containsKey(CREATED)) {
-                    System.out.println("In Update");
                     if (fetched.containsKey("FirstName") || fetched.containsKey("LastName")) {
-                        System.out.println("In name update");
-                        fetched.put("Name", eventData.get("Name"));
+                        fetched.put(NAME, eventData.get(NAME));
                     } else {
-                        fetched.put("Name", "");
+                        fetched.put(NAME, "");
                     }
                     setLeadDetails(fetched, leadMap);
 
@@ -119,7 +114,7 @@ public final class LeadsManagementArea {
 
 
     private static void setLeadDetails(Map<String, Object> leadData, Map<String, Object> leadMap) {
-        leadMap.put("Lead Name", leadData.get("Name"));
+        leadMap.put("Lead Name", leadData.get(NAME));
         leadMap.put("Lead Title", getValidatedString(leadData.get("Title")));
         leadMap.put("Lead Company", getValidatedString(leadData.get("Company")));
         leadMap.put("Lead Website", getValidatedString(leadData.get("Website")));
