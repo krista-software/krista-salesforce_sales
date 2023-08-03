@@ -8,6 +8,8 @@ public final class LeadObject {
     public String FirstName;
     @XmlElement(name = "LastName", namespace = "urn:sobject.enterprise.soap.sforce.com")
     public String LastName;
+    @XmlElement(name = "Name", namespace = "urn:sobject.enterprise.soap.sforce.com")
+    public String Name;
     @XmlElement(name = "Id", namespace = "urn:sobject.enterprise.soap.sforce.com")
     public String Id;
     @XmlElement(name = "Title", namespace = "urn:sobject.enterprise.soap.sforce.com")

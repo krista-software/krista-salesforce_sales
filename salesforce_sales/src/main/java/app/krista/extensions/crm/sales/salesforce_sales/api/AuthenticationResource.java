@@ -5,6 +5,7 @@ import app.krista.extensions.crm.sales.salesforce_sales.impl.connectores.Salesfo
 import app.krista.extensions.crm.sales.salesforce_sales.impl.connectores.SalesforceTokenProviderFactory;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.stores.RefreshTokenStore;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.stores.SalesforceSaleAttributeStore;
+import app.krista.extensions.crm.sales.salesforce_sales.service.Lead;
 import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.Notifications;
 import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.XMlResponseParser;
 import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.account_notification.AccountNotifications;
@@ -22,6 +23,9 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBElement;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 @Path("/")
@@ -171,19 +175,20 @@ public final class AuthenticationResource {
 
     private static FreeForm generateLeadFreeForm(LeadObject leadNotification) {
         FreeForm freeForm = new FreeForm();
-        String fullName="";
-       // freeForm.put("FirstName", TEXT, leadNotification.FirstName);
-       // freeForm.put("LastName", TEXT, leadNotification.LastName);
-
-        if(leadNotification.FirstName!=null){
-            fullName=leadNotification.FirstName+leadNotification.LastName;
+        if (leadNotification.Name != null) {
+            List<String> name = new ArrayList<>(Arrays.asList(leadNotification.Name.split("\\s+")));
+            if (name.size() == 1)
+                leadNotification.LastName = leadNotification.Name;
+            else {
+                leadNotification.FirstName = name.get(0);
+                name.remove(0);
+                leadNotification.LastName = String.join(" ", name);
+            }
         }
-        else {
-            fullName=leadNotification.LastName;
-
-        }
-        freeForm.put("Name", TEXT,fullName);
-
+        String leadName = leadNotification.FirstName == null ? leadNotification.LastName :
+                leadNotification.FirstName + " " + leadNotification.LastName;
+        System.out.println("leadName"+leadName);
+        freeForm.put("Name", TEXT, leadName);
         freeForm.put("Id", TEXT, leadNotification.Id);
         freeForm.put("Title", TEXT, leadNotification.Title);
         freeForm.put("Company", TEXT, leadNotification.Company);

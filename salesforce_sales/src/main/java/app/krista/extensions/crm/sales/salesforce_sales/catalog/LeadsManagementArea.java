@@ -14,6 +14,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.CREATED;
@@ -31,12 +32,14 @@ public final class LeadsManagementArea {
     private final UserDaoImpl userDao;
 
     @Inject
-    private LeadsManagementArea(LeadDaoImpl leadDao,UserDaoImpl userDao) {
+    private LeadsManagementArea(LeadDaoImpl leadDao, UserDaoImpl userDao) {
 
         this.leadDao = leadDao;
         this.userDao = userDao;
 
     }
+//    java.util.concurrent.ExecutionException:
+//    ServerInternal:java.util.NoSuchElementException No area found for: Accounts Management
 
     @CatalogRequest(
             id = "localDomainRequest_48c208ec-65c5-4b2f-9ce4-52a6c7e26d4a",
@@ -72,51 +75,51 @@ public final class LeadsManagementArea {
             return List.of();
         }
     }
+
     @CatalogRequest(
             id = "localDomainRequest_190ec6ca-0e61-41ec-bce6-d04f9976f352",
             name = "Lead Change Alert",
             description = "Gives Warning Message",
             area = "Leads Management",
             type = CatalogRequest.Type.WAIT_FOR_EVENT)
-    @Field.Desc(name = "LeadResponse", type = "{ Lead Name: Text, Lead Id: Text, Lead Title: Text, Lead Company: Text, Lead Website: Text, Lead Owner Id: Text, Lead Is Converted: Text, Lead Converted Account Id: Text, Lead Converted Contact Id: Text, Lead Converted Opportunity Id: Text, Lead Clean Status: Text, Lead Phone: Text, Lead MobilePhone: Text, Lead Email: Email, Lead Description: Paragraph, Lead Status: Text, Lead LeadSource: Text, Lead Industry: Text, Lead Rating: Text, Lead Annual Revenue: Number, Lead Converted Date: Date, Lead Created Date: Date, Lead Last Modified Date: Date }",required = false)
+    @Field.Desc(name = "LeadResponse", type = "{ Lead Name: Text, Lead Id: Text, Lead Title: Text, Lead Company: Text, Lead Website: Text, Lead Owner Id: Text, Lead Is Converted: Text, Lead Converted Account Id: Text, Lead Converted Contact Id: Text, Lead Converted Opportunity Id: Text, Lead Clean Status: Text, Lead Phone: Text, Lead MobilePhone: Text, Lead Email: Email, Lead Description: Paragraph, Lead Status: Text, Lead LeadSource: Text, Lead Industry: Text, Lead Rating: Text, Lead Annual Revenue: Number, Lead Converted Date: Date, Lead Created Date: Date, Lead Last Modified Date: Date }", required = false)
     public Map<String, Object> leadChangeAlert(
             @Field(name = "eventName", type = "Text") String eventName,
             @Field(name = "eventData", type = "FreeForm") FreeForm eventData) {
-        try{
+        try {
             Map<String, Object> leadMap = new HashMap<>();
-        if (eventName.equals("Lead Change Alert")) {
-            leadMap.put("Lead Id", eventData.get("Id"));
-            setLeadDetails(eventData,leadMap);
-            String query = "SELECT Fields(ALL) FROM LeadHistory WHERE LeadId = '" +
-                    eventData.get("Id") + "' ORDER BY CreatedDate DESC LIMIT 20";
-            Map<String, Object> fetched = leadDao.getLeadsUpdatedFields(query);
-            if (fetched.size() != 1 || !fetched.containsKey(CREATED)) {
-                setLeadDetails(fetched, leadMap);
+            if (eventName.equals("Lead Change Alert")) {
+                leadMap.put("Lead Id", eventData.get("Id"));
+                setLeadDetails(eventData, leadMap);
+
+                String query = "SELECT Fields(ALL) FROM LeadHistory WHERE LeadId = '" +
+                        eventData.get("Id") + "' ORDER BY CreatedDate DESC LIMIT 20";
+                Map<String, Object> fetched = leadDao.getLeadsUpdatedFields(query); //only uodated values
+
+                if (fetched.size() != 1 || !fetched.containsKey(CREATED)) {
+                    System.out.println("In Update");
+                    if (fetched.containsKey("FirstName") || fetched.containsKey("LastName")) {
+                        System.out.println("In name update");
+                        fetched.put("Name", eventData.get("Name"));
+                    } else {
+                        fetched.put("Name", "");
+                    }
+                    setLeadDetails(fetched, leadMap);
+
+                }
+                return leadMap;
             }
             return leadMap;
+        } catch (IllegalArgumentException cause) {
+            System.err.println(cause.getMessage());
+            cause.printStackTrace();
+            return Map.of();
         }
-        return leadMap;
-    }
-    catch (IllegalArgumentException cause) {
-        System.err.println(cause.getMessage());
-        cause.printStackTrace();
-        return Map.of();
-    }
     }
 
 
     private static void setLeadDetails(Map<String, Object> leadData, Map<String, Object> leadMap) {
-        String fullName="";
-        if(leadData.get("FirstName")!=null){
-            fullName=leadData.get("FirstName").toString()+leadData.get("LastName").toString();
-        }
-        else {
-            fullName=leadData.get("LastName").toString();
-
-        }
-        leadMap.put("Lead Name", fullName);
-
-       // leadMap.put("Lead Name", getValidatedString(leadData.get("Name")));
+        leadMap.put("Lead Name", leadData.get("Name"));
         leadMap.put("Lead Title", getValidatedString(leadData.get("Title")));
         leadMap.put("Lead Company", getValidatedString(leadData.get("Company")));
         leadMap.put("Lead Website", getValidatedString(leadData.get("Website")));
@@ -135,11 +138,13 @@ public final class LeadsManagementArea {
         leadMap.put("Lead Industry", getValidatedString(leadData.get("Industry")));
         leadMap.put("Lead Rating", getValidatedString(leadData.get("Rating")));
         leadMap.put("Lead Annual Revenue", getValidatedDouble(leadData.get("AnnualRevenue")));
-        leadMap.put("Lead Created Date", leadData.get("CreatedDate") != null ? Long.parseLong((String) leadData.get("CreatedDate")) : null);
+        leadMap.put("Lead Created Date", leadData.get("CreatedDate") != null
+                ? Long.parseLong((String) leadData.get("CreatedDate")) : null);
         leadMap.put("Lead Converted Date", leadData.get("ConvertedDate") != null
-                ? DatePlus.fromYYYYMMDD(leadData.get("ConvertedDate").toString()).getTime()
+                ? Objects.requireNonNull(DatePlus.fromYYYYMMDD(leadData.get("ConvertedDate").toString())).getTime()
                 : null);
-        leadMap.put("Lead Last Modified Date", leadData.get("LastModifiedDate") != null ? Long.parseLong((String) leadData.get("LastModifiedDate")) : null);
+        leadMap.put("Lead Last Modified Date", leadData.get("LastModifiedDate") != null
+                ? Long.parseLong((String) leadData.get("LastModifiedDate")) : null);
 
     }
 
