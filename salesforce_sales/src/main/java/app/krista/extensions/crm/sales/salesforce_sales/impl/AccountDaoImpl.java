@@ -2,17 +2,16 @@ package app.krista.extensions.crm.sales.salesforce_sales.impl;
 
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.CatalogTypes;
 import app.krista.extensions.crm.sales.salesforce_sales.model.SFAccount;
+import app.krista.extensions.crm.sales.salesforce_sales.model.SFAccountHistory;
 import app.krista.extensions.crm.sales.salesforce_sales.service.Account;
 import app.krista.extensions.crm.sales.salesforce_sales.service.AccountDao;
 import app.krista.extensions.crm.sales.salesforce_sales.util.SalesforceListResponse;
-import com.github.scribejava.apis.salesforce.SalesforceToken;
+import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.jvnet.hk2.annotations.Service;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.GSON;
@@ -21,6 +20,7 @@ import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.GS
 public class AccountDaoImpl implements AccountDao {
 
     public static final String ACCOUNT = "Account";
+    public static final Gson gson = new Gson();
     private final String QUERY_FIELDS = "id, createdDate, phone, type, website, Name, ownership, AccountNumber, Industry, NumberOfEmployees, fax, sic, ownerId, createdById, cleanStatus, " +
             "BillingStreet, BillingCity, BillingState, BillingCountry, BillingPostalCode, ShippingStreet, ShippingCity, ShippingState, ShippingPostalCode, ShippingCountry, AnnualRevenue, SLASerialNumber__c, SLAExpirationDate__c, CustomerPriority__c";
     private final SalesforceManager salesforceManager;
@@ -60,7 +60,7 @@ public class AccountDaoImpl implements AccountDao {
         salesforceManager.updateRecord(updatedopportunity.id, GSON.toJson(diff), ACCOUNT);
     }
 
-    private List<Account> getAccountByQuery(String query) {
+    public List<Account> getAccountByQuery(String query) {
         String response = salesforceManager.getRecordByQuery(query);
         SalesforceListResponse<SFAccount> oppList =
                 GSON.fromJson(response, new TypeToken<SalesforceListResponse<SFAccount>>() {
@@ -71,6 +71,14 @@ public class AccountDaoImpl implements AccountDao {
             return List.of();
         }
     }
+
+    public Map<String, Object> getAccountUpdatedFields(String query) {
+        String response = salesforceManager.getRecordByQuery(query);
+        SFAccountHistory sfAccountHistory = gson.fromJson(response, SFAccountHistory.class);
+        Map<String, Object> mapArrayList = sfAccountHistory.toArrayList();
+        return mapArrayList;
+    }
+
 
     public void deleteAccount(String key) {
         salesforceManager.deleteRecordById(key, ACCOUNT);

@@ -7,6 +7,10 @@ import app.krista.extensions.crm.sales.salesforce_sales.impl.stores.RefreshToken
 import app.krista.extensions.crm.sales.salesforce_sales.impl.stores.SalesforceSaleAttributeStore;
 import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.Notifications;
 import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.XMlResponseParser;
+import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.account_notification.AccountNotifications;
+import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.account_notification.AccountObject;
+import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.lead_notification.LeadNotifications;
+import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.lead_notification.LeadObject;
 import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.sObject;
 import app.krista.extensions.util.EventHandler;
 import app.krista.ksdk.authentication.AuthorizationListener;
@@ -24,6 +28,9 @@ import java.util.Objects;
 public final class AuthenticationResource {
     public static final String CODE = "code";
     public static final String STATE = "state";
+    public static final String TEXT = "Text";
+    public static final String DOUBLE = "Double";
+    public static final String LONG = "Long";
     private final RefreshTokenStore refreshTokenStore;
     private final EventHandler eventHandler;
     private final SalesforceSaleAttributeStore attributeStore;
@@ -91,15 +98,115 @@ public final class AuthenticationResource {
             String name = notificationSObject.Name;
 
             FreeForm freeForm = new FreeForm();
-            freeForm.put("Id", "Text", id);
-            freeForm.put("Amount", "Text", amount);
-            freeForm.put("StageName", "Text", stageName);
-            freeForm.put("Name", "Text", name);
+            freeForm.put("Id", TEXT, id);
+            freeForm.put("Amount", TEXT, amount);
+            freeForm.put("StageName", TEXT, stageName);
+            freeForm.put("Name", TEXT, name);
 
             eventHandler.handleEvent("opportunityChanged", freeForm);
         }
 
         return Response.ok().build();
+    }
+
+    @POST
+    @Path("/accountChanged")
+    public Response handleAccountChangedEvent(String xml) throws Exception {
+        JAXBElement<AccountNotifications> accountNotifications = XMlResponseParser.parseAccountXmlResponse(xml);
+        if (accountNotifications != null) {
+            AccountObject accountNotificationSObject = accountNotifications.getValue().accountNotification.accountObject;
+            FreeForm freeForm = generateAccountFreeForm(accountNotificationSObject);
+            eventHandler.handleEvent("Account Change Alert", freeForm);
+        }
+        return Response.ok().build();
+    }
+
+    private static FreeForm generateAccountFreeForm(AccountObject accountNotification) {
+
+        FreeForm freeForm = new FreeForm();
+        freeForm.put("Id", TEXT, accountNotification.Id);
+        freeForm.put("Name", TEXT, accountNotification.Name);
+        freeForm.put("Fax", TEXT, accountNotification.Fax);
+        freeForm.put("AccountNumber", TEXT, accountNotification.AccountNumber);
+        freeForm.put("Website", TEXT, accountNotification.Website);
+        freeForm.put("Sic", TEXT, accountNotification.Sic);
+        freeForm.put("OwnerId", TEXT, accountNotification.OwnerId);
+        freeForm.put("CreatedById", TEXT, accountNotification.CreatedById);
+        freeForm.put("CleanStatus", TEXT, accountNotification.CleanStatus);
+        freeForm.put("SLASerialNumber__c", TEXT, accountNotification.SLASerialNumber__c);
+        freeForm.put("CreatedDate", LONG, accountNotification.CreatedDate);
+        freeForm.put("Type", TEXT, accountNotification.Type);
+        freeForm.put("BillingStreet", TEXT, accountNotification.BillingStreet);
+        freeForm.put("BillingCity", TEXT, accountNotification.BillingCity);
+        freeForm.put("BillingState", TEXT, accountNotification.BillingState);
+        freeForm.put("BillingPostalCode", TEXT, accountNotification.BillingPostalCode);
+        freeForm.put("BillingCountry", TEXT, accountNotification.BillingCountry);
+        freeForm.put("ShippingStreet", TEXT, accountNotification.ShippingStreet);
+        freeForm.put("ShippingCity", TEXT, accountNotification.ShippingCity);
+        freeForm.put("ShippingState", TEXT, accountNotification.ShippingState);
+        freeForm.put("ShippingPostalCode", TEXT, accountNotification.ShippingPostalCode);
+        freeForm.put("ShippingCountry", TEXT, accountNotification.ShippingCountry);
+        freeForm.put("Phone", TEXT, accountNotification.Phone);
+        freeForm.put("Industry", TEXT, accountNotification.Industry);
+        freeForm.put("NumberOfEmployees", DOUBLE, accountNotification.NumberOfEmployees);
+        freeForm.put("Ownership", TEXT, accountNotification.Ownership);
+        freeForm.put("CustomerPriority__c", TEXT, accountNotification.CustomerPriority__c);
+        freeForm.put("SLAExpirationDate__c", TEXT, accountNotification.SLAExpirationDate__c);
+        freeForm.put("AnnualRevenue", DOUBLE, accountNotification.AnnualRevenue);
+        return freeForm;
+    }
+
+    @POST
+    @Path("/leadChanged")
+    public Response handleLeadChangedEvent(String xml) throws Exception {
+        System.out.println("XML" + xml);
+        JAXBElement<LeadNotifications> leadNotifications = XMlResponseParser.parseLeadXmlResponse(xml);
+        if (leadNotifications != null) {
+            LeadObject leadNotificationSObject = leadNotifications.getValue().leadNotification.leadObject;
+            FreeForm freeForm = generateLeadFreeForm(leadNotificationSObject);
+            eventHandler.handleEvent("Lead Change Alert", freeForm);
+        }
+        return Response.ok().build();
+    }
+
+    private static FreeForm generateLeadFreeForm(LeadObject leadNotification) {
+        FreeForm freeForm = new FreeForm();
+        String fullName="";
+       // freeForm.put("FirstName", TEXT, leadNotification.FirstName);
+       // freeForm.put("LastName", TEXT, leadNotification.LastName);
+
+        if(leadNotification.FirstName!=null){
+            fullName=leadNotification.FirstName+leadNotification.LastName;
+        }
+        else {
+            fullName=leadNotification.LastName;
+
+        }
+        freeForm.put("Name", TEXT,fullName);
+
+        freeForm.put("Id", TEXT, leadNotification.Id);
+        freeForm.put("Title", TEXT, leadNotification.Title);
+        freeForm.put("Company", TEXT, leadNotification.Company);
+        freeForm.put("Website", TEXT, leadNotification.Website);
+        freeForm.put("OwnerId", TEXT, leadNotification.OwnerId);
+        freeForm.put("IsConverted", TEXT, leadNotification.IsConverted);
+        freeForm.put("ConvertedAccountId", TEXT, leadNotification.ConvertedAccountId);
+        freeForm.put("ConvertedContactId", TEXT, leadNotification.ConvertedContactId);
+        freeForm.put("ConvertedOpportunityId", TEXT, leadNotification.ConvertedOpportunityId);
+        freeForm.put("CleanStatus", TEXT, leadNotification.CleanStatus);
+        freeForm.put("Phone", TEXT, leadNotification.Phone);
+        freeForm.put("MobilePhone", TEXT, leadNotification.MobilePhone);
+        freeForm.put("Email", TEXT, leadNotification.Email);
+        freeForm.put("Description", TEXT, leadNotification.Description);
+        freeForm.put("Status", TEXT, leadNotification.Status);
+        freeForm.put("LeadSource", TEXT, leadNotification.LeadSource);
+        freeForm.put("Industry", TEXT, leadNotification.Industry);
+        freeForm.put("Rating", TEXT, leadNotification.Rating);
+        freeForm.put("AnnualRevenue", DOUBLE, leadNotification.AnnualRevenue);
+        freeForm.put("ConvertedDate", TEXT, leadNotification.ConvertedDate);
+        freeForm.put("CreatedDate", LONG, leadNotification.CreatedDate);
+        freeForm.put("LastModifiedDate", LONG, leadNotification.LastModifiedDate);
+        return freeForm;
     }
 
 }

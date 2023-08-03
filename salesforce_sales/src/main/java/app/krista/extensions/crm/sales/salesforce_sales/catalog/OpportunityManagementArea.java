@@ -193,6 +193,7 @@ public final class OpportunityManagementArea {
                 whenAnImportantOpportunityStatusChangesResponse.amount = ((Double) eventData.get("Amount")).longValue();
                 whenAnImportantOpportunityStatusChangesResponse.newStatus = (String) eventData.get("StageName");
                 whenAnImportantOpportunityStatusChangesResponse.previousStatus = (String) eventData.get("Name");
+
                 String query = "Select StageName, Amount FROM OpportunityHistory where Opportunity.Id = '" + whenAnImportantOpportunityStatusChangesResponse.opportunityId + "' LIMIT 2";
                 List<Opportunity> opp = opportunityDao.getOpportunitiesByQuery(query).stream().map(CatalogTypes::fromSFOpportunity).collect(Collectors.toList());
                 if (opp.size() == 2) {
