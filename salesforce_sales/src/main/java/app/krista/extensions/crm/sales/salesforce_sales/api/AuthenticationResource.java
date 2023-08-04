@@ -5,12 +5,10 @@ import app.krista.extensions.crm.sales.salesforce_sales.impl.connectores.Salesfo
 import app.krista.extensions.crm.sales.salesforce_sales.impl.connectores.SalesforceTokenProviderFactory;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.stores.RefreshTokenStore;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.stores.SalesforceSaleAttributeStore;
-import app.krista.extensions.crm.sales.salesforce_sales.util.Constants;
 import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.Notifications;
 import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.XMlResponseParser;
 import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.account_notification.AccountNotifications;
 import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.lead_notification.LeadNotifications;
-import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.sObject;
 import app.krista.extensions.util.EventHandler;
 import app.krista.ksdk.authentication.AuthorizationListener;
 import app.krista.ksdk.context.AuthorizationContext;
@@ -23,8 +21,6 @@ import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBElement;
 import java.util.Objects;
 
-import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.*;
-
 @Path("/")
 public final class AuthenticationResource {
 
@@ -34,6 +30,8 @@ public final class AuthenticationResource {
     private final SalesforceTokenProviderFactory providerFactory;
     private final AuthorizationContext context;
     private final AuthorizationListener authorizationListener;
+    private final String CODE = "code";
+    private final String STATE = "state";
 
     @Inject
     public AuthenticationResource(RefreshTokenStore refreshTokenStore, EventHandler eventHandler, SalesforceSaleAttributeStore attributeStore, SalesforceTokenProviderFactory providerFactory, AuthorizationContext context, AuthorizationListener authorizationListener) {
@@ -47,7 +45,7 @@ public final class AuthenticationResource {
 
     @GET
     @Path("/callback")
-    public String getCallBack(@QueryParam(Constants.CODE) String code, @QueryParam(Constants.STATE) String state) {
+    public String getCallBack(@QueryParam(CODE) String code, @QueryParam(STATE) String state) {
         Objects.requireNonNull(code);
         String[] parts = state.split("#");
         if (parts[0].isBlank() || parts.length > 2) {

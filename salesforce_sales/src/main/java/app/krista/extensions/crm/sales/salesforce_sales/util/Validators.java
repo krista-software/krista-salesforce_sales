@@ -7,4 +7,6 @@ public class Validators {
     public static Double getValidatedDouble(Object value) {
         return value != null ? (Double) value : 0;
     }
+    private Validators() {
+    }
 }

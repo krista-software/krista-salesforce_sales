@@ -55,8 +55,8 @@ public final class SalesforceSalesExtension {
 
     @InvokerRequest(InvokerRequest.Type.VALIDATE_ATTRIBUTES)
     public void validateConnection(Map<String, Object> connectionAttributes) throws IOException {
-        SalesforceSalesAttributes salesforceSalesAttributes = SalesforceSalesAttributes.create(invoker, connectionAttributes);
-        validateSalesAttributes(salesforceSalesAttributes);
+        SalesforceSalesAttributes salesAttributes = SalesforceSalesAttributes.create(invoker, connectionAttributes);
+        validateSalesAttributes(salesAttributes);
     }
 
     private void validateSalesAttributes(SalesforceSalesAttributes salesforceSalesAttributes) throws IOException {

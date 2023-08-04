@@ -32,10 +32,8 @@ public final class LeadsManagementArea {
 
     @Inject
     private LeadsManagementArea(LeadDaoImpl leadDao) {
-
         this.leadDao = leadDao;
     }
-
 
     @CatalogRequest(
             id = "localDomainRequest_48c208ec-65c5-4b2f-9ce4-52a6c7e26d4a",
@@ -87,14 +85,12 @@ public final class LeadsManagementArea {
                 Map<String, Object> leadMap = new HashMap<>();
                 leadMap.put("Lead Id", eventData.get("Id"));
                 setLeadDetails(eventData, leadMap);
-
                 updateLeadDetails(eventData, leadMap);
                 return leadMap;
             }
             return Map.of();
         } catch (IllegalArgumentException cause) {
             System.err.println(cause.getMessage());
-            cause.printStackTrace();
             return Map.of();
         }
     }
@@ -102,8 +98,8 @@ public final class LeadsManagementArea {
     private void updateLeadDetails(FreeForm eventData, Map<String, Object> leadMap) {
         String query = "SELECT Fields(ALL) FROM LeadHistory WHERE LeadId = '" +
                 eventData.get("Id") + "' ORDER BY CreatedDate DESC LIMIT 20";
-        Map<String, Object> fetched = leadDao.getLeadsUpdatedFields(query);
 
+        Map<String, Object> fetched = leadDao.getLeadsUpdatedFields(query);
         if (fetched.size() != 1 || !fetched.containsKey(CREATED)) {
             if (fetched.containsKey("FirstName") || fetched.containsKey("LastName")) {
                 fetched.put(NAME, eventData.get(NAME));
@@ -111,10 +107,8 @@ public final class LeadsManagementArea {
                 fetched.put(NAME, "");
             }
             setLeadDetails(fetched, leadMap);
-
         }
     }
-
 
     private static void setLeadDetails(Map<String, Object> leadData, Map<String, Object> leadMap) {
         leadMap.put("Lead Name", leadData.get(NAME));
@@ -145,6 +139,4 @@ public final class LeadsManagementArea {
                 ? Long.parseLong((String) leadData.get("LastModifiedDate")) : null);
 
     }
-
-
 }

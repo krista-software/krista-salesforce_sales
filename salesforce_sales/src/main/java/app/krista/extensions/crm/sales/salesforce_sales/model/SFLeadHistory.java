@@ -25,7 +25,6 @@ public class SFLeadHistory {
         return newRecord;
     }
 
-
     public class Record {
         public Attributes attributes;
         public String Id;
@@ -33,10 +32,8 @@ public class SFLeadHistory {
         public String LeadId;
         public String CreatedById;
         public Date CreatedDate;
-
         public String Field;
         public String DataType;
-
         public String OldValue;
         public String NewValue;
 

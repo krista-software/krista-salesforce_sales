@@ -418,6 +418,7 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
   - Click on **Set History Tracking** on the upper right and enable Account History.
   - Select the below given fields and save.
     ![Setup](../pages/../_media/addAccountFields.png)
+
   - Select Page Layouts from the left menu.
   - Click on Account Layout if you are working with account change alert  from the given options.
   - Click on Related Lists.
@@ -512,6 +513,7 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
   - Click on **Set History Tracking** on the upper right and enable Lead History.
   - Select the below given fields and save.
     ![Setup](../pages/../_media/addLeadFields.png)
+  
   - Select Page Layouts from the left menu.
   - Click on Lead Layout if you are working with account change alert  from the given options.
   - Click on Related Lists.

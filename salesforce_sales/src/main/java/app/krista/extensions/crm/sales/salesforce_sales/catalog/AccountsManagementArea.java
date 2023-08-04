@@ -43,14 +43,13 @@ public class AccountsManagementArea {
             return Map.of();
         } catch (IllegalArgumentException cause) {
             System.err.println(cause.getMessage());
-            cause.printStackTrace();
             return Map.of();
         }
-
     }
 
     private void updateAccountDetails(FreeForm eventData, Map<String, Object> accountMap) {
-        String query = "SELECT Fields(ALL) FROM AccountHistory WHERE AccountId = '" + eventData.get("Id") + "' ORDER BY CreatedDate DESC LIMIT 20";
+        String query = "SELECT Fields(ALL) FROM AccountHistory WHERE AccountId = '" + eventData.get("Id")
+                + "' ORDER BY CreatedDate DESC LIMIT 20";
 
         Map<String, Object> fetched = accountDao.getAccountUpdatedFields(query);
         if (fetched.size() != 1 || !fetched.containsKey(Constants.CREATED)) {
@@ -89,10 +88,15 @@ public class AccountsManagementArea {
         accountMap.put("Account Ownership", getValidatedString(accountData.get("Ownership")));
         accountMap.put("Account Customer Priority", getValidatedString(accountData.get("CustomerPriority__c")));
         accountMap.put("Account Annual Revenue", getValidatedDouble(accountData.get("AnnualRevenue")));
-        accountMap.put("Account SLA Expiration Date", accountData.get("SLAExpirationDate__c") != null ? Objects.requireNonNull(DatePlus.fromYYYYMMDD(accountData.get("SLAExpirationDate__c").toString())).getTime() : null);
+        accountMap.put("Account SLA Expiration Date", accountData.get("SLAExpirationDate__c") != null
+                ? Objects.requireNonNull(
+                        DatePlus.fromYYYYMMDD(accountData.get("SLAExpirationDate__c").toString())).getTime()
+                : null);
         accountMap.put("Account Owner Id", getValidatedString(accountData.get("OwnerId")));
         accountMap.put("Account Created By Id", getValidatedString(accountData.get("CreatedById")));
-        accountMap.put("Account Created Date", accountData.get("CreatedDate") != null ? Long.parseLong((String) accountData.get("CreatedDate")) : null);
+        accountMap.put("Account Created Date", accountData.get("CreatedDate") != null
+                ? Long.parseLong((String) accountData.get("CreatedDate"))
+                : null);
 
     }
 }

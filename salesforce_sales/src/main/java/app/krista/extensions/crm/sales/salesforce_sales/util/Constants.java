@@ -2,14 +2,10 @@ package app.krista.extensions.crm.sales.salesforce_sales.util;
 
 import app.krista.extension.impl.anno.Field;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 public final class Constants {
-    public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    public static final String REFRESH_TOKEN = "refresh_token";
+    public static final Gson GSON = new Gson();
     public static final String CREATED = "created";
-    public static final String CODE = "code";
-    public static final String STATE = "state";
     public static final String TEXT = "Text";
     public static final String DOUBLE = "Double";
     public static final String LONG = "Long";

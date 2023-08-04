@@ -3,8 +3,6 @@ package app.krista.extensions.crm.sales.salesforce_sales.model;
 import java.util.*;
 
 public class SFAccountHistory {
-
-
     public int totalSize;
     public boolean done;
     public List<Record> records;
@@ -18,7 +16,6 @@ public class SFAccountHistory {
                 return newRecord;
             } else if (createdDate==records.get(i).CreatedDate.getTime()) {
                 newRecord.put(records.get(i).Field, records.get(i).NewValue);
-
             }
         }
         return newRecord;
@@ -32,10 +29,8 @@ public class SFAccountHistory {
         public String AccountId;
         public String CreatedById;
         public Date CreatedDate;
-
         public String Field;
         public String DataType;
-
         public String OldValue;
         public String NewValue;
 
@@ -43,8 +38,5 @@ public class SFAccountHistory {
             public String type;
             public String url;
         }
-
     }
-
-
 }

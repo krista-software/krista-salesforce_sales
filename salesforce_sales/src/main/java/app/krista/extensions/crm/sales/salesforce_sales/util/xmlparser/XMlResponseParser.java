@@ -22,7 +22,6 @@ public final class XMlResponseParser {
             xsr.nextTag(); // Advance to Body tag
             xsr.nextTag();
 
-
             JAXBContext jc = JAXBContext.newInstance(Notifications.class);
             Unmarshaller unmarshaller = jc.createUnmarshaller();
             return unmarshaller.unmarshal(xsr, Notifications.class);
@@ -42,7 +41,6 @@ public final class XMlResponseParser {
             xsr.nextTag(); // Advance to Body tag
             xsr.nextTag();
 
-
             JAXBContext jc = JAXBContext.newInstance(AccountNotifications.class);
             Unmarshaller unmarshaller = jc.createUnmarshaller();
             return unmarshaller.unmarshal(xsr, AccountNotifications.class);
@@ -60,7 +58,6 @@ public final class XMlResponseParser {
 
             xsr.nextTag(); // Advance to Body tag
             xsr.nextTag();
-
 
             JAXBContext jc = JAXBContext.newInstance(LeadNotifications.class);
             Unmarshaller unmarshaller = jc.createUnmarshaller();

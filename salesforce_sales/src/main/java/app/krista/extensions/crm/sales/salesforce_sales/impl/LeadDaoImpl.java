@@ -1,14 +1,12 @@
 package app.krista.extensions.crm.sales.salesforce_sales.impl;
 
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.CatalogTypes;
-import app.krista.extensions.crm.sales.salesforce_sales.model.SFAccountHistory;
 import app.krista.extensions.crm.sales.salesforce_sales.model.SFLead;
 import app.krista.extensions.crm.sales.salesforce_sales.model.SFLeadHistory;
 import app.krista.extensions.crm.sales.salesforce_sales.service.Lead;
 import app.krista.extensions.crm.sales.salesforce_sales.service.LeadDao;
 import app.krista.extensions.crm.sales.salesforce_sales.util.DatePlus;
 import app.krista.extensions.crm.sales.salesforce_sales.util.SalesforceListResponse;
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.jvnet.hk2.annotations.Service;
 
@@ -25,7 +23,6 @@ public class LeadDaoImpl implements LeadDao {
 
     public static final String QUERY_FIELDS = "Id, LastName, FirstName, Salutation, Name, Title, Company, Address, Phone, MobilePhone, Fax, Email, Website, Description, LeadSource, Status, Industry, Rating, AnnualRevenue, NumberOfEmployees, OwnerId, IsConverted, ConvertedDate, ConvertedAccountId, ConvertedContactId, ConvertedOpportunityId, IsUnreadByOwner, CreatedDate, LastModifiedDate, CleanStatus";
     public static final String LEAD = "Lead";
-    public static final Gson gson = new Gson();
 
     private final SalesforceManager salesforceManager;
 
@@ -83,7 +80,7 @@ public class LeadDaoImpl implements LeadDao {
     }
     public Map<String, Object> getLeadsUpdatedFields(String query) {
         String response = salesforceManager.getRecordByQuery(query);
-        SFLeadHistory sfLeadHistory = gson.fromJson(response, SFLeadHistory.class);
+        SFLeadHistory sfLeadHistory = GSON.fromJson(response, SFLeadHistory.class);
         return sfLeadHistory.toArrayList();
     }
 
