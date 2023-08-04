@@ -303,16 +303,20 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|--------------------|
 | Response           | MultiField         |
 
+
+
+
 - **Steps To Create Alert In Salesforce Sale**
+  - To know how to set up field tracking click [here](enableTrackingHistory.md).
 
-    - Navigate to the Setup icon and then click **Setup**.
-      ![Setup](../_media/setup.png)
+  - Navigate to the Setup icon and then click **Setup**.
+    ![Setup](../_media/setup.png)
 
-    - On the SETUP Home page, under the **Process Automation** menu on the left panel, under the **Workflow Actions**,
-      click **Outbound Messages**.
-      ![Outbound Messages](../_media/outboundMessages.png)
+  - On the SETUP Home page, under the **Process Automation** menu on the left panel, under the **Workflow Actions**,
+    click **Outbound Messages**.
+    ![Outbound Messages](../_media/outboundMessages.png)
 
-    - On the **Outbound Messages** page, click on **New Outbound Message**.
+  - On the **Outbound Messages** page, click on **New Outbound Message**.
 
     - Select **Opportunity** object and then click on **Next**.
 
@@ -321,11 +325,12 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
     - Enter **Endpoint URL**
         - Go to the Detail's page of the extension and copy the Routing id from there. After that, append **'
           /rest/salesforcesales/opportunityChanged'** at the end of the routing id (This is your endpoint uri)
+      
           ![Routing Id Reference](../_media/routingId.png)
 
     - Select **Opportunity fields to send** as **Amount**, **ID**, **Name**, and **StageName**, and then click **Save**.
 
-      ![Create Outbound Message](../_media/createOutboundMessage.png)
+      ![Create Outbound Message](../_media/createOppurtunityOutboundMessage.png)
 
     - Now create **Workflow Rule**.
 
@@ -347,6 +352,77 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 
     - Now click on **Done** button
 
+### Accounts Management Area
+
+#### Account Change Alert
+
+- **Description**: This request is for the changes(creation and update) in the accounts.
+- **Input Parameters**: No Parameters Required
+
+- **Output Parameters**:
+
+| **Parameter Name** | **Parameter Type** |
+|--------------------|--------------------|
+| Response           | MultiField         |
+
+**Steps To Create Alert In Salesforce Sale**
+- To know how to set up field tracking click [here](enableTrackingHistory.md).
+
+- Navigate to the Setup icon and then click **Setup**.
+  ![Setup](../_media/setup.png)
+
+- On the SETUP Home page, under the **Process Automation** menu on the left panel, under the **Workflow Actions**,
+  click **Outbound Messages**.
+  ![Outbound Messages](../_media/outboundMessages.png)
+
+- On the **Outbound Messages** page, click on **New Outbound Message**.
+
+  - Select **Account** object and then click on **Next**.
+
+  - On the next page enter **Name**.
+
+  - Enter **Endpoint URL**
+    - Go to the Detail's page of the extension and copy the Routing id from there. After that, append **'
+      /rest/salesforcesales/accountChanged'** at the end of the routing id (This is your endpoint uri)
+
+      ![Routing Id Reference](../_media/routingId.png)
+
+  - Select **Account fields from account entity list to send and then click **Save**.
+
+    ![Create Outbound Message](../_media/createAccountOutboundMessage.png)
+
+  - Now create **Workflow Rule**.
+
+  - On the SETUP Home page, under the **Process Automation** menu on the left panel, click **Workflow Rules**.
+    ![Setup](../_media/workflowRules.png)
+
+  - On the **Workflow Rules**, click **New Role** and select **Continue with Workflow Rules**.
+
+  - On the workflow rule page, select **Account** as object then click **Next**.
+
+  - On the next page add **Rule Name**, **Evaluation Criteria**, and **Rule Criteria** and then click **Save and Next
+    **.
+
+  - On the next page click **Add Workflow Action** and select **Select Existing Action**.
+
+  - On the next page select **Outbound Message** under the **Choose Action Type**.
+
+  - And select your created Outbound Message under **Available Actions** and click Add arrow, and then click **Save**
+
+  - Now click on **Done** button
+
+Click on Setup icon on the upper right of the salesforce page.
+* Select object manager on the left upper navigation bar.
+* Select Account if you are working with account change alert  as the LABEL.
+* Select Fields and Relationships from the left menu.
+* Click on “Set History Tracking” on the upper right and enable Account History.
+* Select the below given fields and save.
+  ![Setup](../pages/../_media/addAccountFields.png)
+* Select Page Layouts from the left menu.
+* Click on Account Layout if you are working with account change alert  from the given options.
+* Click on Related Lists.
+* Drag and drop the Account History icon for account change alert in the Related Fields below and save the changes.
+  ![Setup](../pages/../_media/addAccountTab.png)
 ### Leads Management Area
 
 #### Get Leads
@@ -368,6 +444,75 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 | **Parameter Name** | **Parameter Type** |
 |--------------------|--------------------|
 | Leads              | List&lt;Lead>      |
+
+#### Lead Change Alert
+
+- **Description**: This request is for the changes(creation and update) in the leads.
+- **Input Parameters**: No Parameters Required
+
+- **Output Parameters**:
+
+| **Parameter Name** | **Parameter Type** |
+|--------------------|--------------------|
+| Response           | MultiField         |
+**Steps To Create Alert In Salesforce Sale**
+- To know how to set up field tracking click [here](enableTrackingHistory.md).
+
+- Navigate to the Setup icon and then click **Setup**.
+  ![Setup](../_media/setup.png)
+
+- On the SETUP Home page, under the **Process Automation** menu on the left panel, under the **Workflow Actions**,
+  click **Outbound Messages**.
+  ![Outbound Messages](../_media/outboundMessages.png)
+
+- On the **Outbound Messages** page, click on **New Outbound Message**.
+
+  - Select **Lead** object and then click on **Next**.
+
+  - On the next page enter **Name**.
+
+  - Enter **Endpoint URL**
+    - Go to the Detail's page of the extension and copy the Routing id from there. After that, append **'
+      /rest/salesforcesales/leadChanged'** at the end of the routing id (This is your endpoint uri)
+
+      ![Routing Id Reference](../_media/routingId.png)
+
+  - Select **Lead fields from lead  entity list to send and then click, and then click **Save**.
+
+    ![Create Outbound Message](../_media/createLeadOutboundMessage.png)
+
+  - Now create **Workflow Rule**.
+
+  - On the SETUP Home page, under the **Process Automation** menu on the left panel, click **Workflow Rules**.
+    ![Setup](../_media/workflowRules.png)
+
+  - On the **Workflow Rules**, click **New Role** and select **Continue with Workflow Rules**.
+
+  - On the workflow rule page, select **Lead** as object then click **Next**.
+
+  - On the next page add **Rule Name**, **Evaluation Criteria**, and **Rule Criteria** and then click **Save and Next
+    **.
+
+  - On the next page click **Add Workflow Action** and select **Select Existing Action**.
+
+  - On the next page select **Outbound Message** under the **Choose Action Type**.
+
+  - And select your created Outbound Message under **Available Actions** and click Add arrow, and then click **Save**
+
+  - Now click on **Done** button
+
+Click on Setup icon on the upper right of the salesforce page.
+* Select object manager on the left upper navigation bar.
+* Select Lead if you are working with lead change alert  as the LABEL.
+* Select Fields and Relationships from the left menu.
+* Click on “Set History Tracking” on the upper right and enable Lead History.
+* Select the below given fields and save.
+  ![Setup](../pages/../_media/addLeadFields.png)
+* Select Page Layouts from the left menu.
+* Click on Lead Layout if you are working with lead change alert  from the given options.
+* Click on Related Lists.
+* Drag and drop the Lead History icon for lead change alert in the Related Fields below and save the changes.
+  ![Setup](../pages/../_media/addLeadTab.png)
 
 ### Actions Area
 

@@ -1,6 +1,14 @@
 package app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.lead_notification;
 
+import app.krista.model.base.FreeForm;
+
 import javax.xml.bind.annotation.XmlElement;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.*;
+import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.LONG;
 
 public final class LeadObject {
 
@@ -55,5 +63,43 @@ public final class LeadObject {
 
     @XmlElement(name = "LastModifiedDate", namespace = "urn:sobject.enterprise.soap.sforce.com")
     public Long LastModifiedDate;
-
+    public static FreeForm toLeadFreeForm(LeadObject leadNotification) {
+        FreeForm freeForm = new FreeForm();
+        if (leadNotification.Name != null) {
+            List<String> name = new ArrayList<>(Arrays.asList(leadNotification.Name.split("\\s+")));
+            if (name.size() == 1)
+                leadNotification.LastName = leadNotification.Name;
+            else {
+                leadNotification.FirstName = name.get(0);
+                name.remove(0);
+                leadNotification.LastName = String.join(" ", name);
+            }
+        }
+        String leadName = leadNotification.FirstName == null ? leadNotification.LastName :
+                leadNotification.FirstName + " " + leadNotification.LastName;
+        freeForm.put("Name", TEXT, leadName);
+        freeForm.put("Id", TEXT, leadNotification.Id);
+        freeForm.put("Title", TEXT, leadNotification.Title);
+        freeForm.put("Company", TEXT, leadNotification.Company);
+        freeForm.put("Website", TEXT, leadNotification.Website);
+        freeForm.put("OwnerId", TEXT, leadNotification.OwnerId);
+        freeForm.put("IsConverted", TEXT, leadNotification.IsConverted);
+        freeForm.put("ConvertedAccountId", TEXT, leadNotification.ConvertedAccountId);
+        freeForm.put("ConvertedContactId", TEXT, leadNotification.ConvertedContactId);
+        freeForm.put("ConvertedOpportunityId", TEXT, leadNotification.ConvertedOpportunityId);
+        freeForm.put("CleanStatus", TEXT, leadNotification.CleanStatus);
+        freeForm.put("Phone", TEXT, leadNotification.Phone);
+        freeForm.put("MobilePhone", TEXT, leadNotification.MobilePhone);
+        freeForm.put("Email", TEXT, leadNotification.Email);
+        freeForm.put("Description", TEXT, leadNotification.Description);
+        freeForm.put("Status", TEXT, leadNotification.Status);
+        freeForm.put("LeadSource", TEXT, leadNotification.LeadSource);
+        freeForm.put("Industry", TEXT, leadNotification.Industry);
+        freeForm.put("Rating", TEXT, leadNotification.Rating);
+        freeForm.put("AnnualRevenue", DOUBLE, leadNotification.AnnualRevenue);
+        freeForm.put("ConvertedDate", TEXT, leadNotification.ConvertedDate);
+        freeForm.put("CreatedDate", LONG, leadNotification.CreatedDate);
+        freeForm.put("LastModifiedDate", LONG, leadNotification.LastModifiedDate);
+        return freeForm;
+    }
 }

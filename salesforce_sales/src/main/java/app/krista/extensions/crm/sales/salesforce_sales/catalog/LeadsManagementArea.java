@@ -5,7 +5,6 @@ import app.krista.extension.impl.anno.Domain;
 import app.krista.extension.impl.anno.Field;
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.Lead;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.LeadDaoImpl;
-import app.krista.extensions.crm.sales.salesforce_sales.impl.UserDaoImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.util.DatePlus;
 import app.krista.model.base.FreeForm;
 
@@ -76,7 +75,7 @@ public final class LeadsManagementArea {
     @CatalogRequest(
             id = "localDomainRequest_190ec6ca-0e61-41ec-bce6-d04f9976f352",
             name = "Lead Change Alert",
-            description = "Gives Warning Message",
+            description = "This request is for the changes(creation and update) in the leads.",
             area = "Leads Management",
             type = CatalogRequest.Type.WAIT_FOR_EVENT)
     @Field.Desc(name = "LeadResponse", type = "{ Lead Name: Text, Lead Id: Text, Lead Title: Text, Lead Company: Text, Lead Website: Text, Lead Owner Id: Text, Lead Is Converted: Text, Lead Converted Account Id: Text, Lead Converted Contact Id: Text, Lead Converted Opportunity Id: Text, Lead Clean Status: Text, Lead Phone: Text, Lead MobilePhone: Text, Lead Email: Email, Lead Description: Paragraph, Lead Status: Text, Lead LeadSource: Text, Lead Industry: Text, Lead Rating: Text, Lead Annual Revenue: Number, Lead Converted Date: Date, Lead Created Date: Date, Lead Last Modified Date: Date }", required = false)
@@ -84,31 +83,35 @@ public final class LeadsManagementArea {
             @Field(name = "eventName", type = "Text") String eventName,
             @Field(name = "eventData", type = "FreeForm") FreeForm eventData) {
         try {
-            Map<String, Object> leadMap = new HashMap<>();
             if (eventName.equals("Lead Change Alert")) {
+                Map<String, Object> leadMap = new HashMap<>();
                 leadMap.put("Lead Id", eventData.get("Id"));
                 setLeadDetails(eventData, leadMap);
 
-                String query = "SELECT Fields(ALL) FROM LeadHistory WHERE LeadId = '" +
-                        eventData.get("Id") + "' ORDER BY CreatedDate DESC LIMIT 20";
-                Map<String, Object> fetched = leadDao.getLeadsUpdatedFields(query);
-
-                if (fetched.size() != 1 || !fetched.containsKey(CREATED)) {
-                    if (fetched.containsKey("FirstName") || fetched.containsKey("LastName")) {
-                        fetched.put(NAME, eventData.get(NAME));
-                    } else {
-                        fetched.put(NAME, "");
-                    }
-                    setLeadDetails(fetched, leadMap);
-
-                }
+                updateLeadDetails(eventData, leadMap);
                 return leadMap;
             }
-            return leadMap;
+            return Map.of();
         } catch (IllegalArgumentException cause) {
             System.err.println(cause.getMessage());
             cause.printStackTrace();
             return Map.of();
+        }
+    }
+
+    private void updateLeadDetails(FreeForm eventData, Map<String, Object> leadMap) {
+        String query = "SELECT Fields(ALL) FROM LeadHistory WHERE LeadId = '" +
+                eventData.get("Id") + "' ORDER BY CreatedDate DESC LIMIT 20";
+        Map<String, Object> fetched = leadDao.getLeadsUpdatedFields(query);
+
+        if (fetched.size() != 1 || !fetched.containsKey(CREATED)) {
+            if (fetched.containsKey("FirstName") || fetched.containsKey("LastName")) {
+                fetched.put(NAME, eventData.get(NAME));
+            } else {
+                fetched.put(NAME, "");
+            }
+            setLeadDetails(fetched, leadMap);
+
         }
     }
 

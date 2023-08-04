@@ -123,99 +123,24 @@ public final class AuthenticationResource {
         JAXBElement<AccountNotifications> accountNotifications = XMlResponseParser.parseAccountXmlResponse(xml);
         if (accountNotifications != null) {
             AccountObject accountNotificationSObject = accountNotifications.getValue().accountNotification.accountObject;
-            FreeForm freeForm = generateAccountFreeForm(accountNotificationSObject);
-            eventHandler.handleEvent("Account Change Alert", freeForm);
+            eventHandler.handleEvent("Account Change Alert", AccountObject.toAccountFreeForm(accountNotificationSObject));
         }
         return Response.ok().build();
     }
 
-    private static FreeForm generateAccountFreeForm(AccountObject accountNotification) {
 
-        FreeForm freeForm = new FreeForm();
-        freeForm.put("Id", TEXT, accountNotification.Id);
-        freeForm.put("Name", TEXT, accountNotification.Name);
-        freeForm.put("Fax", TEXT, accountNotification.Fax);
-        freeForm.put("AccountNumber", TEXT, accountNotification.AccountNumber);
-        freeForm.put("Website", TEXT, accountNotification.Website);
-        freeForm.put("Sic", TEXT, accountNotification.Sic);
-        freeForm.put("OwnerId", TEXT, accountNotification.OwnerId);
-        freeForm.put("CreatedById", TEXT, accountNotification.CreatedById);
-        freeForm.put("CleanStatus", TEXT, accountNotification.CleanStatus);
-        freeForm.put("SLASerialNumber__c", TEXT, accountNotification.SLASerialNumber__c);
-        freeForm.put("CreatedDate", LONG, accountNotification.CreatedDate);
-        freeForm.put("Type", TEXT, accountNotification.Type);
-        freeForm.put("BillingStreet", TEXT, accountNotification.BillingStreet);
-        freeForm.put("BillingCity", TEXT, accountNotification.BillingCity);
-        freeForm.put("BillingState", TEXT, accountNotification.BillingState);
-        freeForm.put("BillingPostalCode", TEXT, accountNotification.BillingPostalCode);
-        freeForm.put("BillingCountry", TEXT, accountNotification.BillingCountry);
-        freeForm.put("ShippingStreet", TEXT, accountNotification.ShippingStreet);
-        freeForm.put("ShippingCity", TEXT, accountNotification.ShippingCity);
-        freeForm.put("ShippingState", TEXT, accountNotification.ShippingState);
-        freeForm.put("ShippingPostalCode", TEXT, accountNotification.ShippingPostalCode);
-        freeForm.put("ShippingCountry", TEXT, accountNotification.ShippingCountry);
-        freeForm.put("Phone", TEXT, accountNotification.Phone);
-        freeForm.put("Industry", TEXT, accountNotification.Industry);
-        freeForm.put("NumberOfEmployees", DOUBLE, accountNotification.NumberOfEmployees);
-        freeForm.put("Ownership", TEXT, accountNotification.Ownership);
-        freeForm.put("CustomerPriority__c", TEXT, accountNotification.CustomerPriority__c);
-        freeForm.put("SLAExpirationDate__c", TEXT, accountNotification.SLAExpirationDate__c);
-        freeForm.put("AnnualRevenue", DOUBLE, accountNotification.AnnualRevenue);
-        return freeForm;
-    }
 
     @POST
     @Path("/leadChanged")
     public Response handleLeadChangedEvent(String xml) throws Exception {
-        System.out.println("XML" + xml);
         JAXBElement<LeadNotifications> leadNotifications = XMlResponseParser.parseLeadXmlResponse(xml);
         if (leadNotifications != null) {
             LeadObject leadNotificationSObject = leadNotifications.getValue().leadNotification.leadObject;
-            FreeForm freeForm = generateLeadFreeForm(leadNotificationSObject);
-            eventHandler.handleEvent("Lead Change Alert", freeForm);
+            eventHandler.handleEvent("Lead Change Alert", LeadObject.toLeadFreeForm(leadNotificationSObject));
         }
         return Response.ok().build();
     }
 
-    private static FreeForm generateLeadFreeForm(LeadObject leadNotification) {
-        FreeForm freeForm = new FreeForm();
-        if (leadNotification.Name != null) {
-            List<String> name = new ArrayList<>(Arrays.asList(leadNotification.Name.split("\\s+")));
-            if (name.size() == 1)
-                leadNotification.LastName = leadNotification.Name;
-            else {
-                leadNotification.FirstName = name.get(0);
-                name.remove(0);
-                leadNotification.LastName = String.join(" ", name);
-            }
-        }
-        String leadName = leadNotification.FirstName == null ? leadNotification.LastName :
-                leadNotification.FirstName + " " + leadNotification.LastName;
-        System.out.println("leadName"+leadName);
-        freeForm.put("Name", TEXT, leadName);
-        freeForm.put("Id", TEXT, leadNotification.Id);
-        freeForm.put("Title", TEXT, leadNotification.Title);
-        freeForm.put("Company", TEXT, leadNotification.Company);
-        freeForm.put("Website", TEXT, leadNotification.Website);
-        freeForm.put("OwnerId", TEXT, leadNotification.OwnerId);
-        freeForm.put("IsConverted", TEXT, leadNotification.IsConverted);
-        freeForm.put("ConvertedAccountId", TEXT, leadNotification.ConvertedAccountId);
-        freeForm.put("ConvertedContactId", TEXT, leadNotification.ConvertedContactId);
-        freeForm.put("ConvertedOpportunityId", TEXT, leadNotification.ConvertedOpportunityId);
-        freeForm.put("CleanStatus", TEXT, leadNotification.CleanStatus);
-        freeForm.put("Phone", TEXT, leadNotification.Phone);
-        freeForm.put("MobilePhone", TEXT, leadNotification.MobilePhone);
-        freeForm.put("Email", TEXT, leadNotification.Email);
-        freeForm.put("Description", TEXT, leadNotification.Description);
-        freeForm.put("Status", TEXT, leadNotification.Status);
-        freeForm.put("LeadSource", TEXT, leadNotification.LeadSource);
-        freeForm.put("Industry", TEXT, leadNotification.Industry);
-        freeForm.put("Rating", TEXT, leadNotification.Rating);
-        freeForm.put("AnnualRevenue", DOUBLE, leadNotification.AnnualRevenue);
-        freeForm.put("ConvertedDate", TEXT, leadNotification.ConvertedDate);
-        freeForm.put("CreatedDate", LONG, leadNotification.CreatedDate);
-        freeForm.put("LastModifiedDate", LONG, leadNotification.LastModifiedDate);
-        return freeForm;
-    }
+
 
 }

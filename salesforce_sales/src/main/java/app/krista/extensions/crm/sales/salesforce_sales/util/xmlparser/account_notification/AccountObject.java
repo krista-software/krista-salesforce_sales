@@ -1,8 +1,10 @@
 package app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.account_notification;
 
-import app.krista.extensions.crm.sales.salesforce_sales.model.PhoneNumber;
+import app.krista.model.base.FreeForm;
 
 import javax.xml.bind.annotation.XmlElement;
+
+import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.*;
 
 public final class AccountObject {
     @XmlElement(name = "Id", namespace = "urn:sobject.enterprise.soap.sforce.com")
@@ -66,4 +68,38 @@ public final class AccountObject {
     @XmlElement(name = "AnnualRevenue", namespace = "urn:sobject.enterprise.soap.sforce.com")
     public Double AnnualRevenue;
 
+    public static FreeForm toAccountFreeForm(AccountObject accountNotification) {
+
+        FreeForm freeForm = new FreeForm();
+        freeForm.put("Id", TEXT, accountNotification.Id);
+        freeForm.put("Name", TEXT, accountNotification.Name);
+        freeForm.put("Fax", TEXT, accountNotification.Fax);
+        freeForm.put("AccountNumber", TEXT, accountNotification.AccountNumber);
+        freeForm.put("Website", TEXT, accountNotification.Website);
+        freeForm.put("Sic", TEXT, accountNotification.Sic);
+        freeForm.put("OwnerId", TEXT, accountNotification.OwnerId);
+        freeForm.put("CreatedById", TEXT, accountNotification.CreatedById);
+        freeForm.put("CleanStatus", TEXT, accountNotification.CleanStatus);
+        freeForm.put("SLASerialNumber__c", TEXT, accountNotification.SLASerialNumber__c);
+        freeForm.put("CreatedDate", LONG, accountNotification.CreatedDate);
+        freeForm.put("Type", TEXT, accountNotification.Type);
+        freeForm.put("BillingStreet", TEXT, accountNotification.BillingStreet);
+        freeForm.put("BillingCity", TEXT, accountNotification.BillingCity);
+        freeForm.put("BillingState", TEXT, accountNotification.BillingState);
+        freeForm.put("BillingPostalCode", TEXT, accountNotification.BillingPostalCode);
+        freeForm.put("BillingCountry", TEXT, accountNotification.BillingCountry);
+        freeForm.put("ShippingStreet", TEXT, accountNotification.ShippingStreet);
+        freeForm.put("ShippingCity", TEXT, accountNotification.ShippingCity);
+        freeForm.put("ShippingState", TEXT, accountNotification.ShippingState);
+        freeForm.put("ShippingPostalCode", TEXT, accountNotification.ShippingPostalCode);
+        freeForm.put("ShippingCountry", TEXT, accountNotification.ShippingCountry);
+        freeForm.put("Phone", TEXT, accountNotification.Phone);
+        freeForm.put("Industry", TEXT, accountNotification.Industry);
+        freeForm.put("NumberOfEmployees", DOUBLE, accountNotification.NumberOfEmployees);
+        freeForm.put("Ownership", TEXT, accountNotification.Ownership);
+        freeForm.put("CustomerPriority__c", TEXT, accountNotification.CustomerPriority__c);
+        freeForm.put("SLAExpirationDate__c", TEXT, accountNotification.SLAExpirationDate__c);
+        freeForm.put("AnnualRevenue", DOUBLE, accountNotification.AnnualRevenue);
+        return freeForm;
+    }
 }
