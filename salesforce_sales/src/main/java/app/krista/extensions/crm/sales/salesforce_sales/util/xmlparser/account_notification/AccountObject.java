@@ -68,38 +68,38 @@ public final class AccountObject {
     @XmlElement(name = "AnnualRevenue", namespace = "urn:sobject.enterprise.soap.sforce.com")
     public Double AnnualRevenue;
 
-    public static FreeForm toAccountFreeForm(AccountObject accountNotification) {
+    public  FreeForm toAccountFreeForm() {
 
         FreeForm freeForm = new FreeForm();
-        freeForm.put("Id", TEXT, accountNotification.Id);
-        freeForm.put("Name", TEXT, accountNotification.Name);
-        freeForm.put("Fax", TEXT, accountNotification.Fax);
-        freeForm.put("AccountNumber", TEXT, accountNotification.AccountNumber);
-        freeForm.put("Website", TEXT, accountNotification.Website);
-        freeForm.put("Sic", TEXT, accountNotification.Sic);
-        freeForm.put("OwnerId", TEXT, accountNotification.OwnerId);
-        freeForm.put("CreatedById", TEXT, accountNotification.CreatedById);
-        freeForm.put("CleanStatus", TEXT, accountNotification.CleanStatus);
-        freeForm.put("SLASerialNumber__c", TEXT, accountNotification.SLASerialNumber__c);
-        freeForm.put("CreatedDate", LONG, accountNotification.CreatedDate);
-        freeForm.put("Type", TEXT, accountNotification.Type);
-        freeForm.put("BillingStreet", TEXT, accountNotification.BillingStreet);
-        freeForm.put("BillingCity", TEXT, accountNotification.BillingCity);
-        freeForm.put("BillingState", TEXT, accountNotification.BillingState);
-        freeForm.put("BillingPostalCode", TEXT, accountNotification.BillingPostalCode);
-        freeForm.put("BillingCountry", TEXT, accountNotification.BillingCountry);
-        freeForm.put("ShippingStreet", TEXT, accountNotification.ShippingStreet);
-        freeForm.put("ShippingCity", TEXT, accountNotification.ShippingCity);
-        freeForm.put("ShippingState", TEXT, accountNotification.ShippingState);
-        freeForm.put("ShippingPostalCode", TEXT, accountNotification.ShippingPostalCode);
-        freeForm.put("ShippingCountry", TEXT, accountNotification.ShippingCountry);
-        freeForm.put("Phone", TEXT, accountNotification.Phone);
-        freeForm.put("Industry", TEXT, accountNotification.Industry);
-        freeForm.put("NumberOfEmployees", DOUBLE, accountNotification.NumberOfEmployees);
-        freeForm.put("Ownership", TEXT, accountNotification.Ownership);
-        freeForm.put("CustomerPriority__c", TEXT, accountNotification.CustomerPriority__c);
-        freeForm.put("SLAExpirationDate__c", TEXT, accountNotification.SLAExpirationDate__c);
-        freeForm.put("AnnualRevenue", DOUBLE, accountNotification.AnnualRevenue);
+        freeForm.put("Id", TEXT, Id);
+        freeForm.put("Name", TEXT, Name);
+        freeForm.put("Fax", TEXT, Fax);
+        freeForm.put("AccountNumber", TEXT, AccountNumber);
+        freeForm.put("Website", TEXT, Website);
+        freeForm.put("Sic", TEXT, Sic);
+        freeForm.put("OwnerId", TEXT, OwnerId);
+        freeForm.put("CreatedById", TEXT, CreatedById);
+        freeForm.put("CleanStatus", TEXT, CleanStatus);
+        freeForm.put("SLASerialNumber__c", TEXT, SLASerialNumber__c);
+        freeForm.put("CreatedDate", LONG, CreatedDate);
+        freeForm.put("Type", TEXT, Type);
+        freeForm.put("BillingStreet", TEXT, BillingStreet);
+        freeForm.put("BillingCity", TEXT,  BillingCity);
+        freeForm.put("BillingState", TEXT,  BillingState);
+        freeForm.put("BillingPostalCode", TEXT,  BillingPostalCode);
+        freeForm.put("BillingCountry", TEXT,  BillingCountry);
+        freeForm.put("ShippingStreet", TEXT,  ShippingStreet);
+        freeForm.put("ShippingCity", TEXT,  ShippingCity);
+        freeForm.put("ShippingState", TEXT,  ShippingState);
+        freeForm.put("ShippingPostalCode", TEXT,  ShippingPostalCode);
+        freeForm.put("ShippingCountry", TEXT,  ShippingCountry);
+        freeForm.put("Phone", TEXT,  Phone);
+        freeForm.put("Industry", TEXT,  Industry);
+        freeForm.put("NumberOfEmployees", DOUBLE,  NumberOfEmployees);
+        freeForm.put("Ownership", TEXT,  Ownership);
+        freeForm.put("CustomerPriority__c", TEXT,  CustomerPriority__c);
+        freeForm.put("SLAExpirationDate__c", TEXT,  SLAExpirationDate__c);
+        freeForm.put("AnnualRevenue", DOUBLE,  AnnualRevenue);
         return freeForm;
     }
 }

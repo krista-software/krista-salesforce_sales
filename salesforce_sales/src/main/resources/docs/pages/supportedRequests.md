@@ -307,7 +307,6 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 
 
 - **Steps To Create Alert In Salesforce Sale**
-  - To know how to set up field tracking click [here](enableTrackingHistory.md).
 
   - Navigate to the Setup icon and then click **Setup**.
     ![Setup](../_media/setup.png)
@@ -365,8 +364,8 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|--------------------|
 | Response           | MultiField         |
 
+
 **Steps To Create Alert In Salesforce Sale**
-- To know how to set up field tracking click [here](enableTrackingHistory.md).
 
 - Navigate to the Setup icon and then click **Setup**.
   ![Setup](../_media/setup.png)
@@ -387,7 +386,7 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 
       ![Routing Id Reference](../_media/routingId.png)
 
-  - Select **Account fields from account entity list to send and then click **Save**.
+  - Select Account fields from account entity list to send and then click **Save**.
 
     ![Create Outbound Message](../_media/createAccountOutboundMessage.png)
 
@@ -411,18 +410,21 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 
   - Now click on **Done** button
 
-Click on Setup icon on the upper right of the salesforce page.
-* Select object manager on the left upper navigation bar.
-* Select Account if you are working with account change alert  as the LABEL.
-* Select Fields and Relationships from the left menu.
-* Click on “Set History Tracking” on the upper right and enable Account History.
-* Select the below given fields and save.
-  ![Setup](../pages/../_media/addAccountFields.png)
-* Select Page Layouts from the left menu.
-* Click on Account Layout if you are working with account change alert  from the given options.
-* Click on Related Lists.
-* Drag and drop the Account History icon for account change alert in the Related Fields below and save the changes.
-  ![Setup](../pages/../_media/addAccountTab.png)
+* Now **Set History Tracking**:
+  - Click on Setup icon on the upper right of the salesforce page. 
+  - Select object manager on the left upper navigation bar. 
+  - Select Account if you are working with account change alert  as the LABEL.
+  - Select Fields and Relationships from the left menu.
+  - Click on **Set History Tracking** on the upper right and enable Account History.
+  - Select the below given fields and save.
+    ![Setup](../pages/../_media/addAccountFields.png)
+  - Select Page Layouts from the left menu.
+  - Click on Account Layout if you are working with account change alert  from the given options.
+  - Click on Related Lists.
+  - Drag and drop the Account History icon for account change alert in the Related Fields below and save the changes.
+    ![Setup](../pages/../_media/addAccountTab.png)
+
+
 ### Leads Management Area
 
 #### Get Leads
@@ -455,8 +457,9 @@ Click on Setup icon on the upper right of the salesforce page.
 | **Parameter Name** | **Parameter Type** |
 |--------------------|--------------------|
 | Response           | MultiField         |
+
+
 **Steps To Create Alert In Salesforce Sale**
-- To know how to set up field tracking click [here](enableTrackingHistory.md).
 
 - Navigate to the Setup icon and then click **Setup**.
   ![Setup](../_media/setup.png)
@@ -477,7 +480,7 @@ Click on Setup icon on the upper right of the salesforce page.
 
       ![Routing Id Reference](../_media/routingId.png)
 
-  - Select **Lead fields from lead  entity list to send and then click, and then click **Save**.
+  - Select Lead fields from lead  entity list to send and then click, and then click **Save**.
 
     ![Create Outbound Message](../_media/createLeadOutboundMessage.png)
 
@@ -501,18 +504,19 @@ Click on Setup icon on the upper right of the salesforce page.
 
   - Now click on **Done** button
 
-Click on Setup icon on the upper right of the salesforce page.
-* Select object manager on the left upper navigation bar.
-* Select Lead if you are working with lead change alert  as the LABEL.
-* Select Fields and Relationships from the left menu.
-* Click on “Set History Tracking” on the upper right and enable Lead History.
-* Select the below given fields and save.
-  ![Setup](../pages/../_media/addLeadFields.png)
-* Select Page Layouts from the left menu.
-* Click on Lead Layout if you are working with lead change alert  from the given options.
-* Click on Related Lists.
-* Drag and drop the Lead History icon for lead change alert in the Related Fields below and save the changes.
-  ![Setup](../pages/../_media/addLeadTab.png)
+* Now **Set History Tracking**:
+  - Click on Setup icon on the upper right of the salesforce page.
+  - Select object manager on the left upper navigation bar.
+  - Select Lead if you are working with lead change alert  as the LABEL.
+  - Select Fields and Relationships from the left menu.
+  - Click on **Set History Tracking** on the upper right and enable Lead History.
+  - Select the below given fields and save.
+    ![Setup](../pages/../_media/addLeadFields.png)
+  - Select Page Layouts from the left menu.
+  - Click on Lead Layout if you are working with account change alert  from the given options.
+  - Click on Related Lists.
+  - Drag and drop the Lead History icon for account change alert in the Related Fields below and save the changes.
+    ![Setup](../pages/../_media/addLeadTab.png)
 
 ### Actions Area
 

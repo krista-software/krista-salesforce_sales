@@ -37,7 +37,7 @@ public final class LeadObject {
     @XmlElement(name = "ConvertedOpportunityId", namespace = "urn:sobject.enterprise.soap.sforce.com")
     public String ConvertedOpportunityId;
     @XmlElement(name = "CleanStatus", namespace = "urn:sobject.enterprise.soap.sforce.com")
-    public String  CleanStatus;
+    public String CleanStatus;
     @XmlElement(name = "Phone", namespace = "urn:sobject.enterprise.soap.sforce.com")
     public String Phone;
     @XmlElement(name = "MobilePhone", namespace = "urn:sobject.enterprise.soap.sforce.com")
@@ -63,43 +63,44 @@ public final class LeadObject {
 
     @XmlElement(name = "LastModifiedDate", namespace = "urn:sobject.enterprise.soap.sforce.com")
     public Long LastModifiedDate;
-    public static FreeForm toLeadFreeForm(LeadObject leadNotification) {
+
+    public FreeForm toLeadFreeForm() {
         FreeForm freeForm = new FreeForm();
-        if (leadNotification.Name != null) {
-            List<String> name = new ArrayList<>(Arrays.asList(leadNotification.Name.split("\\s+")));
+        if (Name != null) {
+            List<String> name = new ArrayList<>(Arrays.asList(Name.split("\\s+")));
             if (name.size() == 1)
-                leadNotification.LastName = leadNotification.Name;
+                LastName = Name;
             else {
-                leadNotification.FirstName = name.get(0);
+                FirstName = name.get(0);
                 name.remove(0);
-                leadNotification.LastName = String.join(" ", name);
+                LastName = String.join(" ", name);
             }
         }
-        String leadName = leadNotification.FirstName == null ? leadNotification.LastName :
-                leadNotification.FirstName + " " + leadNotification.LastName;
+        String leadName = FirstName == null ? LastName :
+                FirstName + " " + LastName;
         freeForm.put("Name", TEXT, leadName);
-        freeForm.put("Id", TEXT, leadNotification.Id);
-        freeForm.put("Title", TEXT, leadNotification.Title);
-        freeForm.put("Company", TEXT, leadNotification.Company);
-        freeForm.put("Website", TEXT, leadNotification.Website);
-        freeForm.put("OwnerId", TEXT, leadNotification.OwnerId);
-        freeForm.put("IsConverted", TEXT, leadNotification.IsConverted);
-        freeForm.put("ConvertedAccountId", TEXT, leadNotification.ConvertedAccountId);
-        freeForm.put("ConvertedContactId", TEXT, leadNotification.ConvertedContactId);
-        freeForm.put("ConvertedOpportunityId", TEXT, leadNotification.ConvertedOpportunityId);
-        freeForm.put("CleanStatus", TEXT, leadNotification.CleanStatus);
-        freeForm.put("Phone", TEXT, leadNotification.Phone);
-        freeForm.put("MobilePhone", TEXT, leadNotification.MobilePhone);
-        freeForm.put("Email", TEXT, leadNotification.Email);
-        freeForm.put("Description", TEXT, leadNotification.Description);
-        freeForm.put("Status", TEXT, leadNotification.Status);
-        freeForm.put("LeadSource", TEXT, leadNotification.LeadSource);
-        freeForm.put("Industry", TEXT, leadNotification.Industry);
-        freeForm.put("Rating", TEXT, leadNotification.Rating);
-        freeForm.put("AnnualRevenue", DOUBLE, leadNotification.AnnualRevenue);
-        freeForm.put("ConvertedDate", TEXT, leadNotification.ConvertedDate);
-        freeForm.put("CreatedDate", LONG, leadNotification.CreatedDate);
-        freeForm.put("LastModifiedDate", LONG, leadNotification.LastModifiedDate);
+        freeForm.put("Id", TEXT, Id);
+        freeForm.put("Title", TEXT, Title);
+        freeForm.put("Company", TEXT, Company);
+        freeForm.put("Website", TEXT, Website);
+        freeForm.put("OwnerId", TEXT, OwnerId);
+        freeForm.put("IsConverted", TEXT, IsConverted);
+        freeForm.put("ConvertedAccountId", TEXT, ConvertedAccountId);
+        freeForm.put("ConvertedContactId", TEXT, ConvertedContactId);
+        freeForm.put("ConvertedOpportunityId", TEXT, ConvertedOpportunityId);
+        freeForm.put("CleanStatus", TEXT, CleanStatus);
+        freeForm.put("Phone", TEXT, Phone);
+        freeForm.put("MobilePhone", TEXT, MobilePhone);
+        freeForm.put("Email", TEXT, Email);
+        freeForm.put("Description", TEXT, Description);
+        freeForm.put("Status", TEXT, Status);
+        freeForm.put("LeadSource", TEXT, LeadSource);
+        freeForm.put("Industry", TEXT, Industry);
+        freeForm.put("Rating", TEXT, Rating);
+        freeForm.put("AnnualRevenue", DOUBLE, AnnualRevenue);
+        freeForm.put("ConvertedDate", TEXT, ConvertedDate);
+        freeForm.put("CreatedDate", LONG, CreatedDate);
+        freeForm.put("LastModifiedDate", LONG, LastModifiedDate);
         return freeForm;
     }
 }
