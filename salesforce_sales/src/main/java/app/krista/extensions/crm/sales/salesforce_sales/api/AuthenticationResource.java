@@ -21,17 +21,19 @@ import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBElement;
 import java.util.Objects;
 
+import static com.github.scribejava.core.model.OAuthConstants.CODE;
+import static com.github.scribejava.core.model.OAuthConstants.STATE;
+
 @Path("/")
 public final class AuthenticationResource {
 
+    public static final String INVALID_STATE_PARAMETERS = "Invalid state parameters!";
     private final RefreshTokenStore refreshTokenStore;
     private final EventHandler eventHandler;
     private final SalesforceSaleAttributeStore attributeStore;
     private final SalesforceTokenProviderFactory providerFactory;
     private final AuthorizationContext context;
     private final AuthorizationListener authorizationListener;
-    private final String CODE = "code";
-    private final String STATE = "state";
 
     @Inject
     public AuthenticationResource(RefreshTokenStore refreshTokenStore, EventHandler eventHandler, SalesforceSaleAttributeStore attributeStore, SalesforceTokenProviderFactory providerFactory, AuthorizationContext context, AuthorizationListener authorizationListener) {
@@ -49,21 +51,13 @@ public final class AuthenticationResource {
         Objects.requireNonNull(code);
         String[] parts = state.split("#");
         if (parts[0].isBlank() || parts.length > 2) {
-            throw new BadRequestException("Invalid state parameters!");
+            throw new BadRequestException(INVALID_STATE_PARAMETERS);
         }
         String key = parts[0];
         String authContextId = parts.length == 2 ? parts[1] : null;
         try {
             Objects.requireNonNull(code);
-            SalesforceTokenProvider tokenProvider;
-            if (authContextId == null) {
-                tokenProvider = providerFactory.create();
-            } else if (authContextId.isBlank()) {
-                throw new BadRequestException("Invalid state parameter!");
-            } else {
-                SalesforceSalesAttributes salesforceSalesAttributes = attributeStore.load(authContextId);
-                tokenProvider = providerFactory.create(salesforceSalesAttributes);
-            }
+            SalesforceTokenProvider tokenProvider = getSalesforceTokenProvider(authContextId);
             OAuth2AccessToken accessToken = tokenProvider.getSalesforceSalesAttributes().getOauthService().getAccessToken(code);
             refreshTokenStore.put(key + "&" + tokenProvider.getSalesforceSalesAttributes().getClientId() + tokenProvider.getSalesforceSalesAttributes().getClientSecret(), accessToken.getRefreshToken());
             if (context.isAuthenticated()) {
@@ -81,10 +75,23 @@ public final class AuthenticationResource {
         }
     }
 
+    private SalesforceTokenProvider getSalesforceTokenProvider(String authContextId) {
+        SalesforceTokenProvider tokenProvider;
+        if (authContextId == null) {
+            tokenProvider = providerFactory.create();
+        } else if (authContextId.isBlank()) {
+            throw new BadRequestException(INVALID_STATE_PARAMETERS);
+        } else {
+            SalesforceSalesAttributes salesforceSalesAttributes = attributeStore.load(authContextId);
+            tokenProvider = providerFactory.create(salesforceSalesAttributes);
+        }
+        return tokenProvider;
+    }
+
     @POST
     @Path("/opportunityChanged")
     public Response handleAmountChangedEvent(String xml) throws Exception {
-        JAXBElement<Notifications> notifications = XMlResponseParser.parseXmlResponse(xml);
+        JAXBElement<Notifications> notifications = XMlResponseParser.parseOpportunityXmlResponse(xml);
         if (notifications != null) {
             FreeForm notificationSObject = notifications.getValue().getNotification().getSObject()
                     .toOpportunityFreeForm();
@@ -98,7 +105,7 @@ public final class AuthenticationResource {
     public Response handleAccountChangedEvent(String xml) throws Exception {
         JAXBElement<AccountNotifications> accountNotifications = XMlResponseParser.parseAccountXmlResponse(xml);
         if (accountNotifications != null) {
-            FreeForm accountNotificationSObject = accountNotifications.getValue().accountNotification.accountObject
+            FreeForm accountNotificationSObject = accountNotifications.getValue().accountNotification.salesforceXmlAccount
                     .toAccountFreeForm();
             eventHandler.handleEvent("Account Change Alert", accountNotificationSObject);
         }

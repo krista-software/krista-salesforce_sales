@@ -10,7 +10,7 @@ public class SFLeadHistory {
     public boolean done;
     public ArrayList<Record> records;
 
-    public Map<String, Object> toArrayList() {
+    public Map<String, Object> toSFHistoryMap() {
         Map<String, Object> newRecord = new HashMap<>();
         newRecord.put(records.get(0).Field, records.get(0).NewValue);
         Long createdDate = records.get(0).CreatedDate.getTime();

@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlElement;
 
 import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.*;
 
-public final class AccountObject {
+public final class SalesforceXmlAccount {
     @XmlElement(name = "Id", namespace = "urn:sobject.enterprise.soap.sforce.com")
     public String Id;
     @XmlElement(name = "Name", namespace = "urn:sobject.enterprise.soap.sforce.com")

@@ -13,59 +13,38 @@ import javax.xml.stream.XMLStreamReader;
 import java.io.StringReader;
 
 public final class XMlResponseParser {
-    public static JAXBElement<Notifications> parseXmlResponse(String response) throws Exception {
+
+    // region Internal
+    private static <T> JAXBElement<T> parseXmlResponse(String response, Class<T> notificationClass) {
         try {
             XMLInputFactory xif = XMLInputFactory.newFactory();
             XMLStreamReader xsr = xif.createXMLStreamReader(new StringReader(response));
             xsr.nextTag(); // Advance to Envelope tag
-
             xsr.nextTag(); // Advance to Body tag
             xsr.nextTag();
 
-            JAXBContext jc = JAXBContext.newInstance(Notifications.class);
+            JAXBContext jc = JAXBContext.newInstance(notificationClass);
             Unmarshaller unmarshaller = jc.createUnmarshaller();
-            return unmarshaller.unmarshal(xsr, Notifications.class);
+            return unmarshaller.unmarshal(xsr, notificationClass);
 
         } catch (XMLStreamException | JAXBException cause) {
             cause.printStackTrace();
         }
         return null;
+    }
+
+    // endregion
+
+    public static JAXBElement<Notifications> parseOpportunityXmlResponse(String response) throws Exception {
+        return parseXmlResponse(response, Notifications.class);
     }
 
     public static JAXBElement<AccountNotifications> parseAccountXmlResponse(String response) throws Exception {
-        try {
-            XMLInputFactory xif = XMLInputFactory.newFactory();
-            XMLStreamReader xsr = xif.createXMLStreamReader(new StringReader(response));
-            xsr.nextTag(); // Advance to Envelope tag
-
-            xsr.nextTag(); // Advance to Body tag
-            xsr.nextTag();
-
-            JAXBContext jc = JAXBContext.newInstance(AccountNotifications.class);
-            Unmarshaller unmarshaller = jc.createUnmarshaller();
-            return unmarshaller.unmarshal(xsr, AccountNotifications.class);
-
-        } catch (XMLStreamException | JAXBException cause) {
-            cause.printStackTrace();
-        }
-        return null;
+        return parseXmlResponse(response, AccountNotifications.class);
     }
+
     public static JAXBElement<LeadNotifications> parseLeadXmlResponse(String response) throws Exception {
-        try {
-            XMLInputFactory xif = XMLInputFactory.newFactory();
-            XMLStreamReader xsr = xif.createXMLStreamReader(new StringReader(response));
-            xsr.nextTag(); // Advance to Envelope tag
-
-            xsr.nextTag(); // Advance to Body tag
-            xsr.nextTag();
-
-            JAXBContext jc = JAXBContext.newInstance(LeadNotifications.class);
-            Unmarshaller unmarshaller = jc.createUnmarshaller();
-            return unmarshaller.unmarshal(xsr, LeadNotifications.class);
-
-        } catch (XMLStreamException | JAXBException cause) {
-            cause.printStackTrace();
-        }
-        return null;
+        return parseXmlResponse(response, LeadNotifications.class);
     }
+
 }
