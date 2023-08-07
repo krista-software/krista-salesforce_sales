@@ -2,19 +2,21 @@ package app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser;
 
 import javax.xml.bind.annotation.XmlElement;
 
-public final class Notification {
-    @XmlElement(name = "sObject", namespace = "http://soap.sforce.com/2005/09/outbound")
-    private sObject sObject;
+import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.SFORCE_COM_2005_09_OUTBOUND;
 
-    @XmlElement(name = "Id", namespace = "http://soap.sforce.com/2005/09/outbound")
+public final class Notification {
+    @XmlElement(name = "sObject", namespace = SFORCE_COM_2005_09_OUTBOUND)
+    private SalesforceXmlOpportunity SalesforceXmlOpportunity;
+
+    @XmlElement(name = "Id", namespace = SFORCE_COM_2005_09_OUTBOUND)
     private String Id;
 
-    public sObject getSObject() {
-        return sObject;
+    public SalesforceXmlOpportunity getSObject() {
+        return SalesforceXmlOpportunity;
     }
 
-    public void setSObject(sObject sObject) {
-        this.sObject = sObject;
+    public void setSObject(SalesforceXmlOpportunity SalesforceXmlOpportunity) {
+        this.SalesforceXmlOpportunity = SalesforceXmlOpportunity;
     }
 
     public String getId() {

@@ -117,7 +117,7 @@ public final class AuthenticationResource {
     public Response handleLeadChangedEvent(String xml) throws Exception {
         JAXBElement<LeadNotifications> leadNotifications = XMlResponseParser.parseLeadXmlResponse(xml);
         if (leadNotifications != null) {
-            FreeForm leadNotificationSObject = leadNotifications.getValue().leadNotification.leadObject
+            FreeForm leadNotificationSObject = leadNotifications.getValue().leadNotification.salesforceXmlLead
                     .toLeadFreeForm();
             eventHandler.handleEvent("Lead Change Alert", leadNotificationSObject);
         }

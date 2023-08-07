@@ -8,76 +8,73 @@ import java.util.Arrays;
 import java.util.List;
 
 import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.*;
-import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.LONG;
 
-public final class LeadObject {
+public final class SalesforceXmlLead {
 
-    @XmlElement(name = "FirstName", namespace = "urn:sobject.enterprise.soap.sforce.com")
+    @XmlElement(name = "FirstName", namespace = ENTERPRISE_SOAP_SFORCE_COM)
     public String FirstName;
-    @XmlElement(name = "LastName", namespace = "urn:sobject.enterprise.soap.sforce.com")
+    @XmlElement(name = "LastName", namespace = ENTERPRISE_SOAP_SFORCE_COM)
     public String LastName;
-    @XmlElement(name = "Name", namespace = "urn:sobject.enterprise.soap.sforce.com")
+    @XmlElement(name = "Name", namespace = ENTERPRISE_SOAP_SFORCE_COM)
     public String Name;
-    @XmlElement(name = "Id", namespace = "urn:sobject.enterprise.soap.sforce.com")
+    @XmlElement(name = "Id", namespace = ENTERPRISE_SOAP_SFORCE_COM)
     public String Id;
-    @XmlElement(name = "Title", namespace = "urn:sobject.enterprise.soap.sforce.com")
+    @XmlElement(name = "Title", namespace = ENTERPRISE_SOAP_SFORCE_COM)
     public String Title;
-    @XmlElement(name = "Company", namespace = "urn:sobject.enterprise.soap.sforce.com")
+    @XmlElement(name = "Company", namespace = ENTERPRISE_SOAP_SFORCE_COM)
     public String Company;
-    @XmlElement(name = "Website", namespace = "urn:sobject.enterprise.soap.sforce.com")
+    @XmlElement(name = "Website", namespace = ENTERPRISE_SOAP_SFORCE_COM)
     public String Website;
-    @XmlElement(name = "OwnerId", namespace = "urn:sobject.enterprise.soap.sforce.com")
+    @XmlElement(name = "OwnerId", namespace = ENTERPRISE_SOAP_SFORCE_COM)
     public String OwnerId;
-    @XmlElement(name = "IsConverted", namespace = "urn:sobject.enterprise.soap.sforce.com")
+    @XmlElement(name = "IsConverted", namespace = ENTERPRISE_SOAP_SFORCE_COM)
     public String IsConverted;
-    @XmlElement(name = "ConvertedAccountId", namespace = "urn:sobject.enterprise.soap.sforce.com")
+    @XmlElement(name = "ConvertedAccountId", namespace = ENTERPRISE_SOAP_SFORCE_COM)
     public String ConvertedAccountId;
-    @XmlElement(name = "ConvertedContactId", namespace = "urn:sobject.enterprise.soap.sforce.com")
+    @XmlElement(name = "ConvertedContactId", namespace = ENTERPRISE_SOAP_SFORCE_COM)
     public String ConvertedContactId;
-    @XmlElement(name = "ConvertedOpportunityId", namespace = "urn:sobject.enterprise.soap.sforce.com")
+    @XmlElement(name = "ConvertedOpportunityId", namespace = ENTERPRISE_SOAP_SFORCE_COM)
     public String ConvertedOpportunityId;
-    @XmlElement(name = "CleanStatus", namespace = "urn:sobject.enterprise.soap.sforce.com")
+    @XmlElement(name = "CleanStatus", namespace = ENTERPRISE_SOAP_SFORCE_COM)
     public String CleanStatus;
-    @XmlElement(name = "Phone", namespace = "urn:sobject.enterprise.soap.sforce.com")
+    @XmlElement(name = "Phone", namespace = ENTERPRISE_SOAP_SFORCE_COM)
     public String Phone;
-    @XmlElement(name = "MobilePhone", namespace = "urn:sobject.enterprise.soap.sforce.com")
+    @XmlElement(name = "MobilePhone", namespace = ENTERPRISE_SOAP_SFORCE_COM)
     public String MobilePhone;
-    @XmlElement(name = "Email", namespace = "urn:sobject.enterprise.soap.sforce.com")
+    @XmlElement(name = "Email", namespace = ENTERPRISE_SOAP_SFORCE_COM)
     public String Email;
-    @XmlElement(name = "Description", namespace = "urn:sobject.enterprise.soap.sforce.com")
+    @XmlElement(name = "Description", namespace = ENTERPRISE_SOAP_SFORCE_COM)
     public String Description;
-    @XmlElement(name = "Status", namespace = "urn:sobject.enterprise.soap.sforce.com")
+    @XmlElement(name = "Status", namespace = ENTERPRISE_SOAP_SFORCE_COM)
     public String Status;
-    @XmlElement(name = "LeadSource", namespace = "urn:sobject.enterprise.soap.sforce.com")
+    @XmlElement(name = "LeadSource", namespace = ENTERPRISE_SOAP_SFORCE_COM)
     public String LeadSource;
-    @XmlElement(name = "Industry", namespace = "urn:sobject.enterprise.soap.sforce.com")
+    @XmlElement(name = "Industry", namespace = ENTERPRISE_SOAP_SFORCE_COM)
     public String Industry;
-    @XmlElement(name = "Rating", namespace = "urn:sobject.enterprise.soap.sforce.com")
+    @XmlElement(name = "Rating", namespace = ENTERPRISE_SOAP_SFORCE_COM)
     public String Rating;
-    @XmlElement(name = "AnnualRevenue", namespace = "urn:sobject.enterprise.soap.sforce.com")
+    @XmlElement(name = "AnnualRevenue", namespace = ENTERPRISE_SOAP_SFORCE_COM)
     public Double AnnualRevenue;
-    @XmlElement(name = "ConvertedDate", namespace = "urn:sobject.enterprise.soap.sforce.com")
+    @XmlElement(name = "ConvertedDate", namespace = ENTERPRISE_SOAP_SFORCE_COM)
     public String ConvertedDate;
-    @XmlElement(name = "CreatedDate", namespace = "urn:sobject.enterprise.soap.sforce.com")
+    @XmlElement(name = "CreatedDate", namespace = ENTERPRISE_SOAP_SFORCE_COM)
     public Long CreatedDate;
 
-    @XmlElement(name = "LastModifiedDate", namespace = "urn:sobject.enterprise.soap.sforce.com")
+    @XmlElement(name = "LastModifiedDate", namespace = ENTERPRISE_SOAP_SFORCE_COM)
     public Long LastModifiedDate;
 
     public FreeForm toLeadFreeForm() {
         FreeForm freeForm = new FreeForm();
-        if (Name != null) {
+        if (Name != null && !Name.isEmpty()) {
             List<String> name = new ArrayList<>(Arrays.asList(Name.split("\\s+")));
-            if (name.size() == 1)
-                LastName = Name;
+            if (name.size() == 1) LastName = Name;
             else {
                 FirstName = name.get(0);
                 name.remove(0);
                 LastName = String.join(" ", name);
             }
         }
-        String leadName = FirstName == null ? LastName :
-                FirstName + " " + LastName;
+        String leadName = FirstName == null ? LastName : FirstName + " " + LastName;
         freeForm.put("Name", TEXT, leadName);
         freeForm.put("Id", TEXT, Id);
         freeForm.put("Title", TEXT, Title);

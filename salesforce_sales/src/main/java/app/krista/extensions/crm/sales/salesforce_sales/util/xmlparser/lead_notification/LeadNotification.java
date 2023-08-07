@@ -2,10 +2,13 @@ package app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.lead_not
 
 import javax.xml.bind.annotation.XmlElement;
 
-public final class LeadNotification {
-    @XmlElement(name = "sObject", namespace = "http://soap.sforce.com/2005/09/outbound")
-    public LeadObject leadObject;
+import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.SFORCE_COM_2005_09_OUTBOUND;
 
-    @XmlElement(name = "Id", namespace = "http://soap.sforce.com/2005/09/outbound")
+public final class LeadNotification {
+
+    @XmlElement(name = "sObject", namespace = SFORCE_COM_2005_09_OUTBOUND)
+    public SalesforceXmlLead salesforceXmlLead;
+
+    @XmlElement(name = "Id", namespace = SFORCE_COM_2005_09_OUTBOUND)
     public String Id;
 }

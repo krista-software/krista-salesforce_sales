@@ -8,17 +8,16 @@ import app.krista.extensions.crm.sales.salesforce_sales.impl.LeadDaoImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.util.DatePlus;
 import app.krista.model.base.FreeForm;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.inject.Inject;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.CREATED;
-import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.getValidatedDouble;
-import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.getValidatedString;
+import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.getDoubleOrEmpty;
+import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.getStringOrEmpty;
 
 @Domain(id = "catEntryDomain_086f33da-aaea-4d0c-816f-3d5f20b4a273",
         name = "Sales",
@@ -33,6 +32,36 @@ public final class LeadsManagementArea {
     @Inject
     private LeadsManagementArea(LeadDaoImpl leadDao) {
         this.leadDao = leadDao;
+    }
+
+    private static void setLeadDetails(Map<String, Object> leadData, Map<String, Object> leadMap) {
+        leadMap.put("Lead Name", leadData.get(NAME));
+        leadMap.put("Lead Title", getStringOrEmpty(leadData.get("Title")));
+        leadMap.put("Lead Company", getStringOrEmpty(leadData.get("Company")));
+        leadMap.put("Lead Website", getStringOrEmpty(leadData.get("Website")));
+        leadMap.put("Lead Owner Id", getStringOrEmpty(leadData.get("OwnerId")));
+        leadMap.put("Lead Is Converted", getStringOrEmpty(leadData.get("IsConverted")));
+        leadMap.put("Lead Converted Account Id", getStringOrEmpty(leadData.get("ConvertedAccountId")));
+        leadMap.put("Lead Converted Contact Id", getStringOrEmpty(leadData.get("ConvertedContactId")));
+        leadMap.put("Lead Converted Opportunity Id", getStringOrEmpty(leadData.get("ConvertedOpportunityId")));
+        leadMap.put("Lead Clean Status", getStringOrEmpty(leadData.get("CleanStatus")));
+        leadMap.put("Lead Phone", getStringOrEmpty(leadData.get("Phone")));
+        leadMap.put("Lead MobilePhone", getStringOrEmpty(leadData.get("MobilePhone")));
+        leadMap.put("Lead Email", getStringOrEmpty(leadData.get("Email")));
+        leadMap.put("Lead Description", getStringOrEmpty(leadData.get("Description")));
+        leadMap.put("Lead Status", getStringOrEmpty(leadData.get("Status")));
+        leadMap.put("Lead LeadSource", getStringOrEmpty(leadData.get("LeadSource")));
+        leadMap.put("Lead Industry", getStringOrEmpty(leadData.get("Industry")));
+        leadMap.put("Lead Rating", getStringOrEmpty(leadData.get("Rating")));
+        leadMap.put("Lead Annual Revenue", getDoubleOrEmpty(leadData.get("AnnualRevenue")));
+        leadMap.put("Lead Created Date", leadData.get("CreatedDate") != null
+                ? Long.parseLong((String) leadData.get("CreatedDate")) : null);
+        leadMap.put("Lead Converted Date", leadData.get("ConvertedDate") != null
+                ? Objects.requireNonNull(DatePlus.fromYYYYMMDD(leadData.get("ConvertedDate").toString())).getTime()
+                : null);
+        leadMap.put("Lead Last Modified Date", leadData.get("LastModifiedDate") != null
+                ? Long.parseLong((String) leadData.get("LastModifiedDate")) : null);
+
     }
 
     @CatalogRequest(
@@ -108,35 +137,5 @@ public final class LeadsManagementArea {
             }
             setLeadDetails(fetched, leadMap);
         }
-    }
-
-    private static void setLeadDetails(Map<String, Object> leadData, Map<String, Object> leadMap) {
-        leadMap.put("Lead Name", leadData.get(NAME));
-        leadMap.put("Lead Title", getValidatedString(leadData.get("Title")));
-        leadMap.put("Lead Company", getValidatedString(leadData.get("Company")));
-        leadMap.put("Lead Website", getValidatedString(leadData.get("Website")));
-        leadMap.put("Lead Owner Id", getValidatedString(leadData.get("OwnerId")));
-        leadMap.put("Lead Is Converted", getValidatedString(leadData.get("IsConverted")));
-        leadMap.put("Lead Converted Account Id", getValidatedString(leadData.get("ConvertedAccountId")));
-        leadMap.put("Lead Converted Contact Id", getValidatedString(leadData.get("ConvertedContactId")));
-        leadMap.put("Lead Converted Opportunity Id", getValidatedString(leadData.get("ConvertedOpportunityId")));
-        leadMap.put("Lead Clean Status", getValidatedString(leadData.get("CleanStatus")));
-        leadMap.put("Lead Phone", getValidatedString(leadData.get("Phone")));
-        leadMap.put("Lead MobilePhone", getValidatedString(leadData.get("MobilePhone")));
-        leadMap.put("Lead Email", getValidatedString(leadData.get("Email")));
-        leadMap.put("Lead Description", getValidatedString(leadData.get("Description")));
-        leadMap.put("Lead Status", getValidatedString(leadData.get("Status")));
-        leadMap.put("Lead LeadSource", getValidatedString(leadData.get("LeadSource")));
-        leadMap.put("Lead Industry", getValidatedString(leadData.get("Industry")));
-        leadMap.put("Lead Rating", getValidatedString(leadData.get("Rating")));
-        leadMap.put("Lead Annual Revenue", getValidatedDouble(leadData.get("AnnualRevenue")));
-        leadMap.put("Lead Created Date", leadData.get("CreatedDate") != null
-                ? Long.parseLong((String) leadData.get("CreatedDate")) : null);
-        leadMap.put("Lead Converted Date", leadData.get("ConvertedDate") != null
-                ? Objects.requireNonNull(DatePlus.fromYYYYMMDD(leadData.get("ConvertedDate").toString())).getTime()
-                : null);
-        leadMap.put("Lead Last Modified Date", leadData.get("LastModifiedDate") != null
-                ? Long.parseLong((String) leadData.get("LastModifiedDate")) : null);
-
     }
 }

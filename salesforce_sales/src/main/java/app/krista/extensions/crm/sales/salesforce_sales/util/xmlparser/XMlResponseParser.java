@@ -16,34 +16,40 @@ public final class XMlResponseParser {
 
     // region Internal
     private static <T> JAXBElement<T> parseXmlResponse(String response, Class<T> notificationClass) {
-        try {
+        try (StringReader stringReader = new StringReader(response)) {
             XMLInputFactory xif = XMLInputFactory.newFactory();
-            XMLStreamReader xsr = xif.createXMLStreamReader(new StringReader(response));
-            xsr.nextTag(); // Advance to Envelope tag
-            xsr.nextTag(); // Advance to Body tag
-            xsr.nextTag();
+            XMLStreamReader xsr = xif.createXMLStreamReader(stringReader);
+            xif.setProperty(XMLInputFactory.SUPPORT_DTD, false); // Disable DTD support
+            xif.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false); // Disable external entities
+            try {
+                xsr.nextTag(); // Advance to Envelope tag
+                xsr.nextTag(); // Advance to Body tag
+                xsr.nextTag();
 
-            JAXBContext jc = JAXBContext.newInstance(notificationClass);
-            Unmarshaller unmarshaller = jc.createUnmarshaller();
-            return unmarshaller.unmarshal(xsr, notificationClass);
+                JAXBContext jc = JAXBContext.newInstance(notificationClass);
+                Unmarshaller unmarshaller = jc.createUnmarshaller();
+                return unmarshaller.unmarshal(xsr, notificationClass);
+            } finally {
+                xsr.close();
+            }
 
         } catch (XMLStreamException | JAXBException cause) {
-            cause.printStackTrace();
+            System.err.println("XML Parsing Failed for " + notificationClass.getSimpleName() + " with error " + cause.getMessage());
         }
         return null;
     }
 
     // endregion
 
-    public static JAXBElement<Notifications> parseOpportunityXmlResponse(String response) throws Exception {
+    public static JAXBElement<Notifications> parseOpportunityXmlResponse(String response) {
         return parseXmlResponse(response, Notifications.class);
     }
 
-    public static JAXBElement<AccountNotifications> parseAccountXmlResponse(String response) throws Exception {
+    public static JAXBElement<AccountNotifications> parseAccountXmlResponse(String response) {
         return parseXmlResponse(response, AccountNotifications.class);
     }
 
-    public static JAXBElement<LeadNotifications> parseLeadXmlResponse(String response) throws Exception {
+    public static JAXBElement<LeadNotifications> parseLeadXmlResponse(String response) {
         return parseXmlResponse(response, LeadNotifications.class);
     }
 

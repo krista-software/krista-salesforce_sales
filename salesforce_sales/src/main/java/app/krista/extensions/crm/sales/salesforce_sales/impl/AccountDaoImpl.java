@@ -72,8 +72,8 @@ public class AccountDaoImpl implements AccountDao {
 
     public Map<String, Object> getAccountUpdatedFields(String query) {
         String response = salesforceManager.getRecordByQuery(query);
-        SFAccountHistory sfAccountHistory = GSON.fromJson(response, SFAccountHistory.class);
-        return sfAccountHistory.toArrayList();
+        SFAccountHistory sfHistory = GSON.fromJson(response, SFAccountHistory.class);
+        return sfHistory.toMap();
     }
 
 
