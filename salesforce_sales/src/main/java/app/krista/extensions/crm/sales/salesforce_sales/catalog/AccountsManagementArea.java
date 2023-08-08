@@ -14,8 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.getDoubleOrEmpty;
-import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.getStringOrEmpty;
+import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.*;
 
 @Domain(id = "catEntryDomain_086f33da-aaea-4d0c-816f-3d5f20b4a273", name = "Sales", ecosystemId = "catEntryEcosystem_8a0e8ce7-6289-492f-9202-52284024280c", ecosystemName = "CRM", ecosystemVersion = "c93e81ed-93eb-4f29-b36c-4186cabee3d1")
 public class AccountsManagementArea {
@@ -34,21 +33,18 @@ public class AccountsManagementArea {
     public Map<String, Object> accountChangeAlert(
             @Field(name = "eventName", type = "Text") String eventName,
             @Field(name = "eventData", type = "FreeForm") FreeForm eventData) {
+        Map<String, Object> accountMap = new HashMap<>();
         try {
             if (eventName.equals("Account Change Alert")) {
-                Map<String, Object> accountMap = new HashMap<>();
-
                 accountMap.put("Account Id", eventData.get("Id"));
                 setAccountDetails(eventData, accountMap);
-
                 updateAccountDetails(eventData, accountMap);
                 return accountMap;
             }
-            return Map.of();
         } catch (IllegalArgumentException cause) {
             System.err.println(cause.getMessage());
-            return Map.of();
         }
+        return accountMap;
     }
 
     private void updateAccountDetails(FreeForm eventData, Map<String, Object> accountMap) {
@@ -88,10 +84,10 @@ public class AccountsManagementArea {
         accountMap.put("Account Shipping Country", getStringOrEmpty(accountData.get("ShippingCountry")));
         accountMap.put("Account Phone", getStringOrEmpty(accountData.get("Phone")));
         accountMap.put("Account Industry", getStringOrEmpty(accountData.get("Industry")));
-        accountMap.put("Account Number Of Employees", getDoubleOrEmpty(accountData.get("NumberOfEmployees")));
+        accountMap.put("Account Number Of Employees", getDoubleOrZero(accountData.get("NumberOfEmployees")));
         accountMap.put("Account Ownership", getStringOrEmpty(accountData.get("Ownership")));
         accountMap.put("Account Customer Priority", getStringOrEmpty(accountData.get("CustomerPriority__c")));
-        accountMap.put("Account Annual Revenue", getDoubleOrEmpty(accountData.get("AnnualRevenue")));
+        accountMap.put("Account Annual Revenue", getDoubleOrZero(accountData.get("AnnualRevenue")));
         accountMap.put("Account SLA Expiration Date", accountData.get("SLAExpirationDate__c") != null
                 ? Objects.requireNonNull(
                 DatePlus.fromYYYYMMDD(accountData.get("SLAExpirationDate__c").toString())).getTime()

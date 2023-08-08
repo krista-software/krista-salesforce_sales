@@ -16,7 +16,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.CREATED;
-import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.getDoubleOrEmpty;
+import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.getDoubleOrZero;
 import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.getStringOrEmpty;
 
 @Domain(id = "catEntryDomain_086f33da-aaea-4d0c-816f-3d5f20b4a273",
@@ -25,7 +25,6 @@ import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.g
         ecosystemName = "CRM",
         ecosystemVersion = "db320c64-6f6f-4c9e-8daa-41d3f796d6a6")
 public final class LeadsManagementArea {
-
     public static final String NAME = "Name";
     private final LeadDaoImpl leadDao;
 
@@ -53,7 +52,7 @@ public final class LeadsManagementArea {
         leadMap.put("Lead LeadSource", getStringOrEmpty(leadData.get("LeadSource")));
         leadMap.put("Lead Industry", getStringOrEmpty(leadData.get("Industry")));
         leadMap.put("Lead Rating", getStringOrEmpty(leadData.get("Rating")));
-        leadMap.put("Lead Annual Revenue", getDoubleOrEmpty(leadData.get("AnnualRevenue")));
+        leadMap.put("Lead Annual Revenue", getDoubleOrZero(leadData.get("AnnualRevenue")));
         leadMap.put("Lead Created Date", leadData.get("CreatedDate") != null
                 ? Long.parseLong((String) leadData.get("CreatedDate")) : null);
         leadMap.put("Lead Converted Date", leadData.get("ConvertedDate") != null
@@ -109,19 +108,17 @@ public final class LeadsManagementArea {
     public Map<String, Object> leadChangeAlert(
             @Field(name = "eventName", type = "Text") String eventName,
             @Field(name = "eventData", type = "FreeForm") FreeForm eventData) {
+        Map<String, Object> leadMap = new HashMap<>();
         try {
             if (eventName.equals("Lead Change Alert")) {
-                Map<String, Object> leadMap = new HashMap<>();
                 leadMap.put("Lead Id", eventData.get("Id"));
                 setLeadDetails(eventData, leadMap);
                 updateLeadDetails(eventData, leadMap);
-                return leadMap;
             }
-            return Map.of();
         } catch (IllegalArgumentException cause) {
             System.err.println(cause.getMessage());
-            return Map.of();
         }
+        return leadMap;
     }
 
     private void updateLeadDetails(FreeForm eventData, Map<String, Object> leadMap) {

@@ -5,7 +5,7 @@ public class Validators {
         return value != null ? value.toString() : "";
     }
 
-    public static Double getDoubleOrEmpty(Object value) {
+    public static Double getDoubleOrZero(Object value) {
         return value != null ? (Double) value : 0;
     }
 

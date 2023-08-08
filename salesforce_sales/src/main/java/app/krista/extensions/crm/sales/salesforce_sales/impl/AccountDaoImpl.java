@@ -76,7 +76,6 @@ public class AccountDaoImpl implements AccountDao {
         return sfHistory.toMap();
     }
 
-
     public void deleteAccount(String key) {
         salesforceManager.deleteRecordById(key, ACCOUNT);
     }

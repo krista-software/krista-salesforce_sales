@@ -19,14 +19,13 @@ public class SFAccountHistory {
                 Long newCreatedDate = records.get(i).CreatedDate.getTime();
                 if (createdDate > newCreatedDate) {
                     return newRecord;
-                } else if (createdDate == newCreatedDate) {
+                } else if (createdDate.equals(newCreatedDate)) {
                     newRecord.put(records.get(i).Field, records.get(i).NewValue);
                 }
             }
         }
         return newRecord;
     }
-
 
     public class Record {
         public Attributes attributes;
