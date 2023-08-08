@@ -7,9 +7,24 @@ import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.SF
 
 public final class AccountNotification {
     @XmlElement(name = "sObject", namespace = SFORCE_COM_2005_09_OUTBOUND)
-    public SalesforceXmlAccount salesforceXmlAccount;
+    private SalesforceXmlAccount SalesforceXmlAccount;
 
     @XmlElement(name = "Id", namespace = SFORCE_COM_2005_09_OUTBOUND)
-    public String Id;
+    private String Id;
 
+    public SalesforceXmlAccount getSalesforceXmlAccount() {
+        return SalesforceXmlAccount;
+    }
+
+    public void setSalesforceXmlAccount(SalesforceXmlAccount salesforceXmlAccount) {
+        this.SalesforceXmlAccount = salesforceXmlAccount;
+    }
+
+    public String getId() {
+        return Id;
+    }
+
+    public void setId(String id) {
+        Id = id;
+    }
 }

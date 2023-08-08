@@ -2,6 +2,7 @@ package app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser;
 
 import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.account_notification.AccountNotifications;
 import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.lead_notification.LeadNotifications;
+import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.opportunity_notification.OpportunityNotifications;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -18,9 +19,9 @@ public final class XMlResponseParser {
     private static <T> JAXBElement<T> parseXmlResponse(String response, Class<T> notificationClass) {
         try (StringReader stringReader = new StringReader(response)) {
             XMLInputFactory xif = XMLInputFactory.newFactory();
-            XMLStreamReader xsr = xif.createXMLStreamReader(stringReader);
             xif.setProperty(XMLInputFactory.SUPPORT_DTD, false); // Disable DTD support
             xif.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false); // Disable external entities
+            XMLStreamReader xsr = xif.createXMLStreamReader(stringReader);
             try {
                 xsr.nextTag(); // Advance to Envelope tag
                 xsr.nextTag(); // Advance to Body tag
@@ -41,8 +42,8 @@ public final class XMlResponseParser {
 
     // endregion
 
-    public static JAXBElement<Notifications> parseOpportunityXmlResponse(String response) {
-        return parseXmlResponse(response, Notifications.class);
+    public static JAXBElement<OpportunityNotifications> parseOpportunityXmlResponse(String response) {
+        return parseXmlResponse(response, OpportunityNotifications.class);
     }
 
     public static JAXBElement<AccountNotifications> parseAccountXmlResponse(String response) {

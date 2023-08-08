@@ -1,4 +1,4 @@
-package app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser;
+package app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.opportunity_notification;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -9,7 +9,7 @@ import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.SF
 
 @XmlRootElement(name = "Notifications", namespace = SFORCE_COM_2005_09_OUTBOUND)
 @XmlAccessorType(XmlAccessType.FIELD)
-public final class Notifications {
+public final class OpportunityNotifications {
     @XmlElement(name = "ActionId", namespace = SFORCE_COM_2005_09_OUTBOUND)
     private String ActionId;
     private String PartnerUrl;
@@ -18,7 +18,7 @@ public final class Notifications {
     private String SessionId;
 
     @XmlElement(name = "Notification", namespace = SFORCE_COM_2005_09_OUTBOUND)
-    private Notification Notification;
+    private OpportunityNotification OpportunityNotification;
 
     public String getActionId() {
         return ActionId;
@@ -60,11 +60,11 @@ public final class Notifications {
         this.SessionId = SessionId;
     }
 
-    public Notification getNotification() {
-        return Notification;
+    public OpportunityNotification getNotification() {
+        return OpportunityNotification;
     }
 
-    public void setNotification(Notification Notification) {
-        this.Notification = Notification;
+    public void setNotification(OpportunityNotification OpportunityNotification) {
+        this.OpportunityNotification = OpportunityNotification;
     }
 }

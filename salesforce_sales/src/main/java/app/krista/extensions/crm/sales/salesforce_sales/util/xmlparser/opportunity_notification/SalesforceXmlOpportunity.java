@@ -1,4 +1,4 @@
-package app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser;
+package app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.opportunity_notification;
 
 import app.krista.model.base.FreeForm;
 

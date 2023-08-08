@@ -1,10 +1,10 @@
-package app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser;
+package app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.opportunity_notification;
 
 import javax.xml.bind.annotation.XmlElement;
 
 import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.SFORCE_COM_2005_09_OUTBOUND;
 
-public final class Notification {
+public final class OpportunityNotification {
     @XmlElement(name = "sObject", namespace = SFORCE_COM_2005_09_OUTBOUND)
     private SalesforceXmlOpportunity SalesforceXmlOpportunity;
 

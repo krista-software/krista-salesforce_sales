@@ -7,8 +7,24 @@ import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.SF
 public final class LeadNotification {
 
     @XmlElement(name = "sObject", namespace = SFORCE_COM_2005_09_OUTBOUND)
-    public SalesforceXmlLead salesforceXmlLead;
+    private SalesforceXmlLead SalesforceXmlLead;
 
     @XmlElement(name = "Id", namespace = SFORCE_COM_2005_09_OUTBOUND)
-    public String Id;
+    private String Id;
+
+    public SalesforceXmlLead getSalesforceXmlLead() {
+        return SalesforceXmlLead;
+    }
+
+    public void setSalesforceXmlLead(SalesforceXmlLead salesforceXmlLead) {
+        this.SalesforceXmlLead = salesforceXmlLead;
+    }
+
+    public String getId() {
+        return Id;
+    }
+
+    public void setId(String id) {
+        Id = id;
+    }
 }

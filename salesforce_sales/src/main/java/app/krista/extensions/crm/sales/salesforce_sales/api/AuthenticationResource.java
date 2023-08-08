@@ -5,10 +5,10 @@ import app.krista.extensions.crm.sales.salesforce_sales.impl.connectores.Salesfo
 import app.krista.extensions.crm.sales.salesforce_sales.impl.connectores.SalesforceTokenProviderFactory;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.stores.RefreshTokenStore;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.stores.SalesforceSaleAttributeStore;
-import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.Notifications;
 import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.XMlResponseParser;
 import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.account_notification.AccountNotifications;
 import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.lead_notification.LeadNotifications;
+import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.opportunity_notification.OpportunityNotifications;
 import app.krista.extensions.util.EventHandler;
 import app.krista.ksdk.authentication.AuthorizationListener;
 import app.krista.ksdk.context.AuthorizationContext;
@@ -91,7 +91,7 @@ public final class AuthenticationResource {
     @POST
     @Path("/opportunityChanged")
     public Response handleAmountChangedEvent(String xml) throws Exception {
-        JAXBElement<Notifications> notifications = XMlResponseParser.parseOpportunityXmlResponse(xml);
+        JAXBElement<OpportunityNotifications> notifications = XMlResponseParser.parseOpportunityXmlResponse(xml);
         if (notifications != null) {
             FreeForm notificationSObject = notifications.getValue().getNotification().getSObject()
                     .toOpportunityFreeForm();
@@ -105,8 +105,9 @@ public final class AuthenticationResource {
     public Response handleAccountChangedEvent(String xml) throws Exception {
         JAXBElement<AccountNotifications> accountNotifications = XMlResponseParser.parseAccountXmlResponse(xml);
         if (accountNotifications != null) {
-            FreeForm accountNotificationSObject = accountNotifications.getValue().accountNotification.salesforceXmlAccount
+            FreeForm accountNotificationSObject = accountNotifications.getValue().getAccountNotification().getSalesforceXmlAccount()
                     .toAccountFreeForm();
+
             eventHandler.handleEvent("Account Change Alert", accountNotificationSObject);
         }
         return Response.ok().build();
@@ -117,12 +118,11 @@ public final class AuthenticationResource {
     public Response handleLeadChangedEvent(String xml) throws Exception {
         JAXBElement<LeadNotifications> leadNotifications = XMlResponseParser.parseLeadXmlResponse(xml);
         if (leadNotifications != null) {
-            FreeForm leadNotificationSObject = leadNotifications.getValue().leadNotification.salesforceXmlLead
+            FreeForm leadNotificationSObject = leadNotifications.getValue().getLeadNotification().getSalesforceXmlLead()
                     .toLeadFreeForm();
             eventHandler.handleEvent("Lead Change Alert", leadNotificationSObject);
         }
         return Response.ok().build();
     }
-
 
 }
