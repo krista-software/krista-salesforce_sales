@@ -317,13 +317,13 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 
   - On the **Outbound Messages** page, click on **New Outbound Message**.
 
-    - Select **Opportunity** object and then click on **Next**.
+    - From the Object drop-down list, select **Opportunity** as an object then click **Next**.
 
     - On the next page enter **Name**.
 
     - Enter **Endpoint URL**
         - Go to the Detail's page of the extension and copy the Routing id from there. After that, append **'
-          /rest/salesforcesales/opportunityChanged'** at the end of the routing id (This is your endpoint uri)
+          /rest/salesforcesales/opportunityChanged'** at the end of the routing id (This is your endpoint uri).
       
           ![Routing Id Reference](../_media/routingId.png)
 
@@ -336,20 +336,19 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
     - On the SETUP Home page, under the **Process Automation** menu on the left panel, click **Workflow Rules**.
       ![Setup](../_media/workflowRules.png)
 
-    - On the **Workflow Rules**, click **New Role** and select **Continue with Workflow Rules**.
+    - On the **Workflow Rules**, click **New Rule** and select **Continue with Workflow Rules**.
 
-    - On the workflow rule page, select **Opportunity** as object then click **Next**.
+    - On the Workflow Rules page, select **Opportunity** as object then click **Next**.
 
-    - On the next page add **Rule Name**, **Evaluation Criteria**, and **Rule Criteria** and then click **Save and Next
-      **.
+    - On the next page add **Rule Name**, **Evaluation Criteria**, and **Rule Criteria** and then click **Save & Next**.
 
     - On the next page click **Add Workflow Action** and select **Select Existing Action**.
 
     - On the next page select **Outbound Message** under the **Choose Action Type**.
 
-    - And select your created Outbound Message under **Available Actions** and click Add arrow, and then click **Save**
+    - And select your created Outbound Message under **Available Actions** and click Add arrow, and then click **Save**.
 
-    - Now click on **Done** button
+    - Now click **Done** button.
 
 ### Accounts Management Area
 
@@ -376,13 +375,13 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 
 - On the **Outbound Messages** page, click on **New Outbound Message**.
 
-  - Select **Account** object and then click on **Next**.
+  - From the Object drop-down list, select **Account** as an object then click **Next**.
 
   - On the next page enter **Name**.
 
   - Enter **Endpoint URL**
     - Go to the Detail's page of the extension and copy the Routing id from there. After that, append **'
-      /rest/salesforcesales/accountChanged'** at the end of the routing id (This is your endpoint uri)
+      /rest/salesforcesales/accountChanged'** at the end of the routing id (This is your endpoint uri).
 
       ![Routing Id Reference](../_media/routingId.png)
 
@@ -395,27 +394,26 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
   - On the SETUP Home page, under the **Process Automation** menu on the left panel, click **Workflow Rules**.
     ![Setup](../_media/workflowRules.png)
 
-  - On the **Workflow Rules**, click **New Role** and select **Continue with Workflow Rules**.
+  - On the **Workflow Rules**, click **New Rule** and select **Continue with Workflow Rules**.
 
-  - On the workflow rule page, select **Account** as object then click **Next**.
+  - On the Workflow Rules page, select **Account** as object then click **Next**.
 
-  - On the next page add **Rule Name**, **Evaluation Criteria**, and **Rule Criteria** and then click **Save and Next
-    **.
+  - On the next page add **Rule Name**, **Evaluation Criteria**, and **Rule Criteria** and then click **Save & Next**.
 
   - On the next page click **Add Workflow Action** and select **Select Existing Action**.
 
   - On the next page select **Outbound Message** under the **Choose Action Type**.
 
-  - And select your created Outbound Message under **Available Actions** and click Add arrow, and then click **Save**
+  - And select your created Outbound Message under **Available Actions** and click Add arrow, and then click **Save**.
 
-  - Now click on **Done** button
+  - Now click **Done** button.
 
-* Now **Set History Tracking**:
+* For the purpose of tracking history of attribute values, perform the following steps:
   - Click on Setup icon on the upper right of the salesforce page. 
   - Select object manager on the left upper navigation bar. 
   - Select Account if you are working with account change alert  as the LABEL.
   - Select Fields and Relationships from the left menu.
-  - Click on **Set History Tracking** on the upper right and enable Account History.
+  - Click **Set History Tracking** on the upper right and enable Account History.
   - Select the below given fields and save.
     ![Setup](../pages/../_media/addAccountFields.png)
 
@@ -471,13 +469,13 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 
 - On the **Outbound Messages** page, click on **New Outbound Message**.
 
-  - Select **Lead** object and then click on **Next**.
+  - From the Object drop-down list, select **Lead** as an object then click **Next**.
 
   - On the next page enter **Name**.
 
   - Enter **Endpoint URL**
     - Go to the Detail's page of the extension and copy the Routing id from there. After that, append **'
-      /rest/salesforcesales/leadChanged'** at the end of the routing id (This is your endpoint uri)
+      /rest/salesforcesales/leadChanged'** at the end of the routing id (This is your endpoint uri).
 
       ![Routing Id Reference](../_media/routingId.png)
 
@@ -490,27 +488,26 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
   - On the SETUP Home page, under the **Process Automation** menu on the left panel, click **Workflow Rules**.
     ![Setup](../_media/workflowRules.png)
 
-  - On the **Workflow Rules**, click **New Role** and select **Continue with Workflow Rules**.
+  - On the **Workflow Rules**, click **New Rule** and select **Continue with Workflow Rules**.
 
-  - On the workflow rule page, select **Lead** as object then click **Next**.
+  - On the Workflow Rules page, select **Lead** as object then click **Next**.
 
-  - On the next page add **Rule Name**, **Evaluation Criteria**, and **Rule Criteria** and then click **Save and Next
-    **.
+  - On the next page add **Rule Name**, **Evaluation Criteria**, and **Rule Criteria** and then click **Save & Next**.
 
   - On the next page click **Add Workflow Action** and select **Select Existing Action**.
 
   - On the next page select **Outbound Message** under the **Choose Action Type**.
 
-  - And select your created Outbound Message under **Available Actions** and click Add arrow, and then click **Save**
+  - And select your created Outbound Message under **Available Actions** and click Add arrow, and then click **Save**.
 
-  - Now click on **Done** button
+  - Now click **Done** button.
 
-* Now **Set History Tracking**:
+* For the purpose of tracking history of attribute values, perform the following steps:
   - Click on Setup icon on the upper right of the salesforce page.
   - Select object manager on the left upper navigation bar.
   - Select Lead if you are working with lead change alert  as the LABEL.
   - Select Fields and Relationships from the left menu.
-  - Click on **Set History Tracking** on the upper right and enable Lead History.
+  - Click **Set History Tracking** on the upper right and enable Lead History.
   - Select the below given fields and save.
     ![Setup](../pages/../_media/addLeadFields.png)
   
