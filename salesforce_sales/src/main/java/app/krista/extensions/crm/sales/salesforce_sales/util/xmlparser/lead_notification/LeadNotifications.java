@@ -1,13 +1,11 @@
 package app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.lead_notification;
 
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.SFORCE_COM_2005_09_OUTBOUND;
-
 
 @XmlRootElement(name = "Lead Notifications", namespace = SFORCE_COM_2005_09_OUTBOUND)
 @XmlAccessorType(XmlAccessType.FIELD)

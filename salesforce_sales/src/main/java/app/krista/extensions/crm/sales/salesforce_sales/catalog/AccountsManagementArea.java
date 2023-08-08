@@ -1,6 +1,5 @@
 package app.krista.extensions.crm.sales.salesforce_sales.catalog;
 
-
 import app.krista.extension.impl.anno.CatalogRequest;
 import app.krista.extension.impl.anno.Domain;
 import app.krista.extension.impl.anno.Field;
@@ -14,7 +13,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.*;
+import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.getDoubleOrZero;
+import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.getStringOrEmpty;
 
 @Domain(id = "catEntryDomain_086f33da-aaea-4d0c-816f-3d5f20b4a273", name = "Sales", ecosystemId = "catEntryEcosystem_8a0e8ce7-6289-492f-9202-52284024280c", ecosystemName = "CRM", ecosystemVersion = "c93e81ed-93eb-4f29-b36c-4186cabee3d1")
 public class AccountsManagementArea {
@@ -39,7 +39,6 @@ public class AccountsManagementArea {
                 accountMap.put("Account Id", eventData.get("Id"));
                 setAccountDetails(eventData, accountMap);
                 updateAccountDetails(eventData, accountMap);
-                return accountMap;
             }
         } catch (IllegalArgumentException cause) {
             System.err.println(cause.getMessage());

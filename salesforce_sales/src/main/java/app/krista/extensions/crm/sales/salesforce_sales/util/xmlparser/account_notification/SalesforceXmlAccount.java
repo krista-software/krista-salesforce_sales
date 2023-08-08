@@ -69,7 +69,6 @@ public final class SalesforceXmlAccount {
     public Double AnnualRevenue;
 
     public FreeForm toAccountFreeForm() {
-
         FreeForm freeForm = new FreeForm();
         freeForm.put("Id", TEXT, Id);
         freeForm.put("Name", TEXT, Name);

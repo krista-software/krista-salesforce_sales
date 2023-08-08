@@ -7,7 +7,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.SFORCE_COM_2005_09_OUTBOUND;
 
-
 @XmlRootElement(name = "Account Notifications", namespace = SFORCE_COM_2005_09_OUTBOUND)
 @XmlAccessorType(XmlAccessType.FIELD)
 public final class AccountNotifications {

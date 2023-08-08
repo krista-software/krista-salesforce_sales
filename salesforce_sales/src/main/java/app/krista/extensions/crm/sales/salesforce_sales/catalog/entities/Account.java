@@ -105,7 +105,6 @@ public class Account {
 
     public static Account fromFields(Map<String, Object> account) {
         Account newAccount = new Account();
-
         newAccount.accountNumber = (String) account.get("Account Number");
         newAccount.ownership = (String) account.get("Ownership");
         newAccount.createdDate = (Long) account.get("Created Date");
