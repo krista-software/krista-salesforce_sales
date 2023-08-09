@@ -101,8 +101,8 @@ public final class AuthenticationResource {
     }
 
     @POST
-    @Path("/accountChanged")
-    public Response handleAccountChangedEvent(String xml) throws Exception {
+    @Path("/accountchanged")
+    public Response handleAccountChangedEvent(String xml) {
         JAXBElement<AccountNotifications> accountNotifications = XMlResponseParser.parseAccountXmlResponse(xml);
         if (accountNotifications != null) {
             FreeForm accountNotificationSObject = accountNotifications.getValue().getAccountNotification().getSalesforceXmlAccount()
@@ -114,8 +114,8 @@ public final class AuthenticationResource {
     }
 
     @POST
-    @Path("/leadChanged")
-    public Response handleLeadChangedEvent(String xml) throws Exception {
+    @Path("/leadchanged")
+    public Response handleLeadChangedEvent(String xml) {
         JAXBElement<LeadNotifications> leadNotifications = XMlResponseParser.parseLeadXmlResponse(xml);
         if (leadNotifications != null) {
             FreeForm leadNotificationSObject = leadNotifications.getValue().getLeadNotification().getSalesforceXmlLead()
