@@ -315,7 +315,7 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
     click **Outbound Messages**.
     ![Outbound Messages](../_media/outboundMessages.png)
 
-  - On the **Outbound Messages** page, click on **New Outbound Message**.
+  - On the **Outbound Messages** page, click **New Outbound Message**.
 
     - From the Object drop-down list, select **Opportunity** as an object then click **Next**.
 
@@ -323,7 +323,7 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 
     - Enter **Endpoint URL**
         - Go to the Detail's page of the extension and copy the Routing id from there. After that, append **'
-          /rest/salesforcesales/opportunityChanged'** at the end of the routing id (This is your endpoint uri).
+          /rest/salesforcesales/opportunityChanged'** at the end of the routing id (This is your endpoint url).
       
           ![Routing Id Reference](../_media/routingId.png)
 
@@ -373,7 +373,7 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
   click **Outbound Messages**.
   ![Outbound Messages](../_media/outboundMessages.png)
 
-- On the **Outbound Messages** page, click on **New Outbound Message**.
+- On the **Outbound Messages** page, click **New Outbound Message**.
 
   - From the Object drop-down list, select **Account** as an object then click **Next**.
 
@@ -381,7 +381,7 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 
   - Enter **Endpoint URL**
     - Go to the Detail's page of the extension and copy the Routing id from there. After that, append **'
-      /rest/salesforcesales/accountChanged'** at the end of the routing id (This is your endpoint uri).
+      /rest/salesforcesales/accountChanged'** at the end of the routing id (This is your endpoint url).
 
       ![Routing Id Reference](../_media/routingId.png)
 
@@ -409,7 +409,7 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
   - Now click **Done** button.
 
 * For the purpose of tracking history of attribute values, perform the following steps:
-  - Click on Setup icon on the upper right of the salesforce page. 
+  - Click Setup icon on the upper right of the salesforce page. 
   - Select object manager on the left upper navigation bar. 
   - Select Account if you are working with account change alert  as the LABEL.
   - Select Fields and Relationships from the left menu.
@@ -467,7 +467,7 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
   click **Outbound Messages**.
   ![Outbound Messages](../_media/outboundMessages.png)
 
-- On the **Outbound Messages** page, click on **New Outbound Message**.
+- On the **Outbound Messages** page, click **New Outbound Message**.
 
   - From the Object drop-down list, select **Lead** as an object then click **Next**.
 
@@ -503,7 +503,7 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
   - Now click **Done** button.
 
 * For the purpose of tracking history of attribute values, perform the following steps:
-  - Click on Setup icon on the upper right of the salesforce page.
+  - Click Setup icon on the upper right of the salesforce page.
   - Select object manager on the left upper navigation bar.
   - Select Lead if you are working with lead change alert  as the LABEL.
   - Select Fields and Relationships from the left menu.
