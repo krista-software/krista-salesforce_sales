@@ -13,6 +13,12 @@ public class SFHelper {
     private SFHelper() {
     }
 
+    /**
+     * This method is used to put entity fields in map.
+     *
+     * @param accountData
+     * @param accountMap
+     */
     public static void upsertAccountDetails(Map<String, Object> accountData, Map<String, Object> accountMap) {
         String accountName = "";
         if (accountData.containsKey("Name")) {
@@ -55,6 +61,13 @@ public class SFHelper {
                 : null);
 
     }
+
+    /**
+     * This method is used to put entity fields in map.
+     *
+     * @param leadData
+     * @param leadMap
+     */
     public static void upsertLeadDetails(Map<String, Object> leadData, Map<String, Object> leadMap) {
         leadMap.put("Lead Name", leadData.get(NAME));
         leadMap.put("Lead Title", getStringOrEmpty(leadData.get("Title")));
