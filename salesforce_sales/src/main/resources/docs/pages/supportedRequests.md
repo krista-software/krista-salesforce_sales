@@ -381,7 +381,7 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 
   - Enter **Endpoint URL**
     - Go to the Detail's page of the extension and copy the Routing id from there. After that, append **'
-      /rest/salesforcesales/accountChanged'** at the end of the routing id (This is your endpoint url).
+      /rest/salesforcesales/accountchanged'** at the end of the routing id (This is your endpoint url).
 
       ![Routing Id Reference](../_media/routingId.png)
 
@@ -475,7 +475,7 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 
   - Enter **Endpoint URL**
     - Go to the Detail's page of the extension and copy the Routing id from there. After that, append **'
-      /rest/salesforcesales/leadChanged'** at the end of the routing id (This is your endpoint uri).
+      /rest/salesforcesales/leadchanged'** at the end of the routing id (This is your endpoint uri).
 
       ![Routing Id Reference](../_media/routingId.png)
 
