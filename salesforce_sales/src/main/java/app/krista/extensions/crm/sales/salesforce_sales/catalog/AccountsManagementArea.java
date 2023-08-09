@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import static app.krista.extensions.crm.sales.salesforce_sales.util.SFHelper.upsertAccountDetails;
 import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.getDoubleOrZero;
 import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.getStringOrEmpty;
 
@@ -37,7 +38,7 @@ public class AccountsManagementArea {
         try {
             if (eventName.equals("Account Change Alert")) {
                 accountMap.put("Account Id", eventData.get("Id"));
-                setAccountDetails(eventData, accountMap);
+                upsertAccountDetails(eventData, accountMap);
                 updateAccountDetails(eventData, accountMap);
             }
         } catch (IllegalArgumentException cause) {
@@ -52,50 +53,8 @@ public class AccountsManagementArea {
 
         Map<String, Object> fetched = accountDao.getAccountUpdatedFields(query);
         if (fetched.size() != 1 || !fetched.containsKey(Constants.CREATED)) {
-            setAccountDetails(fetched, accountMap);
+            upsertAccountDetails(fetched, accountMap);
         }
     }
 
-    private static void setAccountDetails(Map<String, Object> accountData, Map<String, Object> accountMap) {
-        String accountName = "";
-        if (accountData.containsKey("Name")) {
-            accountName = accountData.get("Name").toString();
-        } else if (accountData.containsKey("TextName")) {
-            accountName = accountData.get("TextName").toString();
-        }
-        accountMap.put("Account Name", accountName);
-        accountMap.put("Account Fax", getStringOrEmpty(accountData.get("Fax")));
-        accountMap.put("Account Number", getStringOrEmpty(accountData.get("AccountNumber")));
-        accountMap.put("Account Website", getStringOrEmpty(accountData.get("Website")));
-        accountMap.put("Account Sic", getStringOrEmpty(accountData.get("Sic")));
-        accountMap.put("Account Clean Status", getStringOrEmpty(accountData.get("CleanStatus")));
-        accountMap.put("Account SLA Serial Number", getStringOrEmpty(accountData.get("SLASerialNumber__c")));
-        accountMap.put("Account Type", getStringOrEmpty(accountData.get("Type")));
-        accountMap.put("Account Billing Street", getStringOrEmpty(accountData.get("BillingStreet")));
-        accountMap.put("Account Billing City", getStringOrEmpty(accountData.get("BillingCity")));
-        accountMap.put("Account Billing State", getStringOrEmpty(accountData.get("BillingState")));
-        accountMap.put("Account Billing Postal Code", getStringOrEmpty(accountData.get("BillingPostalCode")));
-        accountMap.put("Account Billing Country", getStringOrEmpty(accountData.get("BillingCountry")));
-        accountMap.put("Account Shipping Street", getStringOrEmpty(accountData.get("ShippingStreet")));
-        accountMap.put("Account Shipping City", getStringOrEmpty(accountData.get("ShippingCity")));
-        accountMap.put("Account Shipping State", getStringOrEmpty(accountData.get("ShippingState")));
-        accountMap.put("Account Shipping Postal Code", getStringOrEmpty(accountData.get("ShippingPostalCode")));
-        accountMap.put("Account Shipping Country", getStringOrEmpty(accountData.get("ShippingCountry")));
-        accountMap.put("Account Phone", getStringOrEmpty(accountData.get("Phone")));
-        accountMap.put("Account Industry", getStringOrEmpty(accountData.get("Industry")));
-        accountMap.put("Account Number Of Employees", getDoubleOrZero(accountData.get("NumberOfEmployees")));
-        accountMap.put("Account Ownership", getStringOrEmpty(accountData.get("Ownership")));
-        accountMap.put("Account Customer Priority", getStringOrEmpty(accountData.get("CustomerPriority__c")));
-        accountMap.put("Account Annual Revenue", getDoubleOrZero(accountData.get("AnnualRevenue")));
-        accountMap.put("Account SLA Expiration Date", accountData.get("SLAExpirationDate__c") != null
-                ? Objects.requireNonNull(
-                DatePlus.fromYYYYMMDD(accountData.get("SLAExpirationDate__c").toString())).getTime()
-                : null);
-        accountMap.put("Account Owner Id", getStringOrEmpty(accountData.get("OwnerId")));
-        accountMap.put("Account Created By Id", getStringOrEmpty(accountData.get("CreatedById")));
-        accountMap.put("Account Created Date", accountData.get("CreatedDate") != null
-                ? Long.parseLong((String) accountData.get("CreatedDate"))
-                : null);
-
-    }
 }

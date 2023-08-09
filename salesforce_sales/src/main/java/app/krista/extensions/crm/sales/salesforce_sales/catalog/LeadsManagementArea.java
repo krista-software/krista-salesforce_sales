@@ -16,8 +16,11 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.CREATED;
+import static app.krista.extensions.crm.sales.salesforce_sales.util.SFHelper.upsertLeadDetails;
 import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.getDoubleOrZero;
 import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.getStringOrEmpty;
+import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.*;
+
 
 @Domain(id = "catEntryDomain_086f33da-aaea-4d0c-816f-3d5f20b4a273",
         name = "Sales",
@@ -25,42 +28,11 @@ import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.g
         ecosystemName = "CRM",
         ecosystemVersion = "db320c64-6f6f-4c9e-8daa-41d3f796d6a6")
 public final class LeadsManagementArea {
-    public static final String NAME = "Name";
     private final LeadDaoImpl leadDao;
 
     @Inject
     private LeadsManagementArea(LeadDaoImpl leadDao) {
         this.leadDao = leadDao;
-    }
-
-    private static void setLeadDetails(Map<String, Object> leadData, Map<String, Object> leadMap) {
-        leadMap.put("Lead Name", leadData.get(NAME));
-        leadMap.put("Lead Title", getStringOrEmpty(leadData.get("Title")));
-        leadMap.put("Lead Company", getStringOrEmpty(leadData.get("Company")));
-        leadMap.put("Lead Website", getStringOrEmpty(leadData.get("Website")));
-        leadMap.put("Lead Owner Id", getStringOrEmpty(leadData.get("OwnerId")));
-        leadMap.put("Lead Is Converted", getStringOrEmpty(leadData.get("IsConverted")));
-        leadMap.put("Lead Converted Account Id", getStringOrEmpty(leadData.get("ConvertedAccountId")));
-        leadMap.put("Lead Converted Contact Id", getStringOrEmpty(leadData.get("ConvertedContactId")));
-        leadMap.put("Lead Converted Opportunity Id", getStringOrEmpty(leadData.get("ConvertedOpportunityId")));
-        leadMap.put("Lead Clean Status", getStringOrEmpty(leadData.get("CleanStatus")));
-        leadMap.put("Lead Phone", getStringOrEmpty(leadData.get("Phone")));
-        leadMap.put("Lead MobilePhone", getStringOrEmpty(leadData.get("MobilePhone")));
-        leadMap.put("Lead Email", getStringOrEmpty(leadData.get("Email")));
-        leadMap.put("Lead Description", getStringOrEmpty(leadData.get("Description")));
-        leadMap.put("Lead Status", getStringOrEmpty(leadData.get("Status")));
-        leadMap.put("Lead LeadSource", getStringOrEmpty(leadData.get("LeadSource")));
-        leadMap.put("Lead Industry", getStringOrEmpty(leadData.get("Industry")));
-        leadMap.put("Lead Rating", getStringOrEmpty(leadData.get("Rating")));
-        leadMap.put("Lead Annual Revenue", getDoubleOrZero(leadData.get("AnnualRevenue")));
-        leadMap.put("Lead Created Date", leadData.get("CreatedDate") != null
-                ? Long.parseLong((String) leadData.get("CreatedDate")) : null);
-        leadMap.put("Lead Converted Date", leadData.get("ConvertedDate") != null
-                ? Objects.requireNonNull(DatePlus.fromYYYYMMDD(leadData.get("ConvertedDate").toString())).getTime()
-                : null);
-        leadMap.put("Lead Last Modified Date", leadData.get("LastModifiedDate") != null
-                ? Long.parseLong((String) leadData.get("LastModifiedDate")) : null);
-
     }
 
     @CatalogRequest(
@@ -112,7 +84,7 @@ public final class LeadsManagementArea {
         try {
             if (eventName.equals("Lead Change Alert")) {
                 leadMap.put("Lead Id", eventData.get("Id"));
-                setLeadDetails(eventData, leadMap);
+                upsertLeadDetails(eventData, leadMap);
                 updateLeadDetails(eventData, leadMap);
             }
         } catch (IllegalArgumentException cause) {
@@ -132,7 +104,7 @@ public final class LeadsManagementArea {
             } else {
                 fetched.put(NAME, "");
             }
-            setLeadDetails(fetched, leadMap);
+            upsertLeadDetails(fetched, leadMap);
         }
     }
 }
