@@ -73,7 +73,7 @@ public final class LeadsManagementArea {
     @CatalogRequest(
             id = "localDomainRequest_190ec6ca-0e61-41ec-bce6-d04f9976f352",
             name = "Lead Change Alert",
-            description = "This request is for the changes(creation and update) in the leads.",
+            description = "This request will alert the user whenever you create a lead or update any lead.",
             area = "Leads Management",
             type = CatalogRequest.Type.WAIT_FOR_EVENT)
     @Field.Desc(name = "LeadResponse", type = "{ Lead Name: Text, Lead Id: Text, Lead Title: Text, Lead Company: Text, Lead Website: Text, Lead Owner Id: Text, Lead Is Converted: Text, Lead Converted Account Id: Text, Lead Converted Contact Id: Text, Lead Converted Opportunity Id: Text, Lead Clean Status: Text, Lead Phone: Text, Lead MobilePhone: Text, Lead Email: Email, Lead Description: Paragraph, Lead Status: Text, Lead LeadSource: Text, Lead Industry: Text, Lead Rating: Text, Lead Annual Revenue: Number, Lead Converted Date: Date, Lead Created Date: Date, Lead Last Modified Date: Date }", required = false)
@@ -88,7 +88,7 @@ public final class LeadsManagementArea {
                 updateLeadDetails(eventData, leadMap);
             }
         } catch (IllegalArgumentException cause) {
-            System.err.println(cause.getMessage());
+            System.err.println("This error is for lead change alert." + cause.getMessage());
         }
         return leadMap;
     }

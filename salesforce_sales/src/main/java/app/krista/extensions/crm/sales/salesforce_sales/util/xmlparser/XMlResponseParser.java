@@ -15,6 +15,9 @@ import java.io.StringReader;
 
 public final class XMlResponseParser {
 
+    private XMlResponseParser() {
+    }
+
     // region Internal
     private static <T> JAXBElement<T> parseXmlResponse(String response, Class<T> notificationClass) {
         try (StringReader stringReader = new StringReader(response)) {

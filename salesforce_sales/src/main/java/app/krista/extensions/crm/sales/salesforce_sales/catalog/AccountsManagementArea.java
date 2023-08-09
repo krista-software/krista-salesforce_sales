@@ -26,10 +26,12 @@ public class AccountsManagementArea {
         this.accountDao = accountDao;
     }
 
-    @CatalogRequest(id = "localDomainRequest_4c4a7002-31c1-4840-89cd-6a435f3b7bb8",
+    @CatalogRequest(
+            id = "localDomainRequest_4c4a7002-31c1-4840-89cd-6a435f3b7bb8",
             name = "Account Change Alert",
-            description = "This request is for the changes(creation and update) in the accounts.",
-            area = "Accounts Management ", type = CatalogRequest.Type.WAIT_FOR_EVENT)
+            description = "This request will alert the user whenever you create a account or update any account.",
+            area = "Accounts Management ",
+            type = CatalogRequest.Type.WAIT_FOR_EVENT)
     @Field.Desc(name = "Response", type = "{ Account Id: Text, Account Name: Text, Account Fax: Text, Account Number: Text, Account Website: Text, Account Sic: Text, Account Owner Id: Text, Account Created By Id: Text, Account Clean Status: Text, Account SLA Serial Number: Text, Account Created Date: Date, Account Type: Text, Account Billing Street: Street, Account Billing City: City, Account Billing State: State, Account Billing Postal Code: PostalCode, Account Billing Country: Country, Account Shipping Street: Street, Account Shipping City: City, Account Shipping State: State, Account Shipping Postal Code: PostalCode, Account Shipping Country: Country, Account Phone: Text, Account Industry: Text, Account Number Of Employees: Number, Account Ownership: Text, Account Customer Priority: Text, Account SLA Expiration Date: Date, Account Annual Revenue: Number }", required = false)
     public Map<String, Object> accountChangeAlert(
             @Field(name = "eventName", type = "Text") String eventName,
@@ -42,7 +44,7 @@ public class AccountsManagementArea {
                 updateAccountDetails(eventData, accountMap);
             }
         } catch (IllegalArgumentException cause) {
-            System.err.println(cause.getMessage());
+            System.err.println("This error is for account change alert." + cause.getMessage());
         }
         return accountMap;
     }
