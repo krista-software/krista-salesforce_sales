@@ -11,8 +11,6 @@ import app.krista.extensions.crm.sales.salesforce_sales.impl.OpportunityImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.UserDaoImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.model.SFOpportunity;
 import app.krista.extensions.crm.sales.salesforce_sales.model.WhenAnImportantOpportunityStatusChangesResponse;
-import app.krista.model.field.util.FieldValues;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -193,6 +191,7 @@ public final class OpportunityManagementArea {
                 whenAnImportantOpportunityStatusChangesResponse.amount = ((Double) eventData.get("Amount")).longValue();
                 whenAnImportantOpportunityStatusChangesResponse.newStatus = (String) eventData.get("StageName");
                 whenAnImportantOpportunityStatusChangesResponse.previousStatus = (String) eventData.get("Name");
+
                 String query = "Select StageName, Amount FROM OpportunityHistory where Opportunity.Id = '" + whenAnImportantOpportunityStatusChangesResponse.opportunityId + "' LIMIT 2";
                 List<Opportunity> opp = opportunityDao.getOpportunitiesByQuery(query).stream().map(CatalogTypes::fromSFOpportunity).collect(Collectors.toList());
                 if (opp.size() == 2) {

@@ -81,10 +81,12 @@ public final class SalesforceManager {
     public String getRecordByQuery(String query) {
         try {
             SalesforceToken salesforceToken = tokenProvider.getSalesforceToken();
-            String url = salesforceToken.getInstanceUrl() + "/services/data/v48.0/query?q=" + URLEncoder.encode(query, StandardCharsets.UTF_8);
+            String url = salesforceToken.getInstanceUrl() + "/services/data/v58.0/query?q=" +
+                    URLEncoder.encode(query, StandardCharsets.UTF_8);
             final OAuthRequest request = getoAuthRequest(Verb.GET, null, salesforceToken, url);
             return getRequestResponse(salesforceToken, request);
         } catch (IOException cause) {
+            cause.printStackTrace();
             System.err.println(cause.getMessage());
         }
         return "";
@@ -181,7 +183,7 @@ public final class SalesforceManager {
             final OAuthRequest request = getoAuthRequest(Verb.GET, null, salesforceToken, url);
             return getRequestResponse(salesforceToken, request);
         } catch (IOException cause) {
-            System.err.println("Failed to get opportunity feed posts. " + cause. getMessage());
+            System.err.println("Failed to get opportunity feed posts. " + cause.getMessage());
         }
         return "";
     }

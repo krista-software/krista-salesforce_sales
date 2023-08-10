@@ -2,6 +2,7 @@ package app.krista.extensions.crm.sales.salesforce_sales.impl;
 
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.CatalogTypes;
 import app.krista.extensions.crm.sales.salesforce_sales.model.SFLead;
+import app.krista.extensions.crm.sales.salesforce_sales.model.SFLeadHistory;
 import app.krista.extensions.crm.sales.salesforce_sales.service.Lead;
 import app.krista.extensions.crm.sales.salesforce_sales.service.LeadDao;
 import app.krista.extensions.crm.sales.salesforce_sales.util.DatePlus;
@@ -22,6 +23,8 @@ public class LeadDaoImpl implements LeadDao {
 
     public static final String QUERY_FIELDS = "Id, LastName, FirstName, Salutation, Name, Title, Company, Address, Phone, MobilePhone, Fax, Email, Website, Description, LeadSource, Status, Industry, Rating, AnnualRevenue, NumberOfEmployees, OwnerId, IsConverted, ConvertedDate, ConvertedAccountId, ConvertedContactId, ConvertedOpportunityId, IsUnreadByOwner, CreatedDate, LastModifiedDate, CleanStatus";
     public static final String LEAD = "Lead";
+    public static final String SELECT = "Select ";
+
     private final SalesforceManager salesforceManager;
 
     @Inject
@@ -31,22 +34,22 @@ public class LeadDaoImpl implements LeadDao {
 
     @Override
     public Lead getLeadById(String id) {
-        return getLeadsByQuery("Select " + QUERY_FIELDS + " from Lead where id = '" + id + "'").stream().findFirst().orElseThrow(IllegalArgumentException::new);
+        return getLeadsByQuery(SELECT + QUERY_FIELDS + " from Lead where id = '" + id + "'").stream().findFirst().orElseThrow(IllegalArgumentException::new);
     }
 
     @Override
     public List<Lead> getLeadsByOwnerId(String ownerId) {
-        return getLeadsByQuery("Select " + QUERY_FIELDS + " from Lead where ownerId = '" + ownerId + "'");
+        return getLeadsByQuery(SELECT + QUERY_FIELDS + " from Lead where ownerId = '" + ownerId + "'");
     }
 
     @Override
     public List<Lead> getLeadByDate(long date) {
-        return getLeadsByQuery("Select " + QUERY_FIELDS + " from Lead WHERE CreatedDate >" + DatePlus.getISODate(new Date(date)));
+        return getLeadsByQuery(SELECT + QUERY_FIELDS + " from Lead WHERE CreatedDate >" + DatePlus.getISODate(new Date(date)));
     }
 
     @Override
     public List<Lead> getLeads(long size, long page) {
-        return getLeadsByQuery("Select " + QUERY_FIELDS + " from Lead ORDER BY LastModifiedDate DESC LIMIT " + size + " OFFSET " + Math.max((page - 1) * size, 0));
+        return getLeadsByQuery(SELECT + QUERY_FIELDS + " from Lead ORDER BY LastModifiedDate DESC LIMIT " + size + " OFFSET " + Math.max((page - 1) * size, 0));
     }
 
     @Override
@@ -75,6 +78,11 @@ public class LeadDaoImpl implements LeadDao {
         SFLead oldLead = SFLead.from(CatalogTypes.fromSFLead(getLeadById(updatedLead.id)));
         Map<String, Object> diff = salesforceManager.getDifference(oldLead, updatedLead);
         salesforceManager.updateRecord(updatedLead.id, GSON.toJson(diff), LEAD);
+    }
+    public Map<String, Object> getLeadsUpdatedFields(String query) {
+        String response = salesforceManager.getRecordByQuery(query);
+        SFLeadHistory sfLeadHistory = GSON.fromJson(response, SFLeadHistory.class);
+        return sfLeadHistory.toSFHistoryMap();
     }
 
     public void deleteLead(String key) {

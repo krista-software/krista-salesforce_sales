@@ -7,6 +7,9 @@ import java.util.TimeZone;
 
 public final class DatePlus {
 
+    private DatePlus() {
+    }
+
     public static String getISODate(Date date) {
         SimpleDateFormat sdf;
         sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");

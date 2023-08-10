@@ -56,4 +56,17 @@ public interface LeadDao {
      * @param lead {@link Lead} object of salesforce to be updated
      */
     void updateLead(Lead lead);
+
+    /**
+     * This function will return updated fields for lead object.
+     * @param query
+     * @return
+     */
+    Map<String, Object> getLeadsUpdatedFields(String query);
+
+    /**
+     * This function will delete lead from lead object.
+     * @param key 
+     */
+    void deleteLead(String key);
 }

@@ -16,10 +16,10 @@ import java.util.Map;
 @Field.Text(value = SalesforceSalesAttributes.CLIENT_ID)
 @Field.Text(value = SalesforceSalesAttributes.CLIENT_SECRET, isSecured = true)
 @Field.Text(value = SalesforceSalesAttributes.USER_NAME, required = false)
-@Field.Text(value = SalesforceSalesAttributes.PASSWORD, isSecured = true, required = false)
+@Field.Text(value = SalesforceSalesAttributes.PASS_WORD, isSecured = true, required = false)
 @Field.Text(value = SalesforceSalesAttributes.SECURITY_TOKEN, isSecured = true, required = false)
 @Field.Boolean(value = SalesforceSalesAttributes.SANDBOX, required = false)
-@Extension(version = "2.0.4")
+@Extension(version = "2.0.5-rc1")
 @StaticResource(path = "docs", file = "docs")
 public final class SalesforceSalesExtension {
 
@@ -55,8 +55,8 @@ public final class SalesforceSalesExtension {
 
     @InvokerRequest(InvokerRequest.Type.VALIDATE_ATTRIBUTES)
     public void validateConnection(Map<String, Object> connectionAttributes) throws IOException {
-        SalesforceSalesAttributes salesforceSalesAttributes = SalesforceSalesAttributes.create(invoker, connectionAttributes);
-        validateSalesAttributes(salesforceSalesAttributes);
+        SalesforceSalesAttributes salesAttributes = SalesforceSalesAttributes.create(invoker, connectionAttributes);
+        validateSalesAttributes(salesAttributes);
     }
 
     private void validateSalesAttributes(SalesforceSalesAttributes salesforceSalesAttributes) throws IOException {

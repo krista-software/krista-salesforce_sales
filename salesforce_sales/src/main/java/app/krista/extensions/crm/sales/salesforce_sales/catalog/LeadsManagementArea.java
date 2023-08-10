@@ -5,10 +5,18 @@ import app.krista.extension.impl.anno.Domain;
 import app.krista.extension.impl.anno.Field;
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.Lead;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.LeadDaoImpl;
+import app.krista.model.base.FreeForm;
 
 import javax.inject.Inject;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+
+import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.CREATED;
+import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.NAME;
+import static app.krista.extensions.crm.sales.salesforce_sales.util.SFHelper.upsertLeadDetails;
+
 
 @Domain(id = "catEntryDomain_086f33da-aaea-4d0c-816f-3d5f20b4a273",
         name = "Sales",
@@ -16,7 +24,6 @@ import java.util.stream.Collectors;
         ecosystemName = "CRM",
         ecosystemVersion = "db320c64-6f6f-4c9e-8daa-41d3f796d6a6")
 public final class LeadsManagementArea {
-
     private final LeadDaoImpl leadDao;
 
     @Inject
@@ -56,6 +63,44 @@ public final class LeadsManagementArea {
             System.err.println(cause.getMessage());
             cause.printStackTrace();
             return List.of();
+        }
+    }
+
+    @CatalogRequest(
+            id = "localDomainRequest_190ec6ca-0e61-41ec-bce6-d04f9976f352",
+            name = "Lead Change Alert",
+            description = "This request will alert the user whenever you create a lead or update any lead.",
+            area = "Leads Management",
+            type = CatalogRequest.Type.WAIT_FOR_EVENT)
+    @Field.Desc(name = "LeadResponse", type = "{ Lead Name: Text, Lead Id: Text, Lead Title: Text, Lead Company: Text, Lead Website: Text, Lead Owner Id: Text, Lead Is Converted: Text, Lead Converted Account Id: Text, Lead Converted Contact Id: Text, Lead Converted Opportunity Id: Text, Lead Clean Status: Text, Lead Phone: Text, Lead MobilePhone: Text, Lead Email: Email, Lead Description: Paragraph, Lead Status: Text, Lead LeadSource: Text, Lead Industry: Text, Lead Rating: Text, Lead Annual Revenue: Number, Lead Converted Date: Date, Lead Created Date: Date, Lead Last Modified Date: Date }", required = false)
+    public Map<String, Object> leadChangeAlert(
+            @Field(name = "eventName", type = "Text") String eventName,
+            @Field(name = "eventData", type = "FreeForm") FreeForm eventData) {
+        Map<String, Object> leadMap = new HashMap<>();
+        try {
+            if (eventName.equals("Lead Change Alert")) {
+                leadMap.put("Lead Id", eventData.get("Id"));
+                upsertLeadDetails(eventData, leadMap);
+                updateLeadDetails(eventData, leadMap);
+            }
+        } catch (IllegalArgumentException cause) {
+            System.err.println("Unable to create alert for lead change due to " + cause.getMessage());
+        }
+        return leadMap;
+    }
+
+    private void updateLeadDetails(FreeForm eventData, Map<String, Object> leadMap) {
+        String query = "SELECT Fields(ALL) FROM LeadHistory WHERE LeadId = '" +
+                eventData.get("Id") + "' ORDER BY CreatedDate DESC LIMIT 20";
+
+        Map<String, Object> fetched = leadDao.getLeadsUpdatedFields(query);
+        if (fetched.size() != 1 || !fetched.containsKey(CREATED)) {
+            if (fetched.containsKey("FirstName") || fetched.containsKey("LastName")) {
+                fetched.put(NAME, eventData.get(NAME));
+            } else {
+                fetched.put(NAME, "");
+            }
+            upsertLeadDetails(fetched, leadMap);
         }
     }
 }
