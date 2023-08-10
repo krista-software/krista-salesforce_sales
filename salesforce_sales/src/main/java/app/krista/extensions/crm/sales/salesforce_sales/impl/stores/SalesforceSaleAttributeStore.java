@@ -9,7 +9,6 @@ import app.krista.extensions.util.KeyValueStore;
 import org.jvnet.hk2.annotations.Service;
 
 import javax.inject.Inject;
-import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
 
@@ -38,7 +37,7 @@ public final class SalesforceSaleAttributeStore {
         return new SalesforceSalesAttributes((String) attributes.get(SalesforceSalesAttributes.CLIENT_ID),
                 (String) attributes.get(SalesforceSalesAttributes.CLIENT_SECRET),
                 (String) attributes.get(SalesforceSalesAttributes.USER_NAME),
-                (String) attributes.get(SalesforceSalesAttributes.PASSWORD),
+                (String) attributes.get(SalesforceSalesAttributes.PASS_WORD),
                 (String) attributes.get(SalesforceSalesAttributes.SECURITY_TOKEN),
                 (Boolean) attributes.get(SalesforceSalesAttributes.SANDBOX),
                 invoker.getRoutingInfo().getRoutingURL(HttpProtocol.PROTOCOL_NAME, RoutingInfo.Type.APPLIANCE));

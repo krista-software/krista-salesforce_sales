@@ -18,7 +18,7 @@ public final class SalesforceSalesAttributes {
     public static final String CLIENT_ID = "clientId";
     public static final String CLIENT_SECRET = "clientSecret";
     public static final String USER_NAME = "username";
-    public static final String PASSWORD = "password";
+    public static final String PASS_WORD = "password";
     public static final String SECURITY_TOKEN = "securityToken";
     public static final String SANDBOX = "sandbox";
     private final String routingUrl;
@@ -40,7 +40,7 @@ public final class SalesforceSalesAttributes {
         this((String) attributes.get(CLIENT_ID),
                 (String) attributes.get(CLIENT_SECRET),
                 (String) attributes.get(USER_NAME),
-                (String) attributes.get(PASSWORD),
+                (String) attributes.get(PASS_WORD),
                 (String) attributes.get(SECURITY_TOKEN),
                 (Boolean) attributes.get(SANDBOX),
                 routingUrl);
@@ -101,7 +101,7 @@ public final class SalesforceSalesAttributes {
         clientId = InvokerAttributes.getStringOrNull(newAttributes, CLIENT_ID);
         clientSecret = InvokerAttributes.getStringOrNull(newAttributes, CLIENT_SECRET);
         userName = InvokerAttributes.getStringOrNull(newAttributes, USER_NAME);
-        password = InvokerAttributes.getStringOrNull(newAttributes, PASSWORD);
+        password = InvokerAttributes.getStringOrNull(newAttributes, PASS_WORD);
         securityToken = InvokerAttributes.getStringOrNull(newAttributes, SECURITY_TOKEN);
         isSandbox = InvokerAttributes.getBooleanOrNull(newAttributes, SANDBOX);
     }

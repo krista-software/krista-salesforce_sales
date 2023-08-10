@@ -42,4 +42,17 @@ public interface AccountDao {
      * @param account {@link Account} object of salesforce to be updated
      */
     void updateAccount(Account account);
+
+    /**
+     * This function will return updated fields for account object.
+     * @param query
+     * @return
+     */
+    Map<String, Object> getAccountUpdatedFields(String query);
+
+    /**
+     * This function will delete account from account object.
+     * @param key
+     */
+    void deleteAccount(String key);
 }

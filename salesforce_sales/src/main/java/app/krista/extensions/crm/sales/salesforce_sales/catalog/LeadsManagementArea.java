@@ -5,21 +5,17 @@ import app.krista.extension.impl.anno.Domain;
 import app.krista.extension.impl.anno.Field;
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.Lead;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.LeadDaoImpl;
-import app.krista.extensions.crm.sales.salesforce_sales.util.DatePlus;
 import app.krista.model.base.FreeForm;
 
 import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.CREATED;
+import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.NAME;
 import static app.krista.extensions.crm.sales.salesforce_sales.util.SFHelper.upsertLeadDetails;
-import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.getDoubleOrZero;
-import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.getStringOrEmpty;
-import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.*;
 
 
 @Domain(id = "catEntryDomain_086f33da-aaea-4d0c-816f-3d5f20b4a273",
@@ -88,7 +84,7 @@ public final class LeadsManagementArea {
                 updateLeadDetails(eventData, leadMap);
             }
         } catch (IllegalArgumentException cause) {
-            System.err.println("This error is for lead change alert." + cause.getMessage());
+            System.err.println("Unable to create alert for lead change due to " + cause.getMessage());
         }
         return leadMap;
     }

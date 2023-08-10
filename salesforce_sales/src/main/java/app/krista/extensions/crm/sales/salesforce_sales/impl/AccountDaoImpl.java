@@ -10,7 +10,8 @@ import com.google.gson.reflect.TypeToken;
 import org.jvnet.hk2.annotations.Service;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.GSON;
@@ -58,7 +59,7 @@ public class AccountDaoImpl implements AccountDao {
         salesforceManager.updateRecord(updatedopportunity.id, GSON.toJson(diff), ACCOUNT);
     }
 
-    public List<Account> getAccountByQuery(String query) {
+    private List<Account> getAccountByQuery(String query) {
         String response = salesforceManager.getRecordByQuery(query);
         SalesforceListResponse<SFAccount> oppList =
                 GSON.fromJson(response, new TypeToken<SalesforceListResponse<SFAccount>>() {
@@ -70,12 +71,14 @@ public class AccountDaoImpl implements AccountDao {
         }
     }
 
+    @Override
     public Map<String, Object> getAccountUpdatedFields(String query) {
         String response = salesforceManager.getRecordByQuery(query);
         SFAccountHistory sfHistory = GSON.fromJson(response, SFAccountHistory.class);
         return sfHistory.toMap();
     }
 
+    @Override
     public void deleteAccount(String key) {
         salesforceManager.deleteRecordById(key, ACCOUNT);
     }

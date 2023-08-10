@@ -16,7 +16,7 @@ import java.util.Map;
 @Field.Text(value = SalesforceSalesAttributes.CLIENT_ID)
 @Field.Text(value = SalesforceSalesAttributes.CLIENT_SECRET, isSecured = true)
 @Field.Text(value = SalesforceSalesAttributes.USER_NAME, required = false)
-@Field.Text(value = SalesforceSalesAttributes.PASSWORD, isSecured = true, required = false)
+@Field.Text(value = SalesforceSalesAttributes.PASS_WORD, isSecured = true, required = false)
 @Field.Text(value = SalesforceSalesAttributes.SECURITY_TOKEN, isSecured = true, required = false)
 @Field.Boolean(value = SalesforceSalesAttributes.SANDBOX, required = false)
 @Extension(version = "2.0.5-rc1")

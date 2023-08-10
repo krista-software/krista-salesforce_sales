@@ -19,7 +19,9 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBElement;
+import java.io.IOException;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 import static com.github.scribejava.core.model.OAuthConstants.CODE;
 import static com.github.scribejava.core.model.OAuthConstants.STATE;
@@ -65,10 +67,14 @@ public final class AuthenticationResource {
                 return "User authenticated successfully.";
             }
             return "User authenticated successfully. Save the changes.";
-        } catch (Exception cause) {
+        } catch (IOException | ExecutionException cause) {
             System.err.println("Exception occurred due to :" + cause.getMessage());
             throw new IllegalStateException("Error occurred during authorization", cause.getCause());
-        } finally {
+        } catch (InterruptedException cause) {
+            Thread.currentThread().interrupt();
+            System.err.println("Exception occurred due to :" + cause.getMessage());
+            throw new IllegalStateException("Error occurred during authorization", cause.getCause());
+        }  finally {
             if (authContextId != null) {
                 attributeStore.remove(authContextId);
             }
@@ -90,7 +96,7 @@ public final class AuthenticationResource {
 
     @POST
     @Path("/opportunityChanged")
-    public Response handleAmountChangedEvent(String xml) throws Exception {
+    public Response handleAmountChangedEvent(String xml) {
         JAXBElement<OpportunityNotifications> notifications = XMlResponseParser.parseOpportunityXmlResponse(xml);
         if (notifications != null) {
             FreeForm notificationSObject = notifications.getValue().getNotification().getSObject()

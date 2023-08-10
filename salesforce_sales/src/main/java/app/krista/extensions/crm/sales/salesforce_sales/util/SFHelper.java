@@ -10,6 +10,9 @@ import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.*;
 
 
 public class SFHelper {
+
+    public static final String CREATED_DATE = "CreatedDate";
+
     private SFHelper() {
     }
 
@@ -56,8 +59,8 @@ public class SFHelper {
                 : null);
         accountMap.put("Account Owner Id", getStringOrEmpty(accountData.get("OwnerId")));
         accountMap.put("Account Created By Id", getStringOrEmpty(accountData.get("CreatedById")));
-        accountMap.put("Account Created Date", accountData.get("CreatedDate") != null
-                ? Long.parseLong((String) accountData.get("CreatedDate"))
+        accountMap.put("Account Created Date", accountData.get(CREATED_DATE) != null
+                ? Long.parseLong((String) accountData.get(CREATED_DATE))
                 : null);
 
     }
@@ -88,8 +91,8 @@ public class SFHelper {
         leadMap.put("Lead Industry", getStringOrEmpty(leadData.get("Industry")));
         leadMap.put("Lead Rating", getStringOrEmpty(leadData.get("Rating")));
         leadMap.put("Lead Annual Revenue", getDoubleOrZero(leadData.get("AnnualRevenue")));
-        leadMap.put("Lead Created Date", leadData.get("CreatedDate") != null
-                ? Long.parseLong((String) leadData.get("CreatedDate")) : null);
+        leadMap.put("Lead Created Date", leadData.get(CREATED_DATE) != null
+                ? Long.parseLong((String) leadData.get(CREATED_DATE)) : null);
         leadMap.put("Lead Converted Date", leadData.get("ConvertedDate") != null
                 ? Objects.requireNonNull(DatePlus.fromYYYYMMDD(leadData.get("ConvertedDate").toString())).getTime()
                 : null);
