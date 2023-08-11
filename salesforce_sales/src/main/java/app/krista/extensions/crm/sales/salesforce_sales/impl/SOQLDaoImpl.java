@@ -29,8 +29,12 @@ public class SOQLDaoImpl implements SOQLDao {
         if (query == null || query.isEmpty()) {
             return new HashMap();
         }
+        System.out.println("Running soql query");
         String res = salesforceManager.getRecordByQuery(query);
+        System.out.println("QUERY"+query);
         SalesforceListResponse response = GSON.fromJson(res, SalesforceListResponse.class);
+        System.out.println("QUERY"+query);
+        System.out.println("Response"+response.done);
 
         if (response.records.size() > 0) {
             for (Object map : response.records) {

@@ -14,6 +14,10 @@ public final class Constants {
     public static final String SFORCE_COM_2005_09_OUTBOUND = "http://soap.sforce.com/2005/09/outbound";
     public static final String ENTERPRISE_SOAP_SFORCE_COM = "urn:sobject.enterprise.soap.sforce.com";
     public static final String NAME = "Name";
+    public static final String INVALID_TASK_ID = "Invalid task ID";
+    public static final String DATA = "Data";
+
+
 
 
 

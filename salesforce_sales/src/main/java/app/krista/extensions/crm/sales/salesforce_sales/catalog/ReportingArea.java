@@ -1,5 +1,6 @@
 package app.krista.extensions.crm.sales.salesforce_sales.catalog;
 
+import app.krista.extension.impl.anno.Attribute;
 import app.krista.extension.impl.anno.CatalogRequest;
 import app.krista.extension.impl.anno.Domain;
 import app.krista.extension.impl.anno.Field;
@@ -8,30 +9,48 @@ import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.SalesPi
 import app.krista.extensions.crm.sales.salesforce_sales.impl.OpportunityDaoImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.SOQLDaoImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.SalesPipelineSummaryDaoImpl;
+import app.krista.extensions.crm.sales.salesforce_sales.util.Constants;
 import app.krista.extensions.crm.sales.salesforce_sales.util.DatePlus;
+import app.krista.extensions.util.EventHandler;
+import app.krista.ksdk.context.AuthorizationContext;
+import app.krista.ksdk.context.RequestContext;
+import app.krista.model.base.FreeForm;
+import app.krista.model.field.util.FieldValues;
 
 import javax.inject.Inject;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 @Domain(id = "catEntryDomain_086f33da-aaea-4d0c-816f-3d5f20b4a273",
         name = "Sales",
         ecosystemId = "catEntryEcosystem_8a0e8ce7-6289-492f-9202-52284024280c",
         ecosystemName = "CRM",
-        ecosystemVersion = "db320c64-6f6f-4c9e-8daa-41d3f796d6a6")
+        ecosystemVersion = "7a281d96-8440-4945-a07d-a1a49caab1f2")
 public final class ReportingArea {
 
     private final OpportunityDaoImpl opportunityDao;
     private final SalesPipelineSummaryDaoImpl salesPipelineSummaryDao;
     private final SOQLDaoImpl soqlDao;
+    private final RequestContext requestContext;
+    private final AuthorizationContext authorizationContext;
+    private final EventHandler eventHandler;
+    ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     @Inject
-    private ReportingArea(OpportunityDaoImpl opportunityDao, SalesPipelineSummaryDaoImpl salesPipelineSummaryDao, SOQLDaoImpl soqlDao) {
+    private ReportingArea(OpportunityDaoImpl opportunityDao, SalesPipelineSummaryDaoImpl salesPipelineSummaryDao,
+                          SOQLDaoImpl soqlDao,RequestContext requestContext,
+                          AuthorizationContext authorizationContext,EventHandler eventHandler) {
         this.opportunityDao = opportunityDao;
         this.salesPipelineSummaryDao = salesPipelineSummaryDao;
         this.soqlDao = soqlDao;
+        this.requestContext=requestContext;
+        this.authorizationContext=authorizationContext;
+        this.eventHandler=eventHandler;
     }
 
     @CatalogRequest(
@@ -66,6 +85,48 @@ public final class ReportingArea {
             System.err.println(cause.getMessage());
             cause.printStackTrace();
             return null;
+        }
+    }
+    @CatalogRequest(
+            id = "localDomainRequest_1ce88eaa-0d6b-48eb-9642-20104aa43a67",
+            name = "Process Query Request Async",
+            description = "This request takes the SOQL query as input and returns Job Id.",
+            area = "Reporting",
+            type = CatalogRequest.Type.QUERY_SYSTEM)
+    @Field.Text(name = "Job Id", required = false, attributes = {@Attribute(name = "visualWidth", value = "S")}, options = {})
+    public String processQueryRequestAsync(
+            @Field(name = "SOQL Query", type = "Paragraph", required = true, attributes = {@Attribute(name = "visualWidth", value = "L")}, options = {}) String sOQLQuery) {
+        final String jobId = UUID.randomUUID().toString();
+        boolean useReport = !requestContext.invokeAsUser();
+        String accountID = authorizationContext.getAuthorizedAccount().getAccountId();
+        executorService.submit(() -> {
+            try {
+                Object result = soqlDao.getSalesforceObjectByQuery(sOQLQuery);;
+                FreeForm freeForm = new FreeForm();
+                freeForm.put(Constants.DATA, "FreeForm", result);
+                eventHandler.handleEvent(jobId, freeForm);
+            } catch (Exception cause) {
+                throw new IllegalStateException(cause);
+            }
+        });
+        return jobId;
+    }
+    @CatalogRequest(
+            id = "localDomainRequest_2c883b8a-8027-4426-a7a7-d30ec264e8d9",
+            name = "Get Results",
+            description = "This request takes the Job Id as input and returns the generic output.",
+            area = "Reporting",
+            type = CatalogRequest.Type.WAIT_FOR_EVENT)
+    @Field(name = "Response", type = "FreeForm", required = false, attributes = {}, options = {})
+    public FreeForm getResults(
+            @Field(name = "eventName", type = "Text") String eventName,
+            @Field(name = "eventData", type = "FreeForm") FreeForm eventData,
+            @Field.Text(name = "Job Id", required = true, attributes = {@Attribute(name = "visualWidth", value = "S")}, options = {}) String jobId) {
+       // jobId = FieldValues.toString(textField, jobId);
+        if (eventName.equals(jobId)) {
+            return (FreeForm) eventData.get(Constants.DATA);
+        }else {
+            throw new IllegalStateException(Constants.INVALID_TASK_ID);
         }
     }
 

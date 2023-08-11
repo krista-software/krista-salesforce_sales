@@ -83,6 +83,7 @@ public final class SalesforceManager {
             SalesforceToken salesforceToken = tokenProvider.getSalesforceToken();
             String url = salesforceToken.getInstanceUrl() + "/services/data/v58.0/query?q=" +
                     URLEncoder.encode(query, StandardCharsets.UTF_8);
+            System.out.println(url);
             final OAuthRequest request = getoAuthRequest(Verb.GET, null, salesforceToken, url);
             return getRequestResponse(salesforceToken, request);
         } catch (IOException cause) {
