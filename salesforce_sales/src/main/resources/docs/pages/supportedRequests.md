@@ -665,7 +665,7 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|--------------------|
 | Job Id             | String             |
 
-#### Get Results
+#### Get Results for Process Query Request Async
 
 - **Description**: This request takes the Job Id as input and returns the generic output.
 - **Input Parameters**:
