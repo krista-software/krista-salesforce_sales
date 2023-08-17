@@ -92,7 +92,7 @@ public class SalesforceSalesRequestAuthenticator implements RequestAuthenticator
             effectiveSalesforceSalesAttributes = attributeStore.load(authContextId);
             state = userId + "#" + authContextId;
         } else {
-            effectiveSalesforceSalesAttributes = salesforceSalesAttributes;//
+            effectiveSalesforceSalesAttributes = salesforceSalesAttributes;
             state = userId;
         }
         OAuth20Service salesforceSaleService = effectiveSalesforceSalesAttributes.getOauthService();
