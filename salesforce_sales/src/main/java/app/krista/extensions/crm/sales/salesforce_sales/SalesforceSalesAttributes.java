@@ -85,7 +85,8 @@ public final class SalesforceSalesAttributes {
     }
 
     public String getCallbackUrl() {
-        String callBackUrl = this.routingUrl.contains("extension.local.eng.krista.app") ? this.routingUrl.replace("extension.local.eng.krista.app", "localhost:8765") : this.routingUrl;
+        String callBackUrl = this.routingUrl.contains("extension.local.eng.krista.app")
+                ? this.routingUrl.replace("extension.local.eng.krista.app", "localhost:8765") : this.routingUrl;
         return (callBackUrl.contains("localhost:8765") ? callBackUrl.replace("https", "http") : callBackUrl) + "/rest/salesforcesales/callback";
     }
 
