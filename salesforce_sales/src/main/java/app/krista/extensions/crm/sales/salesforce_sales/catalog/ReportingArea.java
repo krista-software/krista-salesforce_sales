@@ -126,7 +126,7 @@ public final class ReportingArea {
 
     @CatalogRequest(
             id = "localDomainRequest_2c883b8a-8027-4426-a7a7-d30ec264e8d9",
-            name = "Get Results",
+            name = "Get Results for Process Query Request Async",
             description = "This request takes the Job Id as input and returns the generic output.",
             area = "Reporting",
             type = CatalogRequest.Type.WAIT_FOR_EVENT)

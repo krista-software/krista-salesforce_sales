@@ -1,7 +1,7 @@
 apply plugin: 'java-library'
 jar.archiveBaseName = "salessforce_sales-extension"
 group 'app.krista.extensions.crm.sales'
-version '2.0.5'
+version '2.0.5-rc2'
 
 
 if (rootProject.file('builder.txt').canRead()) {
