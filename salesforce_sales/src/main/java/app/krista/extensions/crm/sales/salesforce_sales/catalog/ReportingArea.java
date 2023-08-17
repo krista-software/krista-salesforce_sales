@@ -15,16 +15,15 @@ import app.krista.extensions.util.EventHandler;
 import app.krista.ksdk.context.AuthorizationContext;
 import app.krista.ksdk.context.RequestContext;
 import app.krista.model.base.FreeForm;
-import app.krista.model.field.util.FieldValues;
 
 import javax.inject.Inject;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.io.IOException;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
+
+import static app.krista.extensions.crm.sales.salesforce_sales.impl.SOQLDaoImpl.parseQueryResult;
 
 @Domain(id = "catEntryDomain_086f33da-aaea-4d0c-816f-3d5f20b4a273",
         name = "Sales",
@@ -43,14 +42,14 @@ public final class ReportingArea {
 
     @Inject
     private ReportingArea(OpportunityDaoImpl opportunityDao, SalesPipelineSummaryDaoImpl salesPipelineSummaryDao,
-                          SOQLDaoImpl soqlDao,RequestContext requestContext,
-                          AuthorizationContext authorizationContext,EventHandler eventHandler) {
+                          SOQLDaoImpl soqlDao, RequestContext requestContext,
+                          AuthorizationContext authorizationContext, EventHandler eventHandler) {
         this.opportunityDao = opportunityDao;
         this.salesPipelineSummaryDao = salesPipelineSummaryDao;
         this.soqlDao = soqlDao;
-        this.requestContext=requestContext;
-        this.authorizationContext=authorizationContext;
-        this.eventHandler=eventHandler;
+        this.requestContext = requestContext;
+        this.authorizationContext = authorizationContext;
+        this.eventHandler = eventHandler;
     }
 
     @CatalogRequest(
@@ -87,6 +86,7 @@ public final class ReportingArea {
             return null;
         }
     }
+
     @CatalogRequest(
             id = "localDomainRequest_1ce88eaa-0d6b-48eb-9642-20104aa43a67",
             name = "Process Query Request Async",
@@ -96,14 +96,26 @@ public final class ReportingArea {
     @Field.Text(name = "Job Id", required = false, attributes = {@Attribute(name = "visualWidth", value = "S")}, options = {})
     public String processQueryRequestAsync(
             @Field(name = "SOQL Query", type = "Paragraph", required = true, attributes = {@Attribute(name = "visualWidth", value = "L")}, options = {}) String sOQLQuery) {
+
+        boolean invokeAsUser = requestContext.invokeAsUser();
+        if (invokeAsUser) {
+            try {
+                soqlDao.validateRefreshToken();
+            } catch (IOException cause) {
+                cause.printStackTrace();
+                System.out.println("Failed to validate refresh token - " + cause.getMessage());
+            }
+        }
+
         final String jobId = UUID.randomUUID().toString();
-        boolean useReport = !requestContext.invokeAsUser();
-        String accountID = authorizationContext.getAuthorizedAccount().getAccountId();
+        String accountId = invokeAsUser ? authorizationContext.getAuthorizedAccount().getAccountId() : null;
         executorService.submit(() -> {
             try {
-                Object result = soqlDao.getSalesforceObjectByQuery(sOQLQuery);;
+                String result = soqlDao.getSalesforceObjectByQuery(sOQLQuery, invokeAsUser, accountId);
                 FreeForm freeForm = new FreeForm();
-                freeForm.put(Constants.DATA, "FreeForm", result);
+                if (result != null && !result.isEmpty()) {
+                    freeForm.put(Constants.DATA, "Text", result);
+                }
                 eventHandler.handleEvent(jobId, freeForm);
             } catch (Exception cause) {
                 throw new IllegalStateException(cause);
@@ -111,6 +123,7 @@ public final class ReportingArea {
         });
         return jobId;
     }
+
     @CatalogRequest(
             id = "localDomainRequest_2c883b8a-8027-4426-a7a7-d30ec264e8d9",
             name = "Get Results",
@@ -118,14 +131,19 @@ public final class ReportingArea {
             area = "Reporting",
             type = CatalogRequest.Type.WAIT_FOR_EVENT)
     @Field(name = "Response", type = "FreeForm", required = false, attributes = {}, options = {})
-    public FreeForm getResults(
+    public Object getResults(
             @Field(name = "eventName", type = "Text") String eventName,
             @Field(name = "eventData", type = "FreeForm") FreeForm eventData,
             @Field.Text(name = "Job Id", required = true, attributes = {@Attribute(name = "visualWidth", value = "S")}, options = {}) String jobId) {
-       // jobId = FieldValues.toString(textField, jobId);
         if (eventName.equals(jobId)) {
-            return (FreeForm) eventData.get(Constants.DATA);
-        }else {
+            String data = (String) eventData.get(Constants.DATA);
+            if (data != null) {
+                List results = new ArrayList();
+                return parseQueryResult(results, data);
+            } else {
+                return new FreeForm();
+            }
+        } else {
             throw new IllegalStateException(Constants.INVALID_TASK_ID);
         }
     }
@@ -208,7 +226,8 @@ public final class ReportingArea {
                 String query = "Select " + queryLimited + " from Opportunity where lastModifiedDate >= "
                         + startDate + " and lastModifiedDate <= " + endDate + " and stageName LIKE 'Closed won%'";
 
-                return opportunityDao.getOpportunitiesByQuery(query).stream().map(CatalogTypes::fromSFOpportunity).collect(Collectors.toList());
+                return opportunityDao.getOpportunitiesByQuery(query).stream().map(CatalogTypes::fromSFOpportunity)
+                        .collect(Collectors.toList());
             }
         } catch (IllegalArgumentException cause) {
             System.err.println(cause.getMessage());

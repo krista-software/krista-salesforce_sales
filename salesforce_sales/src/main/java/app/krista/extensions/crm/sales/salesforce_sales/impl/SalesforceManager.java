@@ -36,6 +36,10 @@ public final class SalesforceManager {
         this.salesAttributes = salesAttributes;
     }
 
+    public SalesforceTokenProvider getTokenProvider() {
+        return tokenProvider;
+    }
+
     public Map<String, Object> getDifference(Object old, Object newObj) {
         try {
             Map<String, Object> values = new HashMap<>();
@@ -56,7 +60,7 @@ public final class SalesforceManager {
 
     public String getRecordById(String id, String sobject) {
         try {
-            SalesforceToken salesforceToken = tokenProvider.getSalesforceToken();
+            SalesforceToken salesforceToken = tokenProvider.getSalesforceTokenForUser();
             String url = salesforceToken.getInstanceUrl() + "/services/data/v48.0/sobjects/" + sobject + "/" + id;
             final OAuthRequest request = getoAuthRequest(Verb.GET, null, salesforceToken, url);
             return getRequestResponse(salesforceToken, request);
@@ -68,7 +72,7 @@ public final class SalesforceManager {
 
     public String updateRecord(String id, String body, String sobject) {
         try {
-            SalesforceToken salesforceToken = tokenProvider.getSalesforceToken();
+            SalesforceToken salesforceToken = tokenProvider.getSalesforceTokenForUser();
             String url = salesforceToken.getInstanceUrl() + "/services/data/v48.0/sobjects/" + sobject + "/" + id + "?_HttpMethod=PATCH";
             final OAuthRequest request = getoAuthRequest(Verb.POST, body, salesforceToken, url);
             return getRequestResponse(salesforceToken, request);
@@ -80,13 +84,27 @@ public final class SalesforceManager {
 
     public String getRecordByQuery(String query) {
         try {
-            SalesforceToken salesforceToken = tokenProvider.getSalesforceToken();
-            String url = salesforceToken.getInstanceUrl() + "/services/data/v58.0/query?q=" +
-                    URLEncoder.encode(query, StandardCharsets.UTF_8);
-            System.out.println(url);
-            final OAuthRequest request = getoAuthRequest(Verb.GET, null, salesforceToken, url);
-            return getRequestResponse(salesforceToken, request);
+            SalesforceToken salesforceToken = tokenProvider.getSalesforceTokenForUser();
+            return getRecords(query, salesforceToken);
         } catch (IOException cause) {
+            cause.printStackTrace();
+            System.err.println(cause.getMessage());
+        }
+        return "";
+    }
+
+    private String getRecords(String query, SalesforceToken salesforceToken) {
+        String url = salesforceToken.getInstanceUrl() + "/services/data/v58.0/query?q=" +
+                URLEncoder.encode(query, StandardCharsets.UTF_8);
+        final OAuthRequest request = getoAuthRequest(Verb.GET, null, salesforceToken, url);
+        return getRequestResponse(salesforceToken, request);
+    }
+
+    public String getRecordByQuery(String query, boolean invokeAsUser, String accountId) {
+        try {
+            SalesforceToken salesforceToken = tokenProvider.getSalesforceTokenForUser(invokeAsUser, accountId);
+            return getRecords(query, salesforceToken);
+        } catch (IOException | RuntimeException cause) {
             cause.printStackTrace();
             System.err.println(cause.getMessage());
         }
@@ -95,7 +113,7 @@ public final class SalesforceManager {
 
     public String getMe() {
         try {
-            SalesforceToken salesforceToken = tokenProvider.getSalesforceToken();
+            SalesforceToken salesforceToken = tokenProvider.getSalesforceTokenForUser();
             String url = salesforceToken.getInstanceUrl() + "/services/data/v48.0/chatter/users/me";
             final OAuthRequest request = getoAuthRequest(Verb.GET, null, salesforceToken, url);
             return getRequestResponse(salesforceToken, request);
@@ -107,7 +125,7 @@ public final class SalesforceManager {
 
     public void sendEmail(String recepients, String subj, String body) {
         try {
-            SalesforceToken salesforceToken = tokenProvider.getSalesforceToken();
+            SalesforceToken salesforceToken = tokenProvider.getSalesforceTokenForUser();
             String url = salesforceToken.getInstanceUrl() + "/services/data/v48.0/actions/standard/emailSimple";
             SFEmail.Body emailBody = new SFEmail.Body();
             emailBody.inputs.add(new SFEmail(recepients.trim(), subj.trim(), body.trim()));
@@ -120,7 +138,7 @@ public final class SalesforceManager {
 
     public String createRecord(String body, String sobject) {
         try {
-            SalesforceToken salesforceToken = tokenProvider.getSalesforceToken();
+            SalesforceToken salesforceToken = tokenProvider.getSalesforceTokenForUser();
             String url = salesforceToken.getInstanceUrl() + "/services/data/v48.0/sobjects/" + sobject + "/";
             final OAuthRequest request = getoAuthRequest(Verb.POST, body, salesforceToken, url);
             return getRequestResponse(salesforceToken, request);
@@ -132,7 +150,7 @@ public final class SalesforceManager {
 
     public String getObjects(String sObject) {
         try {
-            SalesforceToken salesforceToken = tokenProvider.getSalesforceToken();
+            SalesforceToken salesforceToken = tokenProvider.getSalesforceTokenForUser();
             String url = salesforceToken.getInstanceUrl() + "/services/data/v48.0/sobjects/" + sObject;
             final OAuthRequest request = getoAuthRequest(Verb.GET, null, salesforceToken, url);
             return getRequestResponse(salesforceToken, request);
@@ -144,7 +162,7 @@ public final class SalesforceManager {
 
     public void deleteRecordById(String id, String sobject) {
         try {
-            SalesforceToken salesforceToken = tokenProvider.getSalesforceToken();
+            SalesforceToken salesforceToken = tokenProvider.getSalesforceTokenForUser();
             String url = salesforceToken.getInstanceUrl() + "/services/data/v48.0/sobjects/" + sobject + "/" + id;
             final OAuthRequest request = getoAuthRequest(Verb.DELETE, null, salesforceToken, url);
             getRequestResponse(salesforceToken, request);
@@ -178,7 +196,7 @@ public final class SalesforceManager {
 
     public String getLatestNPostsByOpportunityId(String opportunityId, int numberOfPosts) {
         try {
-            SalesforceToken salesforceToken = tokenProvider.getSalesforceToken();
+            SalesforceToken salesforceToken = tokenProvider.getSalesforceTokenForUser();
             String url = salesforceToken.getInstanceUrl() + "/services/data/v48.0/chatter/feeds/record/" + opportunityId +
                     "/feed-elements?sortOrder=ASC&sortField=CreatedDate&pageSize=" + numberOfPosts;
             final OAuthRequest request = getoAuthRequest(Verb.GET, null, salesforceToken, url);
@@ -191,7 +209,7 @@ public final class SalesforceManager {
 
     public Response getFileResponse(String downloadUrl) {
         try {
-            SalesforceToken salesforceToken = tokenProvider.getSalesforceToken();
+            SalesforceToken salesforceToken = tokenProvider.getSalesforceTokenForUser();
             String url = salesforceToken.getInstanceUrl() + downloadUrl;
             final OAuthRequest request = getoAuthRequest(Verb.GET, null, salesforceToken, url);
             return getResponse(salesforceToken, request);

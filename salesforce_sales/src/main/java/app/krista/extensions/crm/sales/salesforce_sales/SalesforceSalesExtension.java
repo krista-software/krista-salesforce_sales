@@ -63,7 +63,7 @@ public final class SalesforceSalesExtension {
         if (salesforceSalesAttributes.getUserName() == null || salesforceSalesAttributes.getUserName().isBlank() ||
                 salesforceSalesAttributes.getPassword() == null || salesforceSalesAttributes.getPassword().isBlank() ||
                 salesforceSalesAttributes.getSecurityToken() == null || salesforceSalesAttributes.getSecurityToken().isBlank()) {
-            providerFactory.create(salesforceSalesAttributes).getSalesforceToken();
+            providerFactory.create(salesforceSalesAttributes).getSalesforceTokenForUser();
         } else {
             providerFactory.create(salesforceSalesAttributes).getSalesforceTokenForAdmin();
         }

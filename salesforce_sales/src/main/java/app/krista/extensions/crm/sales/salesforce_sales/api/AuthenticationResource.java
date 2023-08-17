@@ -61,7 +61,8 @@ public final class AuthenticationResource {
             Objects.requireNonNull(code);
             SalesforceTokenProvider tokenProvider = getSalesforceTokenProvider(authContextId);
             OAuth2AccessToken accessToken = tokenProvider.getSalesforceSalesAttributes().getOauthService().getAccessToken(code);
-            refreshTokenStore.put(key + "&" + tokenProvider.getSalesforceSalesAttributes().getClientId() + tokenProvider.getSalesforceSalesAttributes().getClientSecret(), accessToken.getRefreshToken());
+            refreshTokenStore.put(key + "&" + tokenProvider.getSalesforceSalesAttributes().getClientId() +
+                    tokenProvider.getSalesforceSalesAttributes().getClientSecret(), accessToken.getRefreshToken());
             if (context.isAuthenticated()) {
                 authorizationListener.authorized();
                 return "User authenticated successfully.";

@@ -650,6 +650,37 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |------------------------|---------------------------------|
 | Sales Pipeline Summary | List&lt;Sales Pipeline Summary> |
 
+#### Process Query Request Async
+
+- **Description**: This request takes the SOQL query as input and returns Job Id.
+- **Input Parameters**: 
+
+| **Parameter Name** | **Parameter Type** |
+|--------------------|--------------------|
+| SOQL Query         | Paragraph          |
+
+- **Output Parameters**:
+
+| **Parameter Name** | **Parameter Type** |
+|--------------------|--------------------|
+| Job Id             | String             |
+
+#### Get Results
+
+- **Description**: This request takes the Job Id as input and returns the generic output.
+- **Input Parameters**:
+
+| **Parameter Name** | **Parameter Type** |
+|--------------------|--------------------|
+| Job Id             | String             |
+
+- **Output Parameters**:
+
+| **Parameter Name** | **Parameter Type** |
+|--------------------|--------------------|
+| Response           | FreeForm           |
+
+
 ### Forecasting Area
 
 #### Get Sales Forecast For A Specific Quarter
