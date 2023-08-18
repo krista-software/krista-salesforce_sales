@@ -19,10 +19,6 @@ public final class Constants {
     public static final String SERVICES_DATA_V_48_0_SOBJECTS = "/services/data/v48.0/sobjects/";
 
 
-
-
-
-
     public static void validation(@Field(name = "Email Addresses", type = "Text") String emailAddresses, @Field(name = "Subject", type = "Text") String subject, @Field(name = "Body", type = "Paragraph") String body) {
         if (emailAddresses == null || emailAddresses.trim().isEmpty()) {
             throw new IllegalArgumentException("Email Addresses must not be empty.");

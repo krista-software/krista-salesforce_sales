@@ -5,10 +5,9 @@ import app.krista.extensions.crm.sales.salesforce_sales.SalesforceSalesAttribute
 import java.util.Map;
 import java.util.Objects;
 
+import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.NAME;
 import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.getDoubleOrZero;
 import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.getStringOrEmpty;
-
-import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.*;
 
 
 public class SFHelper {
