@@ -3,6 +3,7 @@ package app.krista.extensions.crm.sales.salesforce_sales.impl.connectores;
 import app.krista.extension.authorization.MustAuthorizeException;
 import app.krista.extensions.crm.sales.salesforce_sales.SalesforceSalesAttributes;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.stores.RefreshTokenStore;
+import app.krista.extensions.crm.sales.salesforce_sales.util.SFHelper;
 import app.krista.ksdk.context.AuthorizationContext;
 import app.krista.ksdk.context.RequestContext;
 import app.krista.model.field.NamedValuedField;
@@ -55,15 +56,14 @@ public final class SalesforceTokenProvider {
     }
 
     private SalesforceToken getSalesforceToken(boolean isAdmin, String accountId) throws IOException {
-        if (isAdmin || (salesforceSalesAttributes.getUserName() == null || salesforceSalesAttributes.getUserName().isBlank() ||
-                salesforceSalesAttributes.getPassword() == null || salesforceSalesAttributes.getPassword().isBlank() ||
-                salesforceSalesAttributes.getSecurityToken() == null || salesforceSalesAttributes.getSecurityToken().isBlank())) {
+        if (SFHelper.validateUsingOAuth(isAdmin, salesforceSalesAttributes)) {
             accountId = accountId == null ? authorizationContext.getAuthorizedAccount().getAccountId() : accountId;
             String refreshToken = refreshTokenStore.get(getRefreshTokenKey(accountId));
             if (refreshToken == null) {
                 throw createMustAuthorizationException(false, accountId);
             }
             try {
+                System.out.println("Fetching data for oAuth.....");
                 return getSalesforceTokenForUser(salesforceSalesAttributes.getOauthService().refreshAccessToken(refreshToken));
             } catch (MustAuthorizeException cause) {
                 throw createMustAuthorizationException(true, accountId);

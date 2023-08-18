@@ -1,5 +1,6 @@
 package app.krista.extensions.crm.sales.salesforce_sales.impl;
 
+import app.krista.extensions.crm.sales.salesforce_sales.SalesforceSalesAttributes;
 import app.krista.extensions.crm.sales.salesforce_sales.service.SOQLDao;
 import app.krista.extensions.crm.sales.salesforce_sales.util.SalesforceListResponse;
 import com.google.gson.internal.LinkedTreeMap;
@@ -32,6 +33,10 @@ public class SOQLDaoImpl implements SOQLDao {
         }
         String res = salesforceManager.getRecordByQuery(query);
         return parseQueryResult(results, res);
+    }
+
+    public SalesforceSalesAttributes getSalesAttributes() {
+        return salesforceManager.getSalesAttributes();
     }
 
     public static Map parseQueryResult(List results, String res) {
@@ -70,7 +75,11 @@ public class SOQLDaoImpl implements SOQLDao {
     }
 
     @Override
-    public void validateRefreshToken() throws IOException {
-        salesforceManager.getTokenProvider().getSalesforceTokenForUser();
+    public void validateRefreshToken() {
+        try {
+            salesforceManager.getTokenProvider().getSalesforceTokenForUser();
+        } catch (IOException cause) {
+            System.err.println(cause.getMessage());
+        }
     }
 }

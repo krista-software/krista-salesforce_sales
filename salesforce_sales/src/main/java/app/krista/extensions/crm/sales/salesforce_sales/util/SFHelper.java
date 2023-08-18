@@ -1,5 +1,7 @@
 package app.krista.extensions.crm.sales.salesforce_sales.util;
 
+import app.krista.extensions.crm.sales.salesforce_sales.SalesforceSalesAttributes;
+
 import java.util.Map;
 import java.util.Objects;
 
@@ -99,6 +101,11 @@ public class SFHelper {
         leadMap.put("Lead Last Modified Date", leadData.get("LastModifiedDate") != null
                 ? Long.parseLong((String) leadData.get("LastModifiedDate")) : null);
 
+    }
+    public static boolean validateUsingOAuth(boolean isAdmin, SalesforceSalesAttributes salesforceSalesAttributes) {
+        return isAdmin || (salesforceSalesAttributes.getUserName() == null || salesforceSalesAttributes.getUserName().isBlank() ||
+                salesforceSalesAttributes.getPassword() == null || salesforceSalesAttributes.getPassword().isBlank() ||
+                salesforceSalesAttributes.getSecurityToken() == null || salesforceSalesAttributes.getSecurityToken().isBlank());
     }
 
 }

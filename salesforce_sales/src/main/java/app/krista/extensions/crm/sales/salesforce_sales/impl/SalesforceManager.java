@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
+import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.SERVICES_DATA_V_48_0_SOBJECTS;
+
 @Service
 public final class SalesforceManager {
     private final SalesforceSalesAttributes salesAttributes;
@@ -38,6 +40,10 @@ public final class SalesforceManager {
 
     public SalesforceTokenProvider getTokenProvider() {
         return tokenProvider;
+    }
+
+    public SalesforceSalesAttributes getSalesAttributes() {
+        return salesAttributes;
     }
 
     public Map<String, Object> getDifference(Object old, Object newObj) {
@@ -61,7 +67,7 @@ public final class SalesforceManager {
     public String getRecordById(String id, String sobject) {
         try {
             SalesforceToken salesforceToken = tokenProvider.getSalesforceTokenForUser();
-            String url = salesforceToken.getInstanceUrl() + "/services/data/v48.0/sobjects/" + sobject + "/" + id;
+            String url = salesforceToken.getInstanceUrl() + SERVICES_DATA_V_48_0_SOBJECTS + sobject + "/" + id;
             final OAuthRequest request = getoAuthRequest(Verb.GET, null, salesforceToken, url);
             return getRequestResponse(salesforceToken, request);
         } catch (IOException cause) {
@@ -73,7 +79,7 @@ public final class SalesforceManager {
     public String updateRecord(String id, String body, String sobject) {
         try {
             SalesforceToken salesforceToken = tokenProvider.getSalesforceTokenForUser();
-            String url = salesforceToken.getInstanceUrl() + "/services/data/v48.0/sobjects/" + sobject + "/" + id + "?_HttpMethod=PATCH";
+            String url = salesforceToken.getInstanceUrl() + SERVICES_DATA_V_48_0_SOBJECTS + sobject + "/" + id + "?_HttpMethod=PATCH";
             final OAuthRequest request = getoAuthRequest(Verb.POST, body, salesforceToken, url);
             return getRequestResponse(salesforceToken, request);
         } catch (IOException cause) {
@@ -137,7 +143,7 @@ public final class SalesforceManager {
     public String createRecord(String body, String sobject) {
         try {
             SalesforceToken salesforceToken = tokenProvider.getSalesforceTokenForUser();
-            String url = salesforceToken.getInstanceUrl() + "/services/data/v48.0/sobjects/" + sobject + "/";
+            String url = salesforceToken.getInstanceUrl() + SERVICES_DATA_V_48_0_SOBJECTS + sobject + "/";
             final OAuthRequest request = getoAuthRequest(Verb.POST, body, salesforceToken, url);
             return getRequestResponse(salesforceToken, request);
         } catch (IOException cause) {
@@ -149,7 +155,7 @@ public final class SalesforceManager {
     public String getObjects(String sObject) {
         try {
             SalesforceToken salesforceToken = tokenProvider.getSalesforceTokenForUser();
-            String url = salesforceToken.getInstanceUrl() + "/services/data/v48.0/sobjects/" + sObject;
+            String url = salesforceToken.getInstanceUrl() + SERVICES_DATA_V_48_0_SOBJECTS + sObject;
             final OAuthRequest request = getoAuthRequest(Verb.GET, null, salesforceToken, url);
             return getRequestResponse(salesforceToken, request);
         } catch (IOException cause) {
@@ -161,7 +167,7 @@ public final class SalesforceManager {
     public void deleteRecordById(String id, String sobject) {
         try {
             SalesforceToken salesforceToken = tokenProvider.getSalesforceTokenForUser();
-            String url = salesforceToken.getInstanceUrl() + "/services/data/v48.0/sobjects/" + sobject + "/" + id;
+            String url = salesforceToken.getInstanceUrl() + SERVICES_DATA_V_48_0_SOBJECTS + sobject + "/" + id;
             final OAuthRequest request = getoAuthRequest(Verb.DELETE, null, salesforceToken, url);
             getRequestResponse(salesforceToken, request);
         } catch (IOException cause) {

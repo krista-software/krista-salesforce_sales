@@ -11,6 +11,7 @@ import app.krista.extensions.crm.sales.salesforce_sales.impl.SOQLDaoImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.SalesPipelineSummaryDaoImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.util.Constants;
 import app.krista.extensions.crm.sales.salesforce_sales.util.DatePlus;
+import app.krista.extensions.crm.sales.salesforce_sales.util.SFHelper;
 import app.krista.extensions.util.EventHandler;
 import app.krista.ksdk.context.AuthorizationContext;
 import app.krista.ksdk.context.RequestContext;
@@ -99,15 +100,11 @@ public final class ReportingArea {
 
         boolean invokeAsUser = requestContext.invokeAsUser();
         if (invokeAsUser) {
-            try {
-                soqlDao.validateRefreshToken();
-            } catch (IOException cause) {
-                System.err.println("Failed to validate refresh token - " + cause.getMessage());
-            }
+            soqlDao.validateRefreshToken();
         }
 
         final String jobId = UUID.randomUUID().toString();
-        String accountId = invokeAsUser ? authorizationContext.getAuthorizedAccount().getAccountId() : null;
+        String accountId = SFHelper.validateUsingOAuth(invokeAsUser, soqlDao.getSalesAttributes()) ? authorizationContext.getAuthorizedAccount().getAccountId() : null;
         executorService.submit(() -> {
             try {
                 String result = soqlDao.getSalesforceObjectByQuery(sOQLQuery, invokeAsUser, accountId);

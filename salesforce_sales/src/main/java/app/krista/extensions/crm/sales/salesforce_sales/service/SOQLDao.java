@@ -12,5 +12,5 @@ public interface SOQLDao {
     Object getSalesforceObjectByQuery(String query);
     String getSalesforceObjectByQuery(String query, boolean invokeAsUser, String accountId);
 
-    void validateRefreshToken() throws IOException;
+    void validateRefreshToken();
 }

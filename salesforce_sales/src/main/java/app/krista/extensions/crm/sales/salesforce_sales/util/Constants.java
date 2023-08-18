@@ -16,6 +16,8 @@ public final class Constants {
     public static final String NAME = "Name";
     public static final String INVALID_TASK_ID = "Invalid task ID";
     public static final String DATA = "Data";
+    public static final String SERVICES_DATA_V_48_0_SOBJECTS = "/services/data/v48.0/sobjects/";
+
 
 
 
