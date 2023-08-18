@@ -102,8 +102,7 @@ public final class ReportingArea {
             try {
                 soqlDao.validateRefreshToken();
             } catch (IOException cause) {
-                cause.printStackTrace();
-                System.out.println("Failed to validate refresh token - " + cause.getMessage());
+                System.err.println("Failed to validate refresh token - " + cause.getMessage());
             }
         }
 

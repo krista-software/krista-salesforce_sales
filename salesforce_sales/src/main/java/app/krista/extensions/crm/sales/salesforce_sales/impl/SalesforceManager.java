@@ -53,7 +53,7 @@ public final class SalesforceManager {
             }
             return values;
         } catch (IllegalAccessException cause) {
-            System.err.println(cause.getMessage());
+            System.err.println("Failed to get difference " + cause.getMessage());
         }
         return Map.of();
     }
@@ -65,7 +65,7 @@ public final class SalesforceManager {
             final OAuthRequest request = getoAuthRequest(Verb.GET, null, salesforceToken, url);
             return getRequestResponse(salesforceToken, request);
         } catch (IOException cause) {
-            System.err.println("Failed to get record by id" + cause.getMessage());
+            System.err.println("Failed to get record by id " + cause.getMessage());
         }
         return "";
     }
@@ -87,8 +87,7 @@ public final class SalesforceManager {
             SalesforceToken salesforceToken = tokenProvider.getSalesforceTokenForUser();
             return getRecords(query, salesforceToken);
         } catch (IOException cause) {
-            cause.printStackTrace();
-            System.err.println(cause.getMessage());
+            System.err.println("Failed to get record by id " + cause.getMessage());
         }
         return "";
     }
@@ -105,13 +104,12 @@ public final class SalesforceManager {
             SalesforceToken salesforceToken = tokenProvider.getSalesforceTokenForUser(invokeAsUser, accountId);
             return getRecords(query, salesforceToken);
         } catch (IOException | RuntimeException cause) {
-            cause.printStackTrace();
-            System.err.println(cause.getMessage());
+            System.err.println("Failed to get record by query " + cause.getMessage());
         }
         return "";
     }
 
-    public String getMe() {
+    public String getUserDetails() {
         try {
             SalesforceToken salesforceToken = tokenProvider.getSalesforceTokenForUser();
             String url = salesforceToken.getInstanceUrl() + "/services/data/v48.0/chatter/users/me";
@@ -155,7 +153,7 @@ public final class SalesforceManager {
             final OAuthRequest request = getoAuthRequest(Verb.GET, null, salesforceToken, url);
             return getRequestResponse(salesforceToken, request);
         } catch (IOException cause) {
-            System.err.println(cause.getMessage());
+            System.err.println("Failed to get objects " + cause.getMessage());
         }
         return "";
     }
