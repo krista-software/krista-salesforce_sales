@@ -85,7 +85,9 @@ public final class SalesforceSalesAttributes {
     }
 
     public String getCallbackUrl() {
-        return (routingUrl.contains("extension.local.eng.krista.app") ? routingUrl.replace("extension.local.eng.krista.app", "localhost:8765") : routingUrl) + "/rest/salesforcesales/callback";
+        String callBackUrl = this.routingUrl.contains("extension.local.eng.krista.app")
+                ? this.routingUrl.replace("extension.local.eng.krista.app", "localhost:8765") : this.routingUrl;
+        return (callBackUrl.contains("localhost:8765") ? callBackUrl.replace("https", "http") : callBackUrl) + "/rest/salesforcesales/callback";
     }
 
     public synchronized OAuth20Service getOauthService() {

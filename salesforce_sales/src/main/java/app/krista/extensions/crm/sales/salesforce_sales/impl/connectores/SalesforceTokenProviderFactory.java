@@ -8,7 +8,6 @@ import app.krista.ksdk.context.RequestContext;
 import org.jvnet.hk2.annotations.Service;
 
 import javax.inject.Inject;
-import java.io.IOException;
 
 @Service
 public final class SalesforceTokenProviderFactory {
@@ -25,7 +24,9 @@ public final class SalesforceTokenProviderFactory {
                 new SalesforceTokenProvider(refreshTokenStore, requestContext, salesforceSalesAttributes, authorizationContext, null), attributeStore);
     }
 
-    public SalesforceTokenProviderFactory(RefreshTokenStore refreshTokenStore, RequestContext requestContext, AuthorizationContext authorizationContext, SalesforceTokenProvider salesforceTokenProvider, SalesforceSaleAttributeStore attributeStore) {
+    public SalesforceTokenProviderFactory(RefreshTokenStore refreshTokenStore, RequestContext requestContext,
+                                          AuthorizationContext authorizationContext, SalesforceTokenProvider salesforceTokenProvider,
+                                          SalesforceSaleAttributeStore attributeStore) {
         this.refreshTokenStore = refreshTokenStore;
         this.requestContext = requestContext;
         this.authorizationContext = authorizationContext;

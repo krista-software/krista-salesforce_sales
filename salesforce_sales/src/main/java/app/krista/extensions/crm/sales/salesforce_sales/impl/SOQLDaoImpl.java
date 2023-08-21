@@ -1,11 +1,13 @@
 package app.krista.extensions.crm.sales.salesforce_sales.impl;
 
+import app.krista.extensions.crm.sales.salesforce_sales.SalesforceSalesAttributes;
 import app.krista.extensions.crm.sales.salesforce_sales.service.SOQLDao;
 import app.krista.extensions.crm.sales.salesforce_sales.util.SalesforceListResponse;
 import com.google.gson.internal.LinkedTreeMap;
 import org.jvnet.hk2.annotations.Service;
 
 import javax.inject.Inject;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +32,14 @@ public class SOQLDaoImpl implements SOQLDao {
             return new HashMap();
         }
         String res = salesforceManager.getRecordByQuery(query);
+        return parseQueryResult(results, res);
+    }
+
+    public SalesforceSalesAttributes getSalesAttributes() {
+        return salesforceManager.getSalesAttributes();
+    }
+
+    public static Map parseQueryResult(List results, String res) {
         SalesforceListResponse response = GSON.fromJson(res, SalesforceListResponse.class);
 
         if (response.records.size() > 0) {
@@ -53,6 +63,23 @@ public class SOQLDaoImpl implements SOQLDao {
             return responses;
         } else {
             return new HashMap<>();
+        }
+    }
+
+    @Override
+    public String getSalesforceObjectByQuery(String query, boolean invokeAsUser, String accountId) {
+        if (query == null || query.isEmpty()) {
+            return null;
+        }
+        return salesforceManager.getRecordByQuery(query, invokeAsUser, accountId);
+    }
+
+    @Override
+    public void validateRefreshToken() {
+        try {
+            salesforceManager.getTokenProvider().getSalesforceTokenForUser();
+        } catch (IOException cause) {
+            System.err.println(cause.getMessage());
         }
     }
 }

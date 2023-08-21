@@ -3,6 +3,7 @@ package app.krista.extensions.crm.sales.salesforce_sales.impl.connectores;
 import app.krista.extension.authorization.MustAuthorizeException;
 import app.krista.extensions.crm.sales.salesforce_sales.SalesforceSalesAttributes;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.stores.RefreshTokenStore;
+import app.krista.extensions.crm.sales.salesforce_sales.util.SFHelper;
 import app.krista.ksdk.context.AuthorizationContext;
 import app.krista.ksdk.context.RequestContext;
 import app.krista.model.field.NamedValuedField;
@@ -25,7 +26,8 @@ public final class SalesforceTokenProvider {
     private final AuthorizationContext authorizationContext;
 
     @Inject
-    public SalesforceTokenProvider(RefreshTokenStore refreshTokenStore, RequestContext requestContext, SalesforceSalesAttributes salesforceSalesAttributes, AuthorizationContext authorizationContext) {
+    public SalesforceTokenProvider(RefreshTokenStore refreshTokenStore, RequestContext requestContext,
+                                   SalesforceSalesAttributes salesforceSalesAttributes, AuthorizationContext authorizationContext) {
         this(refreshTokenStore, requestContext, salesforceSalesAttributes, authorizationContext, null);
     }
 
@@ -41,29 +43,33 @@ public final class SalesforceTokenProvider {
         return salesforceSalesAttributes;
     }
 
-    public SalesforceToken getSalesforceToken() throws IOException {
-        return getSalesforceToken(requestContext.invokeAsUser());
+    public SalesforceToken getSalesforceTokenForUser() throws IOException {
+        return getSalesforceToken(requestContext.invokeAsUser(), null);
+    }
+
+    public SalesforceToken getSalesforceTokenForUser(boolean invokeAsUser, String accountId) throws IOException {
+        return getSalesforceToken(invokeAsUser, accountId);
     }
 
     public SalesforceToken getSalesforceTokenForAdmin() throws IOException {
-        return getSalesforceToken(false);
+        return getSalesforceToken(false, null);
     }
 
-    private SalesforceToken getSalesforceToken(boolean isAdmin) throws IOException {
-        if (isAdmin || (salesforceSalesAttributes.getUserName() == null || salesforceSalesAttributes.getUserName().isBlank() ||
-                salesforceSalesAttributes.getPassword() == null || salesforceSalesAttributes.getPassword().isBlank() ||
-                salesforceSalesAttributes.getSecurityToken() == null || salesforceSalesAttributes.getSecurityToken().isBlank())) {
-            String refreshToken = refreshTokenStore.get(authorizationContext.getAuthorizedAccount().getAccountId()+"&"+salesforceSalesAttributes.getClientId()+salesforceSalesAttributes.getClientSecret());
-            if (refreshToken == null || refreshToken.isBlank()) {
-                throw createMustAuthorizationException(false);
+    private SalesforceToken getSalesforceToken(boolean isAdmin, String accountId) throws IOException {
+        if (SFHelper.validateUsingOAuth(isAdmin, salesforceSalesAttributes)) {
+            accountId = accountId == null ? authorizationContext.getAuthorizedAccount().getAccountId() : accountId;
+            String refreshToken = refreshTokenStore.get(getRefreshTokenKey(accountId));
+            if (refreshToken == null) {
+                throw createMustAuthorizationException(false, accountId);
             }
             try {
-                return getSalesforceToken(salesforceSalesAttributes.getOauthService().refreshAccessToken(refreshToken));
+                System.out.println("Fetching data for oAuth.....");
+                return getSalesforceTokenForUser(salesforceSalesAttributes.getOauthService().refreshAccessToken(refreshToken));
             } catch (MustAuthorizeException cause) {
-                throw createMustAuthorizationException(true);
+                throw createMustAuthorizationException(true, accountId);
             } catch (OAuth2AccessTokenErrorResponse cause) {
                 if (cause.getErrorDescription() != null && cause.getErrorDescription().equals("expired access/refresh token")) {
-                    throw createMustAuthorizationException(true);
+                    throw createMustAuthorizationException(true, accountId);
                 }
                 throw new RuntimeException("Something went wrong, please try again later. " + cause.getErrorDescription(), cause);
             } catch (Exception cause) {
@@ -75,7 +81,7 @@ public final class SalesforceTokenProvider {
             Object securityToken = salesforceSalesAttributes.getSecurityToken();
 
             try {
-                return getSalesforceToken(
+                return getSalesforceTokenForUser(
                         salesforceSalesAttributes.getOauthService().getAccessTokenPasswordGrant(String.valueOf(username),
                                 password + String.valueOf(securityToken)));
             } catch (Exception cause) {
@@ -85,7 +91,11 @@ public final class SalesforceTokenProvider {
         }
     }
 
-    private SalesforceToken getSalesforceToken(OAuth2AccessToken accessToken) {
+    private String getRefreshTokenKey(String accountId) {
+        return accountId + "&" + salesforceSalesAttributes.getClientId() + salesforceSalesAttributes.getClientSecret();
+    }
+
+    private SalesforceToken getSalesforceTokenForUser(OAuth2AccessToken accessToken) {
         final SalesforceToken salesforceAccessToken;
         if (accessToken instanceof SalesforceToken) {
             salesforceAccessToken = (SalesforceToken) accessToken;
@@ -95,10 +105,11 @@ public final class SalesforceTokenProvider {
         return salesforceAccessToken;
     }
 
-    private MustAuthorizeException createMustAuthorizationException(boolean reAuthentication) {
+    private MustAuthorizeException createMustAuthorizationException(boolean reAuthentication, String accountId) {
         System.err.println(reAuthentication ? "Got error for Authentication. So sending for re authentication" : "Got error for Authentication. So sending for authentication");
+        accountId = accountId == null ? authorizationContext.getAuthorizedAccount().getAccountId() : accountId;//
         List<NamedValuedField> details = new ArrayList<>();
-        NamedValuedField userIdField = new NamedValuedField("userId", "Text", authorizationContext.getAuthorizedAccount().getAccountId(), new HashMap<>(), new HashMap<>());
+        NamedValuedField userIdField = new NamedValuedField("userId", "Text", accountId, new HashMap<>(), new HashMap<>());
         details.add(userIdField);
         if (authContextId != null) {
             NamedValuedField contextIdField = new NamedValuedField("authContextId", "Text", authContextId, new HashMap<>(), new HashMap<>());

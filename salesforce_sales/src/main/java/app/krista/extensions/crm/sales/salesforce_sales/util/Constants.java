@@ -14,7 +14,9 @@ public final class Constants {
     public static final String SFORCE_COM_2005_09_OUTBOUND = "http://soap.sforce.com/2005/09/outbound";
     public static final String ENTERPRISE_SOAP_SFORCE_COM = "urn:sobject.enterprise.soap.sforce.com";
     public static final String NAME = "Name";
-
+    public static final String INVALID_TASK_ID = "Invalid task ID";
+    public static final String DATA = "Data";
+    public static final String SERVICES_DATA_V_48_0_SOBJECTS = "/services/data/v48.0/sobjects/";
 
 
     public static void validation(@Field(name = "Email Addresses", type = "Text") String emailAddresses, @Field(name = "Subject", type = "Text") String subject, @Field(name = "Body", type = "Paragraph") String body) {
