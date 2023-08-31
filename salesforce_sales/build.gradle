@@ -43,14 +43,14 @@ configurations {
 }
 
 dependencies {
-    annotationProcessor 'app.krista:extension-impl-anno-processors:1.0.82'
-    implementation 'app.krista:krista-apis:1.0.82'
+    annotationProcessor 'app.krista:extension-impl-anno-processors:1.0.84'
+    implementation 'app.krista:krista-apis:1.0.84'
     implementation 'org.glassfish.hk2:hk2-api:3.0.3'
     implementation 'com.github.scribejava:scribejava-apis:8.3.3'
     implementation 'com.googlecode.libphonenumber:libphonenumber:5.5'
     implementation 'org.glassfish.jersey.media:jersey-media-multipart:2.35'
 
-    testImplementation 'com.kristasoft.common:common-test:1.0.35'
+    testImplementation 'com.kristasoft.common:common-test:1.0.34'
 }
 
 task createSourceDir(type: Exec) {

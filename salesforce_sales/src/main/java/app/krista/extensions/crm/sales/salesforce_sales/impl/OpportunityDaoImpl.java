@@ -197,9 +197,8 @@ public class OpportunityDaoImpl implements OpportunityDao {
         List<SFAggOpportunityOwnerTotal> sfAggOpportunityOwnerTotal = getRevenueByQuery("SELECT ownerid, owner.name,SUM(AMOUNT) Total from Opportunity where IsClosed = true AND CloseDate=THIS_QUARTER GROUP BY ownerid, owner.name  Having ownerid = '" + ownerId + "'");
         return sfAggOpportunityOwnerTotal != null ? sfAggOpportunityOwnerTotal.stream().map(SFAggOpportunityOwnerTotal::toMap).collect(Collectors.toList()) : List.of();
     }
-
     @Override
-    public List getQuaterClosedSum() {
+    public List getQuaterClosedSum(){
         List<SFAggOpportunityOwnerTotal> sfAggOpportunityOwnerTotal = getRevenueByQuery("SELECT ownerid, owner.name,SUM(AMOUNT) Total from Opportunity where IsClosed = true AND CloseDate=THIS_QUARTER GROUP BY ownerid, owner.name  ");
         return sfAggOpportunityOwnerTotal != null ? sfAggOpportunityOwnerTotal.stream().map(SFAggOpportunityOwnerTotal::toMap).collect(Collectors.toList()) : List.of();
     }
