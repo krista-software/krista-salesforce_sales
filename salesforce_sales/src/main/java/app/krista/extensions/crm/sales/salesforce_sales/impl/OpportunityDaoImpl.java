@@ -199,6 +199,12 @@ public class OpportunityDaoImpl implements OpportunityDao {
     }
 
     @Override
+    public List getQuaterClosedSum() {
+        List<SFAggOpportunityOwnerTotal> sfAggOpportunityOwnerTotal = getRevenueByQuery("SELECT ownerid, owner.name,SUM(AMOUNT) Total from Opportunity where IsClosed = true AND CloseDate=THIS_QUARTER GROUP BY ownerid, owner.name  ");
+        return sfAggOpportunityOwnerTotal != null ? sfAggOpportunityOwnerTotal.stream().map(SFAggOpportunityOwnerTotal::toMap).collect(Collectors.toList()) : List.of();
+    }
+
+    @Override
     public List<Map<String, Object>> getCurrentQuaterQuota() {
         String res = salesforceManager.getRecordByQuery("SELECT QuotaOwner.Name, QuotaAmount FROM ForecastingQuota where startdate = THIS_QUARTER");
         SalesforceListResponse<Quota> oppList =

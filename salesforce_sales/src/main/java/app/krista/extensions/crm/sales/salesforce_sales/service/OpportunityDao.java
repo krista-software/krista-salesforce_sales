@@ -108,6 +108,8 @@ public interface OpportunityDao {
      */
     List getQuaterClosedSumByOwnerId(String ownerId);
 
+    List getQuaterClosedSum();
+
     /**
      * Returns sum of amount of current quarter quota
      * @return sum of amount of current quarter quota

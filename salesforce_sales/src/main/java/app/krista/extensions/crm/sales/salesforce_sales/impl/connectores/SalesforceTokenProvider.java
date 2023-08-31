@@ -63,7 +63,6 @@ public final class SalesforceTokenProvider {
                 throw createMustAuthorizationException(false, accountId);
             }
             try {
-                System.out.println("Fetching data for oAuth.....");
                 return getSalesforceTokenForUser(salesforceSalesAttributes.getOauthService().refreshAccessToken(refreshToken));
             } catch (MustAuthorizeException cause) {
                 throw createMustAuthorizationException(true, accountId);
@@ -107,7 +106,7 @@ public final class SalesforceTokenProvider {
 
     private MustAuthorizeException createMustAuthorizationException(boolean reAuthentication, String accountId) {
         System.err.println(reAuthentication ? "Got error for Authentication. So sending for re authentication" : "Got error for Authentication. So sending for authentication");
-        accountId = accountId == null ? authorizationContext.getAuthorizedAccount().getAccountId() : accountId;//
+        accountId = accountId == null ? authorizationContext.getAuthorizedAccount().getAccountId() : accountId;
         List<NamedValuedField> details = new ArrayList<>();
         NamedValuedField userIdField = new NamedValuedField("userId", "Text", accountId, new HashMap<>(), new HashMap<>());
         details.add(userIdField);
