@@ -607,9 +607,9 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 
 - **Output Parameters**:
 
-| **Parameter Name** | **Parameter Type**   |
-|--------------------|----------------------|
-| Quarter Revenue    | List&lt;Opportunity> |
+| **Parameter Name** | **Parameter Type**        |
+|--------------------|---------------------------|
+| Quarter Revenue    | List<Map<String, Object>> |
 
 #### YTD Sales Revenue Closed
 

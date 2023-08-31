@@ -242,7 +242,6 @@ public class OpportunityDaoImpl implements OpportunityDao {
         salesforceManager.deleteRecordById(key, OPPORTUNITY);
     }
 
-
     private LatestPosts parseElementToPost(JsonNode elementNode) throws IOException {
         String feedElementType = elementNode.get(FEED_ELEMENT_TYPE).asText();
         if (!feedElementType.equalsIgnoreCase("FeedItem")) {
@@ -274,7 +273,6 @@ public class OpportunityDaoImpl implements OpportunityDao {
         }
         return null;
     }
-
 
     private List<app.krista.model.base.File> getFiles(JsonNode elementNode) throws IOException {
         List<app.krista.model.base.File> files = new ArrayList<>();

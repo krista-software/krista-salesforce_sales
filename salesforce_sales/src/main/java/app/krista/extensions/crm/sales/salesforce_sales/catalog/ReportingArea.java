@@ -209,7 +209,7 @@ public final class ReportingArea {
     public List<Map<String, Object>> valueOfOpportunitiesClosedForCurrentQuarter(
             @Field.Text(name = "Owner Id", required = false, attributes = {@Attribute(name = "visualWidth", value = "S")}, options = {}) String ownerId) {
         try {
-            return (ownerId != null && !ownerId.isEmpty() && !ownerId.isBlank()) ?
+            return (ownerId != null && !ownerId.isBlank()) ?
                     opportunityDao.getQuaterClosedSumByOwnerId(ownerId) :
                     opportunityDao.getQuaterClosedSum();
         } catch (IllegalArgumentException cause) {
