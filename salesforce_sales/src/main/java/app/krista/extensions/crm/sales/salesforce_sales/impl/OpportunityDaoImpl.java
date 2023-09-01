@@ -193,13 +193,17 @@ public class OpportunityDaoImpl implements OpportunityDao {
     }
 
     @Override
-    public List getQuaterClosedSumByOwnerId(String ownerId) {
-        List<SFAggOpportunityOwnerTotal> sfAggOpportunityOwnerTotal = getRevenueByQuery("SELECT ownerid, owner.name,SUM(AMOUNT) Total from Opportunity where IsClosed = true AND CloseDate=THIS_QUARTER GROUP BY ownerid, owner.name  Having ownerid = '" + ownerId + "'");
+    public List getQuarterClosedSum(String ownerId) {
+        String query = "SELECT ownerid, owner.name,SUM(AMOUNT) Total from Opportunity where IsClosed = true AND CloseDate=THIS_QUARTER GROUP BY ownerid, owner.name";
+        if (ownerId != null && !ownerId.isBlank()) {
+            query += " Having ownerid = '" + ownerId + "'";
+        }
+        List<SFAggOpportunityOwnerTotal> sfAggOpportunityOwnerTotal = getRevenueByQuery(query);
         return sfAggOpportunityOwnerTotal != null ? sfAggOpportunityOwnerTotal.stream().map(SFAggOpportunityOwnerTotal::toMap).collect(Collectors.toList()) : List.of();
     }
 
     @Override
-    public List<Map<String, Object>> getCurrentQuaterQuota() {
+    public List<Map<String, Object>> getCurrentQuarterQuota() {
         String res = salesforceManager.getRecordByQuery("SELECT QuotaOwner.Name, QuotaAmount FROM ForecastingQuota where startdate = THIS_QUARTER");
         SalesforceListResponse<Quota> oppList =
                 GSON.fromJson(res, new TypeToken<SalesforceListResponse<Quota>>() {
@@ -237,7 +241,6 @@ public class OpportunityDaoImpl implements OpportunityDao {
         salesforceManager.deleteRecordById(key, OPPORTUNITY);
     }
 
-
     private LatestPosts parseElementToPost(JsonNode elementNode) throws IOException {
         String feedElementType = elementNode.get(FEED_ELEMENT_TYPE).asText();
         if (!feedElementType.equalsIgnoreCase("FeedItem")) {
@@ -269,7 +272,6 @@ public class OpportunityDaoImpl implements OpportunityDao {
         }
         return null;
     }
-
 
     private List<app.krista.model.base.File> getFiles(JsonNode elementNode) throws IOException {
         List<app.krista.model.base.File> files = new ArrayList<>();

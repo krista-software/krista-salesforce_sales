@@ -4,13 +4,11 @@ import app.krista.extension.impl.anno.Attribute;
 import app.krista.extension.impl.anno.CatalogRequest;
 import app.krista.extension.impl.anno.Domain;
 import app.krista.extension.impl.anno.Field;
-import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.Opportunity;
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.SalesPipelineSummary;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.OpportunityDaoImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.SOQLDaoImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.SalesPipelineSummaryDaoImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.util.Constants;
-import app.krista.extensions.crm.sales.salesforce_sales.util.DatePlus;
 import app.krista.extensions.crm.sales.salesforce_sales.util.SFHelper;
 import app.krista.extensions.util.EventHandler;
 import app.krista.ksdk.context.AuthorizationContext;
@@ -18,7 +16,10 @@ import app.krista.ksdk.context.RequestContext;
 import app.krista.model.base.FreeForm;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
@@ -190,7 +191,7 @@ public final class ReportingArea {
     @Field.Desc(name = "Sales Quota", type = "[ { Owner Name: Text, Quota Amount: Number } ]", required = false)
     public List<Map<String, Object>> salesQuotaForTheQuarter() {
         try {
-            return opportunityDao.getCurrentQuaterQuota();
+            return opportunityDao.getCurrentQuarterQuota();
         } catch (IllegalArgumentException cause) {
             System.err.println(cause.getMessage());
             cause.printStackTrace();
@@ -201,29 +202,14 @@ public final class ReportingArea {
     @CatalogRequest(
             id = "localDomainRequest_80a52f28-d2e8-4d21-9631-83762b99300e",
             name = "Value Of Opportunities Closed For Current Quarter",
-            description = "This request will return the values of Opportunities closed for the current quarter filtered by owner Id if provided",
+            description = "This request will retrieve the  total closed opportunities revenue within the current quarter. If an owner ID is provided, it returns the revenue for that particular owner; otherwise, it returns total revenue grouped by owners.",
             area = "Reporting",
-            type = CatalogRequest.Type.QUERY_SYSTEM)
-    @Field.Desc(name = "Quarter Revenue", type = "[ Entity(Opportunity) ]", required = false)
-    public List<Opportunity> valueOfOpportunitiesClosedForCurrentQuarter(
-            @Field(name = "Owner Id", type = "Text", required = false) String ownerId) {
+            type = CatalogRequest.Type.CHANGE_SYSTEM)
+    @Field.Desc(name = "Quarter Revenue", type = "[ { Owner Id: Text, Total: Text, Name: Text } ]",required = false)
+    public List<Map<String, Object>> valueOfOpportunitiesClosedForCurrentQuarter(
+            @Field.Text(name = "Owner Id", required = false, attributes = {@Attribute(name = "visualWidth", value = "S")}, options = {}) String ownerId) {
         try {
-            if (ownerId != null && !ownerId.isEmpty() && !ownerId.isBlank()) {
-                return opportunityDao.getQuaterClosedSumByOwnerId(ownerId);
-            } else {
-                Date today = new Date();
-
-                String startDate = DatePlus.getISODate(new Date(today.getTime() - 600 * 1000).getTime());
-                String endDate = DatePlus.getISODate(today.getTime());
-
-                String queryLimited = "Name, StageName, Amount, closeDate, probability, Description, " +
-                        "ExpectedRevenue, LastModifiedDate, createdDate";
-                String query = "Select " + queryLimited + " from Opportunity where lastModifiedDate >= "
-                        + startDate + " and lastModifiedDate <= " + endDate + " and stageName LIKE 'Closed won%'";
-
-                return opportunityDao.getOpportunitiesByQuery(query).stream().map(CatalogTypes::fromSFOpportunity)
-                        .collect(Collectors.toList());
-            }
+            return opportunityDao.getQuarterClosedSum(ownerId);
         } catch (IllegalArgumentException cause) {
             System.err.println(cause.getMessage());
             cause.printStackTrace();
