@@ -204,8 +204,8 @@ public final class ReportingArea {
             name = "Value Of Opportunities Closed For Current Quarter",
             description = "This request will retrieve the  total closed opportunities revenue within the current quarter. If an owner ID is provided, it returns the revenue for that particular owner; otherwise, it returns total revenue grouped by owners.",
             area = "Reporting",
-            type = CatalogRequest.Type.QUERY_SYSTEM)
-    @Field.Desc(name = "Quarter Revenue", type = "[ { Owner Id: Text, Total: Text, Name: Text } ]", required = false)
+            type = CatalogRequest.Type.CHANGE_SYSTEM)
+    @Field.Desc(name = "Quarter Revenue", type = "[ { Owner Id: Text, Total: Text, Name: Text } ]",required = false)
     public List<Map<String, Object>> valueOfOpportunitiesClosedForCurrentQuarter(
             @Field.Text(name = "Owner Id", required = false, attributes = {@Attribute(name = "visualWidth", value = "S")}, options = {}) String ownerId) {
         try {

@@ -9,9 +9,11 @@
 
 ## Resolved Bugs
 
-* [KE-1707](https://antbrains.atlassian.net/browse/KC-1707) Create events for Salesforce sales.
-* [KE-1217](https://antbrains.atlassian.net/browse/KE-1217) Salesforce sales:Value Of Opportunities Closed For Current Quarter reuqest unable to show quarter revenue details
+* [KC-1608](https://antbrains.atlassian.net/browse/KC-1608) Need Events for the Objects in Salesforce.
+* [KE-1217](https://antbrains.atlassian.net/browse/KE-1217) Salesforce sales:Value Of Opportunities Closed For Current Quarter request unable to show quarter revenue details.
 
 ## Known Issues
 
-**Not Available**
+* [KE-701](https://antbrains.atlassian.net/browse/KE-701) Process Query Request don't fetch record more than 250 in SF extension.
+
+
