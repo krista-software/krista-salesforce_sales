@@ -1,7 +1,6 @@
 package app.krista.extensions.crm.sales.salesforce_sales.service;
 
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.LatestPosts;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.io.IOException;
 import java.util.List;
@@ -102,18 +101,18 @@ public interface OpportunityDao {
     List<Object> getYTDClosedSum();
 
     /**
-     * Returns sum of amount of opportunities fom given owner id provided
+     * Returns sum of amount of opportunities ,if an owner ID is provided, it returns the revenue for that owner otherwise, it returns total revenue grouped by owners
      * @param ownerId owner id of opportunity
      * @return sum of amount of opportunities
      */
 
-    List getQuaterClosedSum(String ownerId);
+    List getQuarterClosedSum(String ownerId);
 
     /**
      * Returns sum of amount of current quarter quota
      * @return sum of amount of current quarter quota
      */
-    List<Map<String, Object>> getCurrentQuaterQuota();
+    List<Map<String, Object>> getCurrentQuarterQuota();
 
     List<LatestPosts> getLatestPosts(String opportunityId, int numberOfPosts) throws IOException;
 

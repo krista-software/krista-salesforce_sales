@@ -193,7 +193,7 @@ public class OpportunityDaoImpl implements OpportunityDao {
     }
 
     @Override
-    public List getQuaterClosedSum(String ownerId) {
+    public List getQuarterClosedSum(String ownerId) {
         String query = "SELECT ownerid, owner.name,SUM(AMOUNT) Total from Opportunity where IsClosed = true AND CloseDate=THIS_QUARTER";
         if (ownerId != null && !ownerId.isBlank()) {
             query += " AND ownerid = '" + ownerId + "'";
@@ -203,7 +203,7 @@ public class OpportunityDaoImpl implements OpportunityDao {
     }
 
     @Override
-    public List<Map<String, Object>> getCurrentQuaterQuota() {
+    public List<Map<String, Object>> getCurrentQuarterQuota() {
         String res = salesforceManager.getRecordByQuery("SELECT QuotaOwner.Name, QuotaAmount FROM ForecastingQuota where startdate = THIS_QUARTER");
         SalesforceListResponse<Quota> oppList =
                 GSON.fromJson(res, new TypeToken<SalesforceListResponse<Quota>>() {

@@ -191,7 +191,7 @@ public final class ReportingArea {
     @Field.Desc(name = "Sales Quota", type = "[ { Owner Name: Text, Quota Amount: Number } ]", required = false)
     public List<Map<String, Object>> salesQuotaForTheQuarter() {
         try {
-            return opportunityDao.getCurrentQuaterQuota();
+            return opportunityDao.getCurrentQuarterQuota();
         } catch (IllegalArgumentException cause) {
             System.err.println(cause.getMessage());
             cause.printStackTrace();
@@ -202,14 +202,14 @@ public final class ReportingArea {
     @CatalogRequest(
             id = "localDomainRequest_80a52f28-d2e8-4d21-9631-83762b99300e",
             name = "Value Of Opportunities Closed For Current Quarter",
-            description = "Quarter To Date Sales Revenue Closed. Owner id is optional, if user enters owner id then revenue will be of that user else will be of all the user",
+            description = "This request will retrieve the  total closed opportunities revenue within the current quarter. If an owner ID is provided, it returns the revenue for that particular owner; otherwise, it returns total revenue grouped by owners.",
             area = "Reporting",
             type = CatalogRequest.Type.QUERY_SYSTEM)
     @Field.Desc(name = "Quarter Revenue", type = "[ { Owner Id: Text, Total: Text, Name: Text } ]", required = false)
     public List<Map<String, Object>> valueOfOpportunitiesClosedForCurrentQuarter(
             @Field.Text(name = "Owner Id", required = false, attributes = {@Attribute(name = "visualWidth", value = "S")}, options = {}) String ownerId) {
         try {
-            return opportunityDao.getQuaterClosedSum(ownerId);
+            return opportunityDao.getQuarterClosedSum(ownerId);
         } catch (IllegalArgumentException cause) {
             System.err.println(cause.getMessage());
             cause.printStackTrace();
