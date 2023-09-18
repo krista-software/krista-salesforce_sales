@@ -189,7 +189,8 @@ public final class SalesforceManager {
         salesAttributes.getOauthService().signRequest(salesforceToken, request);
         try (com.github.scribejava.core.model.Response response = salesAttributes.getOauthService().execute(request)) {
             if (response.getCode() >= 400) {
-                throw new IllegalArgumentException("Bad Request, Please enter correct required data. The error is " + response.getBody());
+                System.err.println("Bad Request, Please enter correct required data. The error is " + response.getBody());
+                return "";
             }
             return response.getBody();
         } catch (IOException | InterruptedException | ExecutionException cause) {
