@@ -32,10 +32,6 @@ public class SOQLDaoImpl implements SOQLDao {
             return new HashMap();
         }
         String queryResult = salesforceManager.getRecordByQuery(query);
-        if (queryResult == null || queryResult.isEmpty()) {
-            System.err.println("Invalid Query");
-            return new HashMap();
-        }
         return parseQueryResult(results, queryResult);
     }
 
