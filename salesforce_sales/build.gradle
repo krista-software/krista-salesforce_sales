@@ -1,7 +1,7 @@
 apply plugin: 'java-library'
 jar.archiveBaseName = "salessforce_sales-extension"
 group 'app.krista.extensions.crm.sales'
-version '2.0.5'
+version '2.0.7'
 
 
 if (rootProject.file('builder.txt').canRead()) {
@@ -43,14 +43,14 @@ configurations {
 }
 
 dependencies {
-    annotationProcessor 'app.krista:extension-impl-anno-processors:1.0.84'
-    implementation 'app.krista:krista-apis:1.0.84'
+    annotationProcessor 'app.krista:extension-impl-anno-processors:1.0.87'
+    implementation 'app.krista:krista-apis:1.0.87'
     implementation 'org.glassfish.hk2:hk2-api:3.0.3'
     implementation 'com.github.scribejava:scribejava-apis:8.3.3'
     implementation 'com.googlecode.libphonenumber:libphonenumber:5.5'
     implementation 'org.glassfish.jersey.media:jersey-media-multipart:2.35'
 
-    testImplementation 'com.kristasoft.common:common-test:1.0.34'
+    testImplementation 'com.kristasoft.common:common-test:1.0.37'
 }
 
 task createSourceDir(type: Exec) {

@@ -31,8 +31,12 @@ public class SOQLDaoImpl implements SOQLDao {
         if (query == null || query.isEmpty()) {
             return new HashMap();
         }
-        String res = salesforceManager.getRecordByQuery(query);
-        return parseQueryResult(results, res);
+        String queryResult = salesforceManager.getRecordByQuery(query);
+        if (queryResult == null || queryResult.isEmpty()) {
+            System.err.println("Invalid Query");
+            return new HashMap();
+        }
+        return parseQueryResult(results, queryResult);
     }
 
     public SalesforceSalesAttributes getSalesAttributes() {
