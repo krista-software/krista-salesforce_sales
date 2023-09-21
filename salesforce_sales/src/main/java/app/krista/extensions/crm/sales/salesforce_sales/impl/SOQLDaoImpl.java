@@ -38,7 +38,7 @@ public class SOQLDaoImpl implements SOQLDao {
 
     public static Map parseQueryResult(List results, String res) {
         SalesforceListResponse response = GSON.fromJson(res, SalesforceListResponse.class);
-
+        Map responses = new HashMap<>();
         if (response.records.size() > 0) {
             for (Object map : response.records) {
                 Map<String, Object> fieldMap = new LinkedTreeMap<>();
@@ -55,11 +55,10 @@ public class SOQLDaoImpl implements SOQLDao {
                     results.add(fieldMap);
                 }
             }
-            Map responses = new HashMap<>();
             responses.put("Responses", results);
             return responses;
         } else {
-            return new HashMap<>();
+            return responses;
         }
     }
 
