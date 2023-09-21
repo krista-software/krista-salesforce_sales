@@ -56,8 +56,10 @@ public class SOQLDaoImpl implements SOQLDao {
                 }
             }
             responses.put("Responses", results);
+            return responses;
+        } else {
+            return responses;
         }
-        return responses;
     }
 
     @Override
