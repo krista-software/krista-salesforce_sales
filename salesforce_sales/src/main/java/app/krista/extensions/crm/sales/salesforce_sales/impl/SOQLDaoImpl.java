@@ -8,10 +8,7 @@ import org.jvnet.hk2.annotations.Service;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.GSON;
 
@@ -29,7 +26,7 @@ public class SOQLDaoImpl implements SOQLDao {
     public Object getSalesforceObjectByQuery(String query) {
         List results = new ArrayList();
         if (query == null || query.isEmpty()) {
-            return new HashMap();
+            return Collections.emptyMap();
         }
         String queryResult = salesforceManager.getRecordByQuery(query);
         return parseQueryResult(results, queryResult);
