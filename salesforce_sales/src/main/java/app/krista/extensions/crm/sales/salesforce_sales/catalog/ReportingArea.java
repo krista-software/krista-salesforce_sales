@@ -80,7 +80,7 @@ public final class ReportingArea {
             return soqlDao.getSalesforceObjectByQuery(query);
         } catch (IllegalArgumentException cause) {
             System.err.println(cause.getMessage());
-            return new HashMap<>();
+            return Collections.emptyMap();
         }
     }
 
