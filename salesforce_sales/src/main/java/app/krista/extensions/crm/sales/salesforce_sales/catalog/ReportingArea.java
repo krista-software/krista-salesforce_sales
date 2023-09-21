@@ -16,10 +16,7 @@ import app.krista.ksdk.context.RequestContext;
 import app.krista.model.base.FreeForm;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
@@ -83,8 +80,7 @@ public final class ReportingArea {
             return soqlDao.getSalesforceObjectByQuery(query);
         } catch (IllegalArgumentException cause) {
             System.err.println(cause.getMessage());
-            cause.printStackTrace();
-            return null;
+            return Collections.emptyMap();
         }
     }
 
