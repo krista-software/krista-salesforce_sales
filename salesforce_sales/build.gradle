@@ -1,4 +1,5 @@
 apply plugin: 'java-library'
+apply plugin: 'maven-publish'
 jar.archiveBaseName = "salessforce_sales-extension"
 group 'app.krista.extensions.crm.sales'
 version '2.0.7'
@@ -35,6 +36,42 @@ repositories {
     mavenCentral()
 }
 
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << '-Xlint:all,-serial'
+}
+
+task compile() {
+    dependsOn compileJava
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            afterEvaluate {
+                artifactId = jar.archiveBaseName.get()
+                groupId = rootProject.group
+            }
+        }
+    }
+    repositories {
+        mavenLocal()
+        maven {
+            credentials {
+                username = rootProject.properties['MAVEN_USERNAME']
+                password = rootProject.properties['MAVEN_PASSWORD']
+            }
+            authentication {
+                basic(BasicAuthentication)
+            }
+            url rootProject.properties['MAVEN_UPLOAD_URL']
+        }
+    }
+}
+
+
 configurations {
     implementation {
         canBeConsumed = false
@@ -66,6 +103,34 @@ task copyGradleFile(type: Exec) {
 task includeSources(type: Exec) {
     dependsOn copyGradleFile
     commandLine "cp", "-r", "$projectDir/src", "$projectDir/build/classes/java/main/META-INF/project/src"
+}
+
+task candidate(type: Exec) {
+    commandLine "env",
+            "DOCKER_UPLOAD_REPO=" + rootProject.properties['DOCKER_UPLOAD_REPO'],
+            "MAVEN_URL=" + System.properties['MAVEN_URL'],
+            "MAVEN_UPLOAD_URL=" + rootProject.properties['MAVEN_UPLOAD_URL'],
+            "MAVEN_USERNAME=" + rootProject.properties['MAVEN_USERNAME'],
+            "MAVEN_PASSWORD=" + rootProject.properties['MAVEN_PASSWORD'],
+            "bash", "candidate.sh"
+    standardOutput = new ByteArrayOutputStream()
+    ext.output = {
+        return standardOutput.toString()
+    }
+}
+
+task release(type: Exec) {
+    commandLine "env",
+            "DOCKER_UPLOAD_REPO=" + rootProject.properties['DOCKER_UPLOAD_REPO'],
+            "MAVEN_URL=" + System.properties['MAVEN_URL'],
+            "MAVEN_UPLOAD_URL=" + rootProject.properties['MAVEN_UPLOAD_URL'],
+            "MAVEN_USERNAME=" + rootProject.properties['MAVEN_USERNAME'],
+            "MAVEN_PASSWORD=" + rootProject.properties['MAVEN_PASSWORD'],
+            "bash", "release.sh"
+    standardOutput = new ByteArrayOutputStream()
+    ext.output = {
+        return standardOutput.toString()
+    }
 }
 
 jar {
