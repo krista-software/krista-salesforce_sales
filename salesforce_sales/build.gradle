@@ -5,23 +5,7 @@ group 'app.krista.extensions.crm.sales'
 
 version(System.getenv('BRANCH') == null ? "local" : System.getenv('BRANCH').replace("/", "_"))
 
-if (rootProject.file('builder.txt').canRead()) {
-    ext.builder = rootProject.file('builder.txt').text.trim()
-} else {
-    ext.builder = "0"
-}
-
-task updateVersion {
-    doFirst {
-        project.ext.newbuilder = Integer.parseInt(project.ext.builder) + 1
-        print "Building extension version: " + version.toString()+ "-" + project.ext.newbuilder
-        rootProject.file('builder.txt').text = project.ext.newbuilder
-        System.clearProperty("extensionVersion")
-        System.setProperty("extensionVersion", version.toString() + "-" + project.ext.newbuilder)
-    }
-}
 compileJava.dependsOn clean
-compileJava.dependsOn updateVersion
 
 System.setProperty("extensionVersion", version.toString())
 
