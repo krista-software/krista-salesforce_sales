@@ -1,8 +1,9 @@
 apply plugin: 'java-library'
 apply plugin: 'maven-publish'
-jar.archiveBaseName = "salessforce_sales-extension"
+jar.archiveBaseName = "salesforce_sales-extension"
 group 'app.krista.extensions.crm.sales'
 
+version(System.getenv('BRANCH') == null ? "local" : System.getenv('BRANCH').replace("/", "_"))
 
 if (rootProject.file('builder.txt').canRead()) {
     ext.builder = rootProject.file('builder.txt').text.trim()
