@@ -2,7 +2,6 @@ apply plugin: 'java-library'
 apply plugin: 'maven-publish'
 jar.archiveBaseName = "salessforce_sales-extension"
 group 'app.krista.extensions.crm.sales'
-version '2.0.7'
 
 
 if (rootProject.file('builder.txt').canRead()) {
