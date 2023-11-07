@@ -2,8 +2,6 @@
 set -e
 set -x
 
-echo "Salesforce sales branch candidate == $BRANCH"
-
 if [[ ! $BRANCH =~ release- ]]; then
   echo "BRANCH must start with release- !"
   exit 1

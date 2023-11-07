@@ -3,7 +3,7 @@ apply plugin: 'maven-publish'
 jar.archiveBaseName = "salesforce_sales-extension"
 group 'app.krista.extensions.crm.sales'
 
-version(System.getenv('BRANCH') == null ? "local" : System.getenv('BRANCH').replace("/", "_"))
+version(System.getenv('BRANCH') == null ? "local" : System.getenv('BRANCH').replace("/", "_").replace("sfs-", ""))
 
 compileJava.dependsOn clean
 
