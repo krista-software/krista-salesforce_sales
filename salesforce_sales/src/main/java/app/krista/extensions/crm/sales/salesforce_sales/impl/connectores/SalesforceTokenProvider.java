@@ -10,6 +10,8 @@ import app.krista.model.field.NamedValuedField;
 import com.github.scribejava.apis.salesforce.SalesforceToken;
 import com.github.scribejava.core.model.OAuth2AccessToken;
 import com.github.scribejava.core.model.OAuth2AccessTokenErrorResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -24,6 +26,8 @@ public final class SalesforceTokenProvider {
     private final SalesforceSalesAttributes salesforceSalesAttributes;
     private final String authContextId;
     private final AuthorizationContext authorizationContext;
+    private static final Logger LOGGER = LoggerFactory.getLogger(SalesforceTokenProvider.class);
+
 
     @Inject
     public SalesforceTokenProvider(RefreshTokenStore refreshTokenStore, RequestContext requestContext,
@@ -84,7 +88,6 @@ public final class SalesforceTokenProvider {
                         salesforceSalesAttributes.getOauthService().getAccessTokenPasswordGrant(String.valueOf(username),
                                 password + String.valueOf(securityToken)));
             } catch (Exception cause) {
-                cause.printStackTrace();
                 throw new MustAuthorizeException(cause.getMessage());
             }
         }
@@ -105,7 +108,7 @@ public final class SalesforceTokenProvider {
     }
 
     private MustAuthorizeException createMustAuthorizationException(boolean reAuthentication, String accountId) {
-        System.err.println(reAuthentication ? "Got error for Authentication. So sending for re authentication" : "Got error for Authentication. So sending for authentication");
+        LOGGER.info(reAuthentication ? "Got error for Authentication. So sending for re authentication" : "Got error for Authentication. So sending for authentication");
         accountId = accountId == null ? authorizationContext.getAuthorizedAccount().getAccountId() : accountId;
         List<NamedValuedField> details = new ArrayList<>();
         NamedValuedField userIdField = new NamedValuedField("userId", "Text", accountId, new HashMap<>(), new HashMap<>());

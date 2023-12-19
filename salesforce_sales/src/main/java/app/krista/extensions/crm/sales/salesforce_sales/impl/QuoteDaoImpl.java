@@ -1,6 +1,6 @@
 package app.krista.extensions.crm.sales.salesforce_sales.impl;
 
-import app.krista.extensions.crm.sales.salesforce_sales.catalog.CatalogTypes;
+import app.krista.extensions.crm.sales.salesforce_sales.catalog.catalogtypes.QuoteCatalogType;
 import app.krista.extensions.crm.sales.salesforce_sales.model.CreateRecordResponse;
 import app.krista.extensions.crm.sales.salesforce_sales.model.SFQuote;
 import app.krista.extensions.crm.sales.salesforce_sales.service.PriceBook;
@@ -19,7 +19,10 @@ import com.google.gson.reflect.TypeToken;
 import org.jvnet.hk2.annotations.Service;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.GSON;
@@ -27,7 +30,7 @@ import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.GS
 @Service
 public class QuoteDaoImpl implements QuoteDao {
 
-    public static final String QUOTE = "Quote";
+    private static final String QUOTE = "Quote";
     public static final String QUERY_FIELDS = "Id, OwnerId, Name, CreatedDate, LastModifiedDate, OpportunityId, Pricebook2Id, ContactId, QuoteNumber, Tax, Status, ExpirationDate, Description, Subtotal, TotalPrice, LineItemCount, BillingName, ShippingName, ShippingHandling, QuoteToName, AdditionalName, Email, Phone, Fax, ContractId, AccountId, Discount, GrandTotal";
     private final SalesforceManager salesforceManager;
     private final PriceBookDaoImpl priceBookDao;
@@ -162,8 +165,8 @@ public class QuoteDaoImpl implements QuoteDao {
     public void updateQuote(Quote quote) {
         if (quote.getId() == null || quote.getId().isEmpty())
             throw new IllegalArgumentException("Quote Id cant be empty");
-        SFQuote updatedQuote = SFQuote.from(CatalogTypes.fromSFQuote(quote));
-        SFQuote oldQuote = SFQuote.from(CatalogTypes.fromSFQuote(getQuoteById(updatedQuote.id)));
+        SFQuote updatedQuote = SFQuote.from(QuoteCatalogType.fromSFQuote(quote));
+        SFQuote oldQuote = SFQuote.from(QuoteCatalogType.fromSFQuote(getQuoteById(updatedQuote.id)));
         Map<String, Object> diff = salesforceManager.getDifference(oldQuote, updatedQuote);
         salesforceManager.updateRecord(updatedQuote.id, GSON.toJson(diff), QUOTE);
     }

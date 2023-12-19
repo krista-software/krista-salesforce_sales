@@ -3,6 +3,8 @@ package app.krista.extensions.crm.sales.salesforce_sales.catalog;
 import app.krista.extension.impl.anno.CatalogRequest;
 import app.krista.extension.impl.anno.Domain;
 import app.krista.extension.impl.anno.Field;
+import app.krista.extensions.crm.sales.salesforce_sales.catalog.catalogtypes.OpportunityCatalogType;
+import app.krista.extensions.crm.sales.salesforce_sales.catalog.catalogtypes.UserCatalogType;
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.LatestPosts;
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.Opportunity;
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.User;
@@ -11,6 +13,8 @@ import app.krista.extensions.crm.sales.salesforce_sales.impl.OpportunityImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.UserDaoImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.model.SFOpportunity;
 import app.krista.extensions.crm.sales.salesforce_sales.model.WhenAnImportantOpportunityStatusChangesResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -28,6 +32,8 @@ public final class OpportunityManagementArea {
 
     private final OpportunityDaoImpl opportunityDao;
     private final UserDaoImpl userDao;
+    private static final Logger LOGGER = LoggerFactory.getLogger(OpportunityManagementArea.class);
+
 
     @Inject
     private OpportunityManagementArea(OpportunityDaoImpl opportunityDao, UserDaoImpl userDao) {
@@ -47,15 +53,14 @@ public final class OpportunityManagementArea {
             @Field(name = "Last Days", type = "Number", required = false) Double lastDays) {
         try {
             if (sOQLQuery != null && !sOQLQuery.isEmpty()) {
-                return opportunityDao.getOpportunitiesByQuery(sOQLQuery).stream().map(CatalogTypes::fromSFOpportunity).collect(Collectors.toList());
+                return opportunityDao.getOpportunitiesByQuery(sOQLQuery).stream().map(OpportunityCatalogType::fromSFOpportunity).collect(Collectors.toList());
             } else if (lastDays != null && lastDays >= 0) {
-                return opportunityDao.getNewOpportunitiesByLastDays(lastDays).stream().map(CatalogTypes::fromSFOpportunity).collect(Collectors.toList());
+                return opportunityDao.getNewOpportunitiesByLastDays(lastDays).stream().map(OpportunityCatalogType::fromSFOpportunity).collect(Collectors.toList());
             } else {
                 throw new IllegalArgumentException("Input is missing / wrong. Please provide correct input");
             }
         } catch (IllegalArgumentException cause) {
-            System.err.println(cause.getMessage());
-            cause.printStackTrace();
+            LOGGER.error(cause.getMessage(), cause);
             return List.of();
         }
     }
@@ -80,8 +85,7 @@ public final class OpportunityManagementArea {
             opportunityDao.updateOpportunityStatus(opportunityName, status);
             return true;
         } catch (IllegalArgumentException cause) {
-            System.err.println(cause.getMessage());
-            cause.printStackTrace();
+            LOGGER.error(cause.getMessage(), cause);
             return false;
         }
     }
@@ -103,13 +107,12 @@ public final class OpportunityManagementArea {
                 updateOpportunity.id = o.id;
                 updateOpportunity.stageName = statusOrStageName;
                 opportunityDao.updateOpportunity(new OpportunityImpl(SFOpportunity.from(updateOpportunity)));
-                Opportunity opportunity = CatalogTypes.fromSFOpportunity(opportunityDao.getOpportunityById(updateOpportunity.id));
+                Opportunity opportunity = OpportunityCatalogType.fromSFOpportunity(opportunityDao.getOpportunityById(updateOpportunity.id));
                 updatedOpportunity.add(opportunity);
             }
             return updatedOpportunity;
         } catch (IllegalArgumentException cause) {
-            System.err.println(cause.getMessage());
-            cause.printStackTrace();
+            LOGGER.error(cause.getMessage(), cause);
             return List.of();
         }
     }
@@ -148,10 +151,9 @@ public final class OpportunityManagementArea {
                 updateOpportunity.description = description;
             }
             opportunityDao.updateOpportunity(new OpportunityImpl(SFOpportunity.from(updateOpportunity)));
-            return CatalogTypes.fromSFOpportunity(opportunityDao.getOpportunityById(opportunityId));
+            return OpportunityCatalogType.fromSFOpportunity(opportunityDao.getOpportunityById(opportunityId));
         } catch (IllegalArgumentException cause) {
-            System.err.println(cause.getMessage());
-            cause.printStackTrace();
+            LOGGER.error(cause.getMessage(), cause);
             return null;
         }
     }
@@ -165,10 +167,9 @@ public final class OpportunityManagementArea {
     @Field.Desc(name = "User", type = "Entity(User)", required = false)
     public User getMyDetails() {
         try {
-            return CatalogTypes.fromSFUser(userDao.getMe());
+            return UserCatalogType.fromSFUser(userDao.getMe());
         } catch (IllegalArgumentException cause) {
-            System.err.println(cause.getMessage());
-            cause.printStackTrace();
+            LOGGER.error(cause.getMessage(), cause);
             return null;
         }
     }
@@ -193,7 +194,7 @@ public final class OpportunityManagementArea {
                 whenAnImportantOpportunityStatusChangesResponse.previousStatus = (String) eventData.get("Name");
 
                 String query = "Select StageName, Amount FROM OpportunityHistory where Opportunity.Id = '" + whenAnImportantOpportunityStatusChangesResponse.opportunityId + "' LIMIT 2";
-                List<Opportunity> opp = opportunityDao.getOpportunitiesByQuery(query).stream().map(CatalogTypes::fromSFOpportunity).collect(Collectors.toList());
+                List<Opportunity> opp = opportunityDao.getOpportunitiesByQuery(query).stream().map(OpportunityCatalogType::fromSFOpportunity).collect(Collectors.toList());
                 if (opp.size() == 2) {
                     if (!opp.get(0).stageName.equals(opp.get(1).stageName)) {
                         whenAnImportantOpportunityStatusChangesResponse.previousStatus = opp.get(1).stageName;
@@ -208,8 +209,7 @@ public final class OpportunityManagementArea {
             }
             return Map.of();
         } catch (IllegalArgumentException cause) {
-            System.err.println(cause.getMessage());
-            cause.printStackTrace();
+            LOGGER.error(cause.getMessage(), cause);
             return Map.of();
         }
     }
@@ -234,7 +234,7 @@ public final class OpportunityManagementArea {
             }
             return opportunityDao.getLatestPosts(opportunityId, maxNumberOfPosts);
         } catch (IllegalArgumentException | IOException cause) {
-            System.err.println("Failed to get Latest Posts" + cause.getMessage());
+            LOGGER.error("Failed to get Latest Posts" + cause.getMessage(), cause);
         }
         return List.of();
     }

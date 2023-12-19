@@ -3,10 +3,12 @@ package app.krista.extensions.crm.sales.salesforce_sales.catalog.stores;
 import app.krista.extension.executor.SearchCondition;
 import app.krista.extension.executor.SearchQuery;
 import app.krista.extension.util.EntityStore;
-import app.krista.extensions.crm.sales.salesforce_sales.catalog.CatalogTypes;
+import app.krista.extensions.crm.sales.salesforce_sales.catalog.catalogtypes.UserCatalogType;
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.User;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.UserDaoImpl;
 import org.jvnet.hk2.annotations.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -19,8 +21,10 @@ import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.AN
 @Service
 public class UserStore implements EntityStore<User> {
 
-    public static final String QUERY_FIELDS = "id, Name, CompanyName, Email, Username, Lastname, Firstname, Alias, CommunityNickname, MobilePhone";
+    private static final String QUERY_FIELDS = "id, Name, CompanyName, Email, Username, Lastname, Firstname, Alias, CommunityNickname, MobilePhone";
     private final UserDaoImpl userDaoImpl;
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserStore.class);
+
 
     @Inject
     public UserStore(UserDaoImpl userDaoImpl) {
@@ -30,14 +34,13 @@ public class UserStore implements EntityStore<User> {
     @Override
     public User create(Map<String, Object> entityAttributeField) {
         if (entityAttributeField == null || entityAttributeField.isEmpty()) {
-            System.err.println("Entity attribute field map cannot be null or empty");
+            LOGGER.info("Entity attribute field map cannot be null or empty");
         }
         try {
             userDaoImpl.addUser(entityAttributeField);
             return User.fromFields(entityAttributeField);
         } catch (IllegalArgumentException cause) {
-            System.err.println(cause.getMessage());
-            cause.printStackTrace();
+            LOGGER.error(cause.getMessage(), cause);
             return new User();
         }
     }
@@ -45,13 +48,12 @@ public class UserStore implements EntityStore<User> {
     @Override
     public User get(String primaryKey) {
         if (primaryKey == null || primaryKey.isEmpty()) {
-            System.err.println("Primary key cannot be null or empty");
+            LOGGER.info("Primary key cannot be null or empty");
         }
         try {
-            return CatalogTypes.fromSFUser(userDaoImpl.getUserById(primaryKey));
+            return UserCatalogType.fromSFUser(userDaoImpl.getUserById(primaryKey));
         } catch (IllegalArgumentException cause) {
-            System.err.println(cause.getMessage());
-            cause.printStackTrace();
+            LOGGER.error(cause.getMessage(), cause);
             return null;
         }
     }
@@ -82,7 +84,7 @@ public class UserStore implements EntityStore<User> {
     @Override
     public List<User> search(SearchQuery searchQuery, long pageIndex, int pageSize) throws IOException {
         if (searchQuery == null || searchQuery.getSearchConditions() == null || searchQuery.getSearchConditions().isEmpty()) {
-            System.err.println("Search conditions cannot be null or empty");
+            LOGGER.info("Search conditions cannot be null or empty");
         }
         List<SearchCondition> conditions = searchQuery.getSearchConditions();
         try {
@@ -91,15 +93,14 @@ public class UserStore implements EntityStore<User> {
             String email = getStringConditionValue(conditions, "Email");
             List<User> users;
             if (conditions.size() == 1) {
-                users = userDaoImpl.getUsers(pageSize, pageIndex).stream().map(CatalogTypes::fromSFUser).collect(Collectors.toList());
+                users = userDaoImpl.getUsers(pageSize, pageIndex).stream().map(UserCatalogType::fromSFUser).collect(Collectors.toList());
             } else {
                 String query = createQuery(name, userName, email, pageSize, pageIndex);
-                users = userDaoImpl.getUsersByQuery(query).stream().map(CatalogTypes::fromSFUser).collect(Collectors.toList());
+                users = userDaoImpl.getUsersByQuery(query).stream().map(UserCatalogType::fromSFUser).collect(Collectors.toList());
             }
             return users;
         } catch (IllegalArgumentException cause) {
-            System.err.println(cause.getMessage());
-            cause.printStackTrace();
+            LOGGER.error(cause.getMessage(), cause);
             return null;
         }
     }

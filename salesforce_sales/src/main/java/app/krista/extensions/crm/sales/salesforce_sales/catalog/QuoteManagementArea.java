@@ -3,12 +3,16 @@ package app.krista.extensions.crm.sales.salesforce_sales.catalog;
 import app.krista.extension.impl.anno.CatalogRequest;
 import app.krista.extension.impl.anno.Domain;
 import app.krista.extension.impl.anno.Field;
+import app.krista.extensions.crm.sales.salesforce_sales.catalog.catalogtypes.CatalogTypes;
+import app.krista.extensions.crm.sales.salesforce_sales.catalog.catalogtypes.QuoteCatalogType;
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.Quote;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.PriceBookEntryDaoImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.QuoteDaoImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.QuoteImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.model.SFQuote;
 import app.krista.model.base.FreeForm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -23,6 +27,8 @@ public final class QuoteManagementArea {
 
     private final QuoteDaoImpl quoteDao;
     private final PriceBookEntryDaoImpl priceBookEntryDao;
+    private static final Logger LOGGER = LoggerFactory.getLogger(QuoteManagementArea.class);
+
 
     @Inject
     private QuoteManagementArea(QuoteDaoImpl quoteDao, PriceBookEntryDaoImpl priceBookEntryDao) {
@@ -41,8 +47,7 @@ public final class QuoteManagementArea {
         try {
             return quoteDao.getQuoteStatuses();
         } catch (IllegalArgumentException cause) {
-            System.err.println(cause.getMessage());
-            cause.printStackTrace();
+            LOGGER.error(cause.getMessage(), cause);
             return List.of();
         }
     }
@@ -62,10 +67,9 @@ public final class QuoteManagementArea {
             SFQuote sfQuote = SFQuote.from(fieldMap);
             sfQuote.id = quoteId;
             quoteDao.updateQuote(new QuoteImpl(sfQuote));
-            return CatalogTypes.fromSFQuote(quoteDao.getQuoteById(quoteId));
+            return QuoteCatalogType.fromSFQuote(quoteDao.getQuoteById(quoteId));
         } catch (IllegalArgumentException cause) {
-            System.err.println(cause.getMessage());
-            cause.printStackTrace();
+            LOGGER.error(cause.getMessage(), cause);
             return null;
         }
     }
@@ -81,13 +85,12 @@ public final class QuoteManagementArea {
             @Field(name = "Quote Id", type = "Identifier") String quoteId,
             @Field(name = "Status", type = "Text") String status) {
         try {
-            Quote quote = CatalogTypes.fromSFQuote(quoteDao.getQuoteById(quoteId));
+            Quote quote = QuoteCatalogType.fromSFQuote(quoteDao.getQuoteById(quoteId));
             quote.status = status;
             quoteDao.updateQuote(new QuoteImpl(SFQuote.from(quote)));
             return status;
         } catch (IllegalArgumentException cause) {
-            System.err.println(cause.getMessage());
-            cause.printStackTrace();
+            LOGGER.error(cause.getMessage(), cause);
             return null;
         }
     }
@@ -102,10 +105,9 @@ public final class QuoteManagementArea {
     public Quote getTheLatestQuoteFromOpportunity(
             @Field(name = "Opportunity Id", type = "Identifier") String opportunityId) {
         try {
-            return CatalogTypes.fromSFQuote(quoteDao.getQuoteByOpportunityId(opportunityId));
+            return QuoteCatalogType.fromSFQuote(quoteDao.getQuoteByOpportunityId(opportunityId));
         } catch (IllegalArgumentException cause) {
-            System.err.println(cause.getMessage());
-            cause.printStackTrace();
+            LOGGER.error(cause.getMessage(), cause);
             return null;
         }
     }
@@ -126,8 +128,7 @@ public final class QuoteManagementArea {
             quoteDao.addProductToQuote(quoteDao.getQuoteById(quoteId), priceBookEntryDao.getPriceBookEntryById(pricebookEntryId), discountPercent);
             return quoteDao.getQuoteLineItems(quoteId);
         } catch (IllegalArgumentException cause) {
-            System.err.println(cause.getMessage());
-            cause.printStackTrace();
+            LOGGER.error(cause.getMessage(), cause);
             return List.of();
         }
     }
@@ -144,8 +145,7 @@ public final class QuoteManagementArea {
         try {
             return quoteDao.getQuoteMapById(quoteId);
         } catch (IllegalArgumentException cause) {
-            System.err.println(cause.getMessage());
-            cause.printStackTrace();
+            LOGGER.error(cause.getMessage(), cause);
             return new FreeForm();
         }
     }
@@ -163,8 +163,7 @@ public final class QuoteManagementArea {
         try {
             return quoteDao.getQuoteLineItems(quoteId, filters);
         } catch (IllegalArgumentException cause) {
-            System.err.println(cause.getMessage());
-            cause.printStackTrace();
+            LOGGER.error(cause.getMessage(), cause);
             return List.of();
         }
     }

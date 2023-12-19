@@ -17,7 +17,7 @@ import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.GS
 
 @Service
 public class UserDaoImpl implements UserDao {
-    public static final String USER = "User";
+    private static final String USER = "User";
     private final SalesforceManager salesforceManager;
 
     @Inject

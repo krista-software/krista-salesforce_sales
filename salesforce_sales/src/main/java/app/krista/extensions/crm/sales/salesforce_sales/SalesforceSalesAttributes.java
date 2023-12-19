@@ -99,6 +99,7 @@ public final class SalesforceSalesAttributes {
         }
         return oAuthService;
     }
+
     public void update(Map<String, Object> newAttributes) {
         clientId = InvokerAttributes.getStringOrNull(newAttributes, CLIENT_ID);
         clientSecret = InvokerAttributes.getStringOrNull(newAttributes, CLIENT_SECRET);

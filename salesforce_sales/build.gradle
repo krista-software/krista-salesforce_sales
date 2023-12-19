@@ -64,8 +64,8 @@ configurations {
 }
 
 dependencies {
-    annotationProcessor 'app.krista:extension-impl-anno-processors:1.0.87'
-    implementation 'app.krista:krista-apis:1.0.87'
+    annotationProcessor 'app.krista:extension-impl-anno-processors:1.0.92'
+    implementation 'app.krista:krista-apis:1.0.92'
     implementation 'org.glassfish.hk2:hk2-api:3.0.3'
     implementation 'com.github.scribejava:scribejava-apis:8.3.3'
     implementation 'com.googlecode.libphonenumber:libphonenumber:5.5'
@@ -128,4 +128,14 @@ jar {
     exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
     duplicatesStrategy = "exclude"
 }
+task upgradeJarToKrista(type: Exec) {
+    upgradeJarToKrista.dependsOn(build)
+    String jar_file_name = jar.archiveBaseName.get()+"-"+version.toString()+ ".jar"
+    def file_name = "$projectDir/build/libs/$jar_file_name"
+    workingDir '/usr/bin'
+    commandLine 'python3', "$projectDir/upgrade_extension_jar_to_krista.py", "-config_file=$projectDir/extension_workspace_config.json", "-jar_file=${file_name}"
+}
+
+
+
 

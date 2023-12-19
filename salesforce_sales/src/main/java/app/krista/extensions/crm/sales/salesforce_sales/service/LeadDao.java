@@ -7,6 +7,7 @@ public interface LeadDao {
 
     /**
      * Returns {@link Lead} object of salesforce from given lead id provided.
+     *
      * @param id id of lead to be searched
      * @return {@link Lead} object of salesforce
      */
@@ -14,6 +15,7 @@ public interface LeadDao {
 
     /**
      * Returns {@link List<Lead>} list of object of salesforce from given lead owner id provided.
+     *
      * @param ownerId owner id of lead to be searched
      * @return {@link List<Lead>} list of object of salesforce
      * @return empty list if does not find any records
@@ -22,6 +24,7 @@ public interface LeadDao {
 
     /**
      * Returns {@link List<Lead>} list of object of salesforce from given date provided.
+     *
      * @param date date from which leads are created
      * @return {@link List<Lead>} list of object of salesforce
      * @return empty list if does not find any records
@@ -30,6 +33,7 @@ public interface LeadDao {
 
     /**
      * Returns {@link List<Lead>} list of object of salesforce.
+     *
      * @param size number of lead to be fetched
      * @param page page number to be fetched
      * @return {@link List<Lead>} list of object of salesforce
@@ -39,6 +43,7 @@ public interface LeadDao {
 
     /**
      * Returns {@link List<Lead>} list of object of salesforce.
+     *
      * @param query query to be searched
      * @return {@link List<Lead>} list of object of salesforce
      * @return empty list if does not find any records
@@ -47,18 +52,21 @@ public interface LeadDao {
 
     /**
      * Add {@link Lead} to salesforce from provided input fields
+     *
      * @param entityAttributeField fields which are added in the {@link Lead} object of salesforce to create
      */
     void addLead(Map<String, Object> entityAttributeField);
 
     /**
      * Update {@link Lead} to salesforce from provided input fields
+     *
      * @param lead {@link Lead} object of salesforce to be updated
      */
     void updateLead(Lead lead);
 
     /**
      * This function will return updated fields for lead object.
+     *
      * @param query
      * @return
      */
@@ -66,7 +74,8 @@ public interface LeadDao {
 
     /**
      * This function will delete lead from lead object.
-     * @param key 
+     *
+     * @param key
      */
     void deleteLead(String key);
 }

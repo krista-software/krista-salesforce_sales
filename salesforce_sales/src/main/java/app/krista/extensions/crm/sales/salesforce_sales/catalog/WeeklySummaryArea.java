@@ -4,6 +4,8 @@ import app.krista.extension.impl.anno.CatalogRequest;
 import app.krista.extension.impl.anno.Domain;
 import app.krista.extension.impl.anno.Field;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.OpportunityDaoImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 
@@ -15,6 +17,8 @@ import javax.inject.Inject;
 public final class WeeklySummaryArea {
 
     private final OpportunityDaoImpl opportunityDao;
+    private static final Logger LOGGER = LoggerFactory.getLogger(WeeklySummaryArea.class);
+
 
     @Inject
     public WeeklySummaryArea(OpportunityDaoImpl opportunityDao) {
@@ -32,8 +36,7 @@ public final class WeeklySummaryArea {
         try {
             return opportunityDao.getRevenue(true);
         } catch (IllegalArgumentException cause) {
-            System.err.println(cause.getMessage());
-            cause.printStackTrace();
+            LOGGER.error(cause.getMessage(), cause);
             return null;
         }
     }
@@ -49,8 +52,7 @@ public final class WeeklySummaryArea {
         try {
             return opportunityDao.getRevenue(false);
         } catch (IllegalArgumentException cause) {
-            System.err.println(cause.getMessage());
-            cause.printStackTrace();
+            LOGGER.error(cause.getMessage(), cause);
             return null;
         }
     }

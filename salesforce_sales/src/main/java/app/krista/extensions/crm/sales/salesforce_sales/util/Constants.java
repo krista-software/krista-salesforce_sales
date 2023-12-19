@@ -1,6 +1,5 @@
 package app.krista.extensions.crm.sales.salesforce_sales.util;
 
-import app.krista.extension.impl.anno.Field;
 import com.google.gson.Gson;
 
 public final class Constants {
@@ -17,19 +16,7 @@ public final class Constants {
     public static final String INVALID_TASK_ID = "Invalid task ID";
     public static final String DATA = "Data";
     public static final String SERVICES_DATA_V_48_0_SOBJECTS = "/services/data/v48.0/sobjects/";
-
-
-    public static void validation(@Field(name = "Email Addresses", type = "Text") String emailAddresses, @Field(name = "Subject", type = "Text") String subject, @Field(name = "Body", type = "Paragraph") String body) {
-        if (emailAddresses == null || emailAddresses.trim().isEmpty()) {
-            throw new IllegalArgumentException("Email Addresses must not be empty.");
-        }
-        if (subject == null || subject.trim().isEmpty()) {
-            throw new IllegalArgumentException("Subject must not be empty.");
-        }
-        if (body == null || body.trim().isEmpty()) {
-            throw new IllegalArgumentException("Body must not be empty.");
-        }
-    }
+    public static final String ENTITY_MAP_IS_NULL_OR_EMPTY = "Entity map is null or empty. ";
 
     private Constants() {
     }

@@ -15,7 +15,7 @@ import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.GS
 @Service
 public class PriceBookDaoImpl implements PriceBookDao {
 
-    public static final String QUERY_FIELDS = " Id,Name ";
+    private static final String QUERY_FIELDS = " Id,Name ";
     private final SalesforceManager salesforceManager;
 
     @Inject

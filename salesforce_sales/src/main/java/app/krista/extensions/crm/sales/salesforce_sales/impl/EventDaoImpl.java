@@ -1,6 +1,6 @@
 package app.krista.extensions.crm.sales.salesforce_sales.impl;
 
-import app.krista.extensions.crm.sales.salesforce_sales.catalog.CatalogTypes;
+import app.krista.extensions.crm.sales.salesforce_sales.catalog.catalogtypes.EventCatalogType;
 import app.krista.extensions.crm.sales.salesforce_sales.model.SFEvent;
 import app.krista.extensions.crm.sales.salesforce_sales.service.Event;
 import app.krista.extensions.crm.sales.salesforce_sales.service.EventDao;
@@ -18,8 +18,8 @@ import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.GS
 @Service
 public class EventDaoImpl implements EventDao {
 
-    public static final String EVENT = "Event";
-    public static final String QUERY_FIELDS = "Id, WhoId, Subject, Location, StartDateTime, EndDateTime, Description, AccountId, OwnerId, IsPrivate, ShowAs, IsGroupEvent, CreatedDate, LastModifiedDate";
+    private static final String EVENT = "Event";
+    private static final String QUERY_FIELDS = "Id, WhoId, Subject, Location, StartDateTime, EndDateTime, Description, AccountId, OwnerId, IsPrivate, ShowAs, IsGroupEvent, CreatedDate, LastModifiedDate";
     private final SalesforceManager salesforceManager;
 
     @Inject
@@ -57,8 +57,8 @@ public class EventDaoImpl implements EventDao {
     public void updateEvent(Event event) {
         if (event.getId() == null || event.getId().isEmpty())
             throw new IllegalArgumentException("Event Id cant be empty");
-        SFEvent updatedEvent = SFEvent.from(CatalogTypes.fromSFEvent(event));
-        SFEvent oldEvent = SFEvent.from(CatalogTypes.fromSFEvent(getEventById(updatedEvent.id)));
+        SFEvent updatedEvent = SFEvent.from(EventCatalogType.fromSFEvent(event));
+        SFEvent oldEvent = SFEvent.from(EventCatalogType.fromSFEvent(getEventById(updatedEvent.id)));
         Map<String, Object> diff = salesforceManager.getDifference(oldEvent, updatedEvent);
         salesforceManager.updateRecord(updatedEvent.id, GSON.toJson(diff), EVENT);
     }

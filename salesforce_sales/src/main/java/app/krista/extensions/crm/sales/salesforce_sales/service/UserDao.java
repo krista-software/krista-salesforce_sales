@@ -7,6 +7,7 @@ public interface UserDao {
 
     /**
      * Returns {@link User} object of salesforce from given user id provided.
+     *
      * @param id id of user to be searched
      * @return {@link User} object of salesforce
      */
@@ -14,6 +15,7 @@ public interface UserDao {
 
     /**
      * Returns {@link List<User>} list of object of salesforce.
+     *
      * @param size number of user to be fetched
      * @param page page number to be fetched
      * @return {@link List<User>} list of object of salesforce
@@ -23,6 +25,7 @@ public interface UserDao {
 
     /**
      * Returns {@link List<User>} list of object of salesforce.
+     *
      * @param query query to be searched
      * @return {@link List<User>} list of object of salesforce
      * @return empty list if does not find any records
@@ -31,12 +34,14 @@ public interface UserDao {
 
     /**
      * Returns {@link User} object of salesforce
+     *
      * @return {@link User} object of salesforce
      */
     User getMe();
 
     /**
      * Add {@link User} to salesforce from provided input fields
+     *
      * @param entityAttributeField fields which are added in the {@link User} object of salesforce to create
      */
     void addUser(Map<String, Object> entityAttributeField);

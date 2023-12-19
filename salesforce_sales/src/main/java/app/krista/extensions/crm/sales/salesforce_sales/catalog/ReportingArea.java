@@ -4,6 +4,7 @@ import app.krista.extension.impl.anno.Attribute;
 import app.krista.extension.impl.anno.CatalogRequest;
 import app.krista.extension.impl.anno.Domain;
 import app.krista.extension.impl.anno.Field;
+import app.krista.extensions.crm.sales.salesforce_sales.catalog.catalogtypes.CatalogTypes;
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.SalesPipelineSummary;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.OpportunityDaoImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.SOQLDaoImpl;
@@ -14,6 +15,8 @@ import app.krista.extensions.util.EventHandler;
 import app.krista.ksdk.context.AuthorizationContext;
 import app.krista.ksdk.context.RequestContext;
 import app.krista.model.base.FreeForm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -36,6 +39,8 @@ public final class ReportingArea {
     private final RequestContext requestContext;
     private final AuthorizationContext authorizationContext;
     private final EventHandler eventHandler;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReportingArea.class);
+
     ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     @Inject
@@ -61,8 +66,7 @@ public final class ReportingArea {
         try {
             return opportunityDao.getOpportunitiesRegionWise();
         } catch (IllegalArgumentException cause) {
-            System.err.println(cause.getMessage());
-            cause.printStackTrace();
+            LOGGER.error(cause.getMessage(), cause);
             return List.of();
         }
     }
@@ -79,7 +83,7 @@ public final class ReportingArea {
         try {
             return soqlDao.getSalesforceObjectByQuery(query);
         } catch (IllegalArgumentException cause) {
-            System.err.println(cause.getMessage());
+            LOGGER.error(cause.getMessage(), cause);
             return Collections.emptyMap();
         }
     }
@@ -155,8 +159,7 @@ public final class ReportingArea {
                     opportunityDao.getYTDClosedSumByOwnerId(ownerId) :
                     opportunityDao.getYTDClosedSum();
         } catch (IllegalArgumentException cause) {
-            System.err.println(cause.getMessage());
-            cause.printStackTrace();
+            LOGGER.error(cause.getMessage(), cause);
             return List.of();
         }
     }
@@ -172,8 +175,7 @@ public final class ReportingArea {
         try {
             return salesPipelineSummaryDao.getSalesPipelinedSummaries().stream().map(CatalogTypes::fromSFSalesPipelineSummary).collect(Collectors.toList());
         } catch (IllegalArgumentException cause) {
-            System.err.println(cause.getMessage());
-            cause.printStackTrace();
+            LOGGER.error(cause.getMessage(), cause);
             return List.of();
         }
     }
@@ -189,8 +191,7 @@ public final class ReportingArea {
         try {
             return opportunityDao.getCurrentQuarterQuota();
         } catch (IllegalArgumentException cause) {
-            System.err.println(cause.getMessage());
-            cause.printStackTrace();
+            LOGGER.error(cause.getMessage(), cause);
             return List.of();
         }
     }
@@ -201,14 +202,13 @@ public final class ReportingArea {
             description = "This request will retrieve the  total closed opportunities revenue within the current quarter. If an owner ID is provided, it returns the revenue for that particular owner; otherwise, it returns total revenue grouped by owners.",
             area = "Reporting",
             type = CatalogRequest.Type.CHANGE_SYSTEM)
-    @Field.Desc(name = "Quarter Revenue", type = "[ { Owner Id: Text, Total: Text, Name: Text } ]",required = false)
+    @Field.Desc(name = "Quarter Revenue", type = "[ { Owner Id: Text, Total: Text, Name: Text } ]", required = false)
     public List<Map<String, Object>> valueOfOpportunitiesClosedForCurrentQuarter(
             @Field.Text(name = "Owner Id", required = false, attributes = {@Attribute(name = "visualWidth", value = "S")}, options = {}) String ownerId) {
         try {
             return opportunityDao.getQuarterClosedSum(ownerId);
         } catch (IllegalArgumentException cause) {
-            System.err.println(cause.getMessage());
-            cause.printStackTrace();
+            LOGGER.error(cause.getMessage(), cause);
             return List.of();
         }
     }
@@ -224,8 +224,7 @@ public final class ReportingArea {
         try {
             return opportunityDao.getTotalAmountClosedThisQuarter();
         } catch (IllegalArgumentException cause) {
-            System.err.println(cause.getMessage());
-            cause.printStackTrace();
+            LOGGER.error(cause.getMessage(), cause);
             return null;
         }
     }

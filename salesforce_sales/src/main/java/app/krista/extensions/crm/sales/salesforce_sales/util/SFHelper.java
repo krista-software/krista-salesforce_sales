@@ -1,7 +1,9 @@
 package app.krista.extensions.crm.sales.salesforce_sales.util;
 
 import app.krista.extensions.crm.sales.salesforce_sales.SalesforceSalesAttributes;
+import app.krista.model.base.FreeForm;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -101,6 +103,26 @@ public class SFHelper {
                 ? Long.parseLong((String) leadData.get("LastModifiedDate")) : null);
 
     }
+
+    /**
+     * This method is used to put entity fields in map.
+     *
+     * @param taskData
+     * @param taskMap
+     */
+    public static void upsertTaskDetails(FreeForm taskData, Map<String, Object> taskMap) {
+        if (taskMap == null) {
+            taskMap = new HashMap<>();
+        }
+        taskMap.put("Task Title", getStringOrEmpty(taskData.get("Title")));
+        taskMap.put("Task Priority", getStringOrEmpty(taskData.get("Priority")));
+        taskMap.put("Task Due Date", DatePlus.parseDate(taskData.get("Due Date")));
+        taskMap.put("Task Description", getStringOrEmpty(taskData.get("Description")));
+        taskMap.put("Task Status", getStringOrEmpty(taskData.get("Status")));
+        taskMap.put("Task Assigned To Id", getStringOrEmpty(taskData.get("Assigned To Id")));
+        taskMap.put("Task Associated Entity Id", getStringOrEmpty(taskData.get("Associated Entity Id")));
+    }
+
     public static boolean validateUsingOAuth(boolean isAdmin, SalesforceSalesAttributes salesforceSalesAttributes) {
         return isAdmin || (salesforceSalesAttributes.getUserName() == null || salesforceSalesAttributes.getUserName().isBlank() ||
                 salesforceSalesAttributes.getPassword() == null || salesforceSalesAttributes.getPassword().isBlank() ||

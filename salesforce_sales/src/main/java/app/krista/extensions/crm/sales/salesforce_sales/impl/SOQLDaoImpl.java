@@ -5,6 +5,8 @@ import app.krista.extensions.crm.sales.salesforce_sales.service.SOQLDao;
 import app.krista.extensions.crm.sales.salesforce_sales.util.SalesforceListResponse;
 import com.google.gson.internal.LinkedTreeMap;
 import org.jvnet.hk2.annotations.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -16,6 +18,7 @@ import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.GS
 public class SOQLDaoImpl implements SOQLDao {
 
     private final SalesforceManager salesforceManager;
+    private static final Logger LOGGER = LoggerFactory.getLogger(SOQLDaoImpl.class);
 
     @Inject
     public SOQLDaoImpl(SalesforceManager salesforceManager) {
@@ -75,7 +78,7 @@ public class SOQLDaoImpl implements SOQLDao {
         try {
             salesforceManager.getTokenProvider().getSalesforceTokenForUser();
         } catch (IOException cause) {
-            System.err.println(cause.getMessage());
+            LOGGER.error(cause.getMessage());
         }
     }
 }

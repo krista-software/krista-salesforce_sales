@@ -4,6 +4,7 @@ public interface PriceBookDao {
 
     /**
      * Returns {@link PriceBook} object of salesforce
+     *
      * @return {@link PriceBook} object of salesforce
      * @return null if does not found records
      */

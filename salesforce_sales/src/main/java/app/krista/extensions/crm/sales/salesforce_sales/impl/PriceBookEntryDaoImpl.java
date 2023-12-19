@@ -1,6 +1,6 @@
 package app.krista.extensions.crm.sales.salesforce_sales.impl;
 
-import app.krista.extensions.crm.sales.salesforce_sales.catalog.CatalogTypes;
+import app.krista.extensions.crm.sales.salesforce_sales.catalog.catalogtypes.PricebookEntryCatalogType;
 import app.krista.extensions.crm.sales.salesforce_sales.model.SFPricebookEntry;
 import app.krista.extensions.crm.sales.salesforce_sales.service.PriceBookEntry;
 import app.krista.extensions.crm.sales.salesforce_sales.service.PriceBookEntryDao;
@@ -18,8 +18,8 @@ import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.GS
 @Service
 public class PriceBookEntryDaoImpl implements PriceBookEntryDao {
 
-    public static final String QUERY_FIELDS = "Id, Name, Pricebook2Id, Product2Id, UnitPrice, IsActive, CreatedDate, LastModifiedDate, ProductCode";
-    public static final String PRICEBOOK_ENTRY = "PricebookEntry";
+    private static final String QUERY_FIELDS = "Id, Name, Pricebook2Id, Product2Id, UnitPrice, IsActive, CreatedDate, LastModifiedDate, ProductCode";
+    private static final String PRICEBOOK_ENTRY = "PricebookEntry";
     private final SalesforceManager salesforceManager;
 
     @Inject
@@ -52,8 +52,8 @@ public class PriceBookEntryDaoImpl implements PriceBookEntryDao {
     public void updatePriceBookEntry(PriceBookEntry priceBookEntry) {
         if (priceBookEntry.getId() == null || priceBookEntry.getId().isEmpty())
             throw new IllegalArgumentException("PricebookEntry Id cant be empty");
-        SFPricebookEntry updatedPricebookEntry = SFPricebookEntry.from(CatalogTypes.fromSFPriceBookEntry(priceBookEntry));
-        SFPricebookEntry oldPricebookEntry = SFPricebookEntry.from(CatalogTypes.fromSFPriceBookEntry(getPriceBookEntryById(updatedPricebookEntry.id)));
+        SFPricebookEntry updatedPricebookEntry = SFPricebookEntry.from(PricebookEntryCatalogType.fromSFPriceBookEntry(priceBookEntry));
+        SFPricebookEntry oldPricebookEntry = SFPricebookEntry.from(PricebookEntryCatalogType.fromSFPriceBookEntry(getPriceBookEntryById(updatedPricebookEntry.id)));
         Map<String, Object> diff = salesforceManager.getDifference(oldPricebookEntry, updatedPricebookEntry);
         salesforceManager.updateRecord(updatedPricebookEntry.id, GSON.toJson(diff), PRICEBOOK_ENTRY);
     }

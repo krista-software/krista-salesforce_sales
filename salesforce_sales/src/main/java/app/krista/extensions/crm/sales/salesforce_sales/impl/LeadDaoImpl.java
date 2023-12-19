@@ -1,6 +1,6 @@
 package app.krista.extensions.crm.sales.salesforce_sales.impl;
 
-import app.krista.extensions.crm.sales.salesforce_sales.catalog.CatalogTypes;
+import app.krista.extensions.crm.sales.salesforce_sales.catalog.catalogtypes.LeadCatalogType;
 import app.krista.extensions.crm.sales.salesforce_sales.model.SFLead;
 import app.krista.extensions.crm.sales.salesforce_sales.model.SFLeadHistory;
 import app.krista.extensions.crm.sales.salesforce_sales.service.Lead;
@@ -22,8 +22,8 @@ import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.GS
 public class LeadDaoImpl implements LeadDao {
 
     public static final String QUERY_FIELDS = "Id, LastName, FirstName, Salutation, Name, Title, Company, Address, Phone, MobilePhone, Fax, Email, Website, Description, LeadSource, Status, Industry, Rating, AnnualRevenue, NumberOfEmployees, OwnerId, IsConverted, ConvertedDate, ConvertedAccountId, ConvertedContactId, ConvertedOpportunityId, IsUnreadByOwner, CreatedDate, LastModifiedDate, CleanStatus";
-    public static final String LEAD = "Lead";
-    public static final String SELECT = "Select ";
+    private static final String LEAD = "Lead";
+    private static final String SELECT = "Select ";
 
     private final SalesforceManager salesforceManager;
 
@@ -74,11 +74,12 @@ public class LeadDaoImpl implements LeadDao {
     public void updateLead(Lead lead) {
         if (lead.getId() == null || lead.getId().isEmpty())
             throw new IllegalArgumentException("Lead Id cant be empty");
-        SFLead updatedLead = SFLead.from(CatalogTypes.fromSFLead(lead));
-        SFLead oldLead = SFLead.from(CatalogTypes.fromSFLead(getLeadById(updatedLead.id)));
+        SFLead updatedLead = SFLead.from(LeadCatalogType.fromSFLead(lead));
+        SFLead oldLead = SFLead.from(LeadCatalogType.fromSFLead(getLeadById(updatedLead.id)));
         Map<String, Object> diff = salesforceManager.getDifference(oldLead, updatedLead);
         salesforceManager.updateRecord(updatedLead.id, GSON.toJson(diff), LEAD);
     }
+
     public Map<String, Object> getLeadsUpdatedFields(String query) {
         String response = salesforceManager.getRecordByQuery(query);
         SFLeadHistory sfLeadHistory = GSON.fromJson(response, SFLeadHistory.class);

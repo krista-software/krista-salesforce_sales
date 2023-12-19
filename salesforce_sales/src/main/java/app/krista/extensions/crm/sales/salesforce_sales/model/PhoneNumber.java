@@ -4,6 +4,8 @@ import com.google.gson.annotations.SerializedName;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("unused")
 public final class PhoneNumber {
@@ -12,6 +14,7 @@ public final class PhoneNumber {
 
     @SerializedName("nationalNumber")
     public Long nationalNumber;
+    private static final Logger LOGGER = LoggerFactory.getLogger(PhoneNumber.class);
 
     public static app.krista.model.base.PhoneNumber parsePhoneNumber(String value) {
         if (value == null || value.isEmpty()) {
@@ -23,11 +26,11 @@ public final class PhoneNumber {
             try {
                 Phonenumber.PhoneNumber phoneNumber = phoneUtil.parse(value, "IN");
                 return new app.krista.model.base.PhoneNumber(phoneNumber.getCountryCode(), phoneNumber.getNationalNumber());
-            } catch (NumberParseException e) {
-                System.err.println("NumberParseException was thrown: " + e.toString());
+            } catch (NumberParseException cause) {
+                LOGGER.error("NumberParseException was thrown: " + cause.getMessage());
             }
             return null;
-        } catch (Exception e) {
+        } catch (Exception exception) {
             throw new RuntimeException("Something went wrong");
         }
     }

@@ -9,11 +9,14 @@ import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.XMlRespon
 import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.account_notification.AccountNotifications;
 import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.lead_notification.LeadNotifications;
 import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.opportunity_notification.OpportunityNotifications;
+import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.task_notification.TaskNotifications;
 import app.krista.extensions.util.EventHandler;
 import app.krista.ksdk.authentication.AuthorizationListener;
 import app.krista.ksdk.context.AuthorizationContext;
 import app.krista.model.base.FreeForm;
 import com.github.scribejava.core.model.OAuth2AccessToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -36,6 +39,8 @@ public final class AuthenticationResource {
     private final SalesforceTokenProviderFactory providerFactory;
     private final AuthorizationContext context;
     private final AuthorizationListener authorizationListener;
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationResource.class);
+
 
     @Inject
     public AuthenticationResource(RefreshTokenStore refreshTokenStore, EventHandler eventHandler, SalesforceSaleAttributeStore attributeStore, SalesforceTokenProviderFactory providerFactory, AuthorizationContext context, AuthorizationListener authorizationListener) {
@@ -69,13 +74,14 @@ public final class AuthenticationResource {
             }
             return "User authenticated successfully. Save the changes.";
         } catch (IOException | ExecutionException cause) {
-            System.err.println("Exception occurred due to :" + cause.getMessage());
+            LOGGER.error("Exception occurred due to :" + cause.getMessage(), cause);
+
             throw new IllegalStateException("Error occurred during authorization", cause.getCause());
         } catch (InterruptedException cause) {
             Thread.currentThread().interrupt();
-            System.err.println("Exception occurred due to :" + cause.getMessage());
+            LOGGER.error("Exception occurred due to :" + cause.getMessage(), cause);
             throw new IllegalStateException("Error occurred during authorization", cause.getCause());
-        }  finally {
+        } finally {
             if (authContextId != null) {
                 attributeStore.remove(authContextId);
             }
@@ -128,6 +134,18 @@ public final class AuthenticationResource {
             FreeForm leadNotificationSObject = leadNotifications.getValue().getLeadNotification().getSalesforceXmlLead()
                     .toLeadFreeForm();
             eventHandler.handleEvent("Lead Change Alert", leadNotificationSObject);
+        }
+        return Response.ok().build();
+    }
+
+    @POST
+    @Path("/taskchanged")
+    public Response handleTaskChangedEvent(String xml) {
+        JAXBElement<TaskNotifications> taskNotifications = XMlResponseParser.parseTaskXmlResponse(xml);
+        if (taskNotifications != null) {
+            FreeForm taskNotificationSObject = taskNotifications.getValue().getTaskNotification().getSalesforceXmlTask()
+                    .toTaskFreeForm();
+            eventHandler.handleEvent("Task Change Alert", taskNotificationSObject);
         }
         return Response.ok().build();
     }

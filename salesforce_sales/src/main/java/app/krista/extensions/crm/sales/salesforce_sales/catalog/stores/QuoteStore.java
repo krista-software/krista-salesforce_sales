@@ -3,12 +3,14 @@ package app.krista.extensions.crm.sales.salesforce_sales.catalog.stores;
 import app.krista.extension.executor.SearchCondition;
 import app.krista.extension.executor.SearchQuery;
 import app.krista.extension.util.EntityStore;
-import app.krista.extensions.crm.sales.salesforce_sales.catalog.CatalogTypes;
+import app.krista.extensions.crm.sales.salesforce_sales.catalog.catalogtypes.QuoteCatalogType;
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.Quote;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.QuoteDaoImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.QuoteImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.model.SFQuote;
 import org.jvnet.hk2.annotations.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -22,6 +24,8 @@ import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.AN
 @Service
 public class QuoteStore implements EntityStore<Quote> {
     private final QuoteDaoImpl quoteDao;
+    private static final Logger LOGGER = LoggerFactory.getLogger(QuoteStore.class);
+
 
     @Inject
     public QuoteStore(QuoteDaoImpl quoteDao) {
@@ -31,14 +35,13 @@ public class QuoteStore implements EntityStore<Quote> {
     @Override
     public Quote create(Map<String, Object> entityAttributeField) {
         if (entityAttributeField == null || entityAttributeField.isEmpty()) {
-            System.err.println("Entity attribute field map cannot be null or empty");
+            LOGGER.info("Entity attribute field map cannot be null or empty");
         }
         try {
             quoteDao.addQuote(entityAttributeField);
             return Quote.fromFields(entityAttributeField);
         } catch (IllegalArgumentException cause) {
-            System.err.println(cause.getMessage());
-            cause.printStackTrace();
+            LOGGER.error(cause.getMessage(), cause);
             return new Quote();
         }
     }
@@ -46,13 +49,12 @@ public class QuoteStore implements EntityStore<Quote> {
     @Override
     public Quote get(String primaryKey) {
         if (primaryKey == null || primaryKey.isEmpty()) {
-            System.err.println("Primary key cannot be null or empty");
+            LOGGER.info("Primary key cannot be null or empty");
         }
         try {
-            return CatalogTypes.fromSFQuote(quoteDao.getQuoteById(primaryKey));
+            return QuoteCatalogType.fromSFQuote(quoteDao.getQuoteById(primaryKey));
         } catch (IllegalArgumentException cause) {
-            System.err.println(cause.getMessage());
-            cause.printStackTrace();
+            LOGGER.error(cause.getMessage(), cause);
             return null;
         }
     }
@@ -60,14 +62,13 @@ public class QuoteStore implements EntityStore<Quote> {
     @Override
     public Quote update(Quote quote) {
         if (quote == null) {
-            System.err.println("Quote cannot be null");
+            LOGGER.info("Quote cannot be null");
         }
         try {
             quoteDao.updateQuote(new QuoteImpl(SFQuote.from(quote)));
             return quote;
         } catch (IllegalArgumentException cause) {
-            System.err.println(cause.getMessage());
-            cause.printStackTrace();
+            LOGGER.error(cause.getMessage(), cause);
             return null;
         }
     }
@@ -93,7 +94,7 @@ public class QuoteStore implements EntityStore<Quote> {
     @Override
     public List<Quote> search(SearchQuery searchQuery, long pageIndex, int pageSize) throws IOException {
         if (searchQuery == null || searchQuery.getSearchConditions() == null || searchQuery.getSearchConditions().isEmpty()) {
-            System.err.println("Search conditions cannot be null or empty");
+            LOGGER.info("Search conditions cannot be null or empty");
         }
         List<SearchCondition> conditions = searchQuery.getSearchConditions();
         try {
@@ -103,15 +104,14 @@ public class QuoteStore implements EntityStore<Quote> {
             String opportunityId = getConditionValue(conditions, "Opportunity Id");
             List<Quote> quotes;
             if (conditions.size() == 1) {
-                quotes = quoteDao.getQuotes(pageSize, pageIndex).stream().map(CatalogTypes::fromSFQuote).collect(Collectors.toList());
+                quotes = quoteDao.getQuotes(pageSize, pageIndex).stream().map(QuoteCatalogType::fromSFQuote).collect(Collectors.toList());
             } else {
                 String query = createQuery(name, opportunityId, accountId, status, pageSize, pageIndex);
-                quotes = quoteDao.getQuotesByQuery(query).stream().map(CatalogTypes::fromSFQuote).collect(Collectors.toList());
+                quotes = quoteDao.getQuotesByQuery(query).stream().map(QuoteCatalogType::fromSFQuote).collect(Collectors.toList());
             }
             return quotes;
         } catch (IllegalArgumentException cause) {
-            System.err.println(cause.getMessage());
-            cause.printStackTrace();
+            LOGGER.error(cause.getMessage(), cause);
             return List.of();
         }
     }

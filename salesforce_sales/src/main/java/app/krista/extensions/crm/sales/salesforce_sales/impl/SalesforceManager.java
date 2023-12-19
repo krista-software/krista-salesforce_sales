@@ -10,6 +10,8 @@ import com.github.scribejava.core.model.OAuthRequest;
 import com.github.scribejava.core.model.Response;
 import com.github.scribejava.core.model.Verb;
 import org.jvnet.hk2.annotations.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -27,6 +29,7 @@ import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.SE
 public final class SalesforceManager {
     private final SalesforceSalesAttributes salesAttributes;
     private final SalesforceTokenProvider tokenProvider;
+    private static final Logger LOGGER = LoggerFactory.getLogger(SalesforceManager.class);
 
     @Inject
     public SalesforceManager(SalesforceTokenProviderFactory providerFactory, SalesforceSalesAttributes salesAttributes) {
@@ -59,7 +62,7 @@ public final class SalesforceManager {
             }
             return values;
         } catch (IllegalAccessException cause) {
-            System.err.println("Failed to get difference " + cause.getMessage());
+            LOGGER.error("Failed to get difference " + cause.getMessage(), cause);
         }
         return Map.of();
     }
@@ -71,7 +74,7 @@ public final class SalesforceManager {
             final OAuthRequest request = getoAuthRequest(Verb.GET, null, salesforceToken, url);
             return getRequestResponse(salesforceToken, request);
         } catch (IOException cause) {
-            System.err.println("Failed to get record by id " + cause.getMessage());
+            LOGGER.error("Failed to get record by id " + cause.getMessage(), cause);
         }
         return "";
     }
@@ -83,7 +86,7 @@ public final class SalesforceManager {
             final OAuthRequest request = getoAuthRequest(Verb.POST, body, salesforceToken, url);
             return getRequestResponse(salesforceToken, request);
         } catch (IOException cause) {
-            System.err.println("Failed to update record " + cause.getCause());
+            LOGGER.error("Failed to update record " + cause.getCause(), cause);
         }
         return "";
     }
@@ -93,7 +96,7 @@ public final class SalesforceManager {
             SalesforceToken salesforceToken = tokenProvider.getSalesforceTokenForUser();
             return getRecords(query, salesforceToken);
         } catch (IOException cause) {
-            System.err.println("Failed to get record by id " + cause.getMessage());
+            LOGGER.error("Failed to get record by id " + cause.getMessage(), cause);
         }
         return "";
     }
@@ -110,7 +113,7 @@ public final class SalesforceManager {
             SalesforceToken salesforceToken = tokenProvider.getSalesforceTokenForUser(invokeAsUser, accountId);
             return getRecords(query, salesforceToken);
         } catch (IOException | RuntimeException cause) {
-            System.err.println("Failed to get record by query " + cause.getMessage());
+            LOGGER.error("Failed to get record by query " + cause.getMessage(), cause);
         }
         return "";
     }
@@ -122,7 +125,7 @@ public final class SalesforceManager {
             final OAuthRequest request = getoAuthRequest(Verb.GET, null, salesforceToken, url);
             return getRequestResponse(salesforceToken, request);
         } catch (IOException cause) {
-            System.err.println("Failed to get user details " + cause.getMessage());
+            LOGGER.error("Failed to get user details " + cause.getMessage(), cause);
         }
         return "";
     }
@@ -136,7 +139,7 @@ public final class SalesforceManager {
             final OAuthRequest request = getoAuthRequest(Verb.POST, Constants.GSON.toJson(emailBody), salesforceToken, url);
             getRequestResponse(salesforceToken, request);
         } catch (IOException cause) {
-            System.err.println("Failed to get user details " + cause.getMessage());
+            LOGGER.error("Failed to get user details " + cause.getMessage(), cause);
         }
     }
 
@@ -147,7 +150,7 @@ public final class SalesforceManager {
             final OAuthRequest request = getoAuthRequest(Verb.POST, body, salesforceToken, url);
             return getRequestResponse(salesforceToken, request);
         } catch (IOException cause) {
-            System.err.println("Failed to create record " + cause.getMessage());
+            LOGGER.error("Failed to create record " + cause.getMessage(), cause);
         }
         return "";
     }
@@ -159,7 +162,7 @@ public final class SalesforceManager {
             final OAuthRequest request = getoAuthRequest(Verb.GET, null, salesforceToken, url);
             return getRequestResponse(salesforceToken, request);
         } catch (IOException cause) {
-            System.err.println("Failed to get objects " + cause.getMessage());
+            LOGGER.error("Failed to get objects " + cause.getMessage(), cause);
         }
         return "";
     }
@@ -171,7 +174,7 @@ public final class SalesforceManager {
             final OAuthRequest request = getoAuthRequest(Verb.DELETE, null, salesforceToken, url);
             getRequestResponse(salesforceToken, request);
         } catch (IOException cause) {
-            System.err.println("Failed to delete asset " + cause.getMessage());
+            LOGGER.error("Failed to delete asset " + cause.getMessage(), cause);
         }
     }
 
@@ -193,7 +196,7 @@ public final class SalesforceManager {
             }
             return response.getBody();
         } catch (IOException | InterruptedException | ExecutionException cause) {
-            System.err.println("Failed to get record " + cause.getMessage());
+            LOGGER.error("Failed to get record " + cause.getMessage(), cause);
         }
         return "";
     }
@@ -206,7 +209,7 @@ public final class SalesforceManager {
             final OAuthRequest request = getoAuthRequest(Verb.GET, null, salesforceToken, url);
             return getRequestResponse(salesforceToken, request);
         } catch (IOException cause) {
-            System.err.println("Failed to get opportunity feed posts. " + cause.getMessage());
+            LOGGER.error("Failed to get opportunity feed posts. " + cause.getMessage(), cause);
         }
         return "";
     }
@@ -218,7 +221,7 @@ public final class SalesforceManager {
             final OAuthRequest request = getoAuthRequest(Verb.GET, null, salesforceToken, url);
             return getResponse(salesforceToken, request);
         } catch (IOException | ExecutionException | InterruptedException cause) {
-            System.err.println("Failed to get file response" + cause.getMessage());
+            LOGGER.error("Failed to get file response" + cause.getMessage(), cause);
         }
         return null;
     }
@@ -231,7 +234,7 @@ public final class SalesforceManager {
             }
             return response;
         } catch (IOException | InterruptedException | ExecutionException cause) {
-            System.err.println("Failed to get record " + cause.getMessage());
+            LOGGER.error("Failed to get record " + cause.getMessage(), cause);
         }
         return null;
     }

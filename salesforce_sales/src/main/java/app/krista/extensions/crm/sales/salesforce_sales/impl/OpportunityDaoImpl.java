@@ -1,6 +1,6 @@
 package app.krista.extensions.crm.sales.salesforce_sales.impl;
 
-import app.krista.extensions.crm.sales.salesforce_sales.catalog.CatalogTypes;
+import app.krista.extensions.crm.sales.salesforce_sales.catalog.catalogtypes.OpportunityCatalogType;
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.LatestPosts;
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.stores.MediaClient;
 import app.krista.extensions.crm.sales.salesforce_sales.model.Quota;
@@ -36,21 +36,21 @@ import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.GS
 @Service
 public class OpportunityDaoImpl implements OpportunityDao {
 
-    public static final String OPPORTUNITY = "Opportunity";
+    private static final String OPPORTUNITY = "Opportunity";
     public static final String QUERY_FIELDS = "id, Name, StageName, NextStep, Amount, ACV__c, AccountId, Account.Name, ContactId, Pricebook2Id, type, LeadSource, Partner__c, Competition__c, closeDate, probability, Description, " +
             "ExpectedRevenue, LastModifiedDate, createdDate, ownerid, owner.Name";
-    public static final String ELEMENTS = "elements";
-    public static final String FEED_ELEMENT_TYPE = "feedElementType";
-    public static final String ACTOR = "actor";
-    public static final String NAME = "name";
-    public static final String BODY = "body";
-    public static final String MESSAGE_SEGMENTS = "messageSegments";
-    public static final String TYPE = "type";
-    public static final String INLINE_IMAGE = "InlineImage";
-    public static final String DOWNLOAD_URL = "downloadUrl";
-    public static final String ITEMS = "items";
-    public static final String CAPABILITIES = "capabilities";
-    public static final String FILES = "files";
+    private static final String ELEMENTS = "elements";
+    private static final String FEED_ELEMENT_TYPE = "feedElementType";
+    private static final String ACTOR = "actor";
+    private static final String NAME = "name";
+    private static final String BODY = "body";
+    private static final String MESSAGE_SEGMENTS = "messageSegments";
+    private static final String TYPE = "type";
+    private static final String INLINE_IMAGE = "InlineImage";
+    private static final String DOWNLOAD_URL = "downloadUrl";
+    private static final String ITEMS = "items";
+    private static final String CAPABILITIES = "capabilities";
+    private static final String FILES = "files";
     private final SalesforceManager salesforceManager;
     private final PriceBookDaoImpl priceBookDao;
     private final UserDaoImpl userDao;
@@ -118,8 +118,8 @@ public class OpportunityDaoImpl implements OpportunityDao {
     public void updateOpportunity(Opportunity opportunity) {
         if (opportunity.getId() == null || opportunity.getId().isEmpty())
             throw new IllegalArgumentException("Opportunity Id cant be empty");
-        SFOpportunity updatedOpportunity = SFOpportunity.from(CatalogTypes.fromSFOpportunity(opportunity));
-        SFOpportunity oldOpportunity = SFOpportunity.from(CatalogTypes.fromSFOpportunity(getOpportunityById(updatedOpportunity.id)));
+        SFOpportunity updatedOpportunity = SFOpportunity.from(OpportunityCatalogType.fromSFOpportunity(opportunity));
+        SFOpportunity oldOpportunity = SFOpportunity.from(OpportunityCatalogType.fromSFOpportunity(getOpportunityById(updatedOpportunity.id)));
         Map<String, Object> diff = salesforceManager.getDifference(oldOpportunity, updatedOpportunity);
         salesforceManager.updateRecord(updatedOpportunity.id, GSON.toJson(diff), OPPORTUNITY);
     }
@@ -127,9 +127,9 @@ public class OpportunityDaoImpl implements OpportunityDao {
     @Override
     public void updateOpportunityStatus(String name, String status) {
         getOpportunitiesByQuery("name LIKE '%" + name + "%'").forEach(opportunity -> {
-            SFOpportunity updatedOpportunity = SFOpportunity.from(CatalogTypes.fromSFOpportunity(opportunity));
+            SFOpportunity updatedOpportunity = SFOpportunity.from(OpportunityCatalogType.fromSFOpportunity(opportunity));
             updatedOpportunity.stageName = status;
-            SFOpportunity oldOpportunity = SFOpportunity.from(CatalogTypes.fromSFOpportunity(getOpportunityById(updatedOpportunity.id)));
+            SFOpportunity oldOpportunity = SFOpportunity.from(OpportunityCatalogType.fromSFOpportunity(getOpportunityById(updatedOpportunity.id)));
             Map<String, Object> diff = salesforceManager.getDifference(oldOpportunity, updatedOpportunity);
             salesforceManager.updateRecord(updatedOpportunity.id, GSON.toJson(diff), OPPORTUNITY);
         });

@@ -3,10 +3,12 @@ package app.krista.extensions.crm.sales.salesforce_sales.catalog.stores;
 import app.krista.extension.executor.SearchCondition;
 import app.krista.extension.executor.SearchQuery;
 import app.krista.extension.util.EntityStore;
-import app.krista.extensions.crm.sales.salesforce_sales.catalog.CatalogTypes;
+import app.krista.extensions.crm.sales.salesforce_sales.catalog.catalogtypes.AssetCatalogType;
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.Asset;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.AssetDaoImpl;
 import org.jvnet.hk2.annotations.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -19,6 +21,8 @@ import java.util.stream.Collectors;
 public class AssetStore implements EntityStore<Asset> {
 
     private final AssetDaoImpl assetDao;
+    private static final Logger LOGGER = LoggerFactory.getLogger(AssetStore.class);
+
 
     @Inject
     public AssetStore(AssetDaoImpl assetDao) {
@@ -28,14 +32,13 @@ public class AssetStore implements EntityStore<Asset> {
     @Override
     public Asset create(Map<String, Object> entityAttributeField) {
         if (entityAttributeField == null || entityAttributeField.isEmpty()) {
-            System.err.println("Entity attribute field map cannot be null or empty");
+            LOGGER.info("Entity attribute field map cannot be null or empty");
         }
         try {
             assetDao.addAsset(entityAttributeField);
             return Asset.fromFields(entityAttributeField);
         } catch (IllegalArgumentException cause) {
-            System.err.println(cause.getMessage());
-            cause.printStackTrace();
+            LOGGER.error(cause.getMessage(), cause);
             return new Asset();
         }
     }
@@ -43,13 +46,12 @@ public class AssetStore implements EntityStore<Asset> {
     @Override
     public Asset get(String primaryKey) {
         if (primaryKey == null || primaryKey.isEmpty()) {
-            System.err.println("Primary key cannot be null or empty");
+            LOGGER.info("Primary key cannot be null or empty");
         }
         try {
-            return CatalogTypes.fromSFAsset(assetDao.getAssetById(primaryKey));
+            return AssetCatalogType.fromSFAsset(assetDao.getAssetById(primaryKey));
         } catch (IllegalArgumentException cause) {
-            System.err.println(cause.getMessage());
-            cause.printStackTrace();
+            LOGGER.error(cause.getMessage(), cause);
             return null;
         }
     }
@@ -80,7 +82,7 @@ public class AssetStore implements EntityStore<Asset> {
     @Override
     public List<Asset> search(SearchQuery searchQuery, long pageIndex, int pageSize) throws IOException {
         if (searchQuery == null || searchQuery.getSearchConditions() == null || searchQuery.getSearchConditions().isEmpty()) {
-            System.err.println("Search conditions cannot be null or empty");
+            LOGGER.info("Search conditions cannot be null or empty");
         }
         List<SearchCondition> conditions = searchQuery.getSearchConditions();
         try {
@@ -89,16 +91,15 @@ public class AssetStore implements EntityStore<Asset> {
                 String matchPattern = condition.getOperand() != null ? String.valueOf(condition.getOperand()).trim() : "";
                 String selector = condition.getFieldName();
                 if ("Id".equalsIgnoreCase(selector)) {
-                    assets = assetDao.getAssetById(matchPattern, pageSize, pageIndex).stream().map(CatalogTypes::fromSFAsset).collect(Collectors.toList());
+                    assets = assetDao.getAssetById(matchPattern, pageSize, pageIndex).stream().map(AssetCatalogType::fromSFAsset).collect(Collectors.toList());
                 }
             }
             if (conditions.size() == 1 && assets.isEmpty()) {
-                assets = assetDao.getAssets(pageSize, pageIndex).stream().map(CatalogTypes::fromSFAsset).collect(Collectors.toList());
+                assets = assetDao.getAssets(pageSize, pageIndex).stream().map(AssetCatalogType::fromSFAsset).collect(Collectors.toList());
             }
             return assets;
         } catch (IllegalArgumentException cause) {
-            System.err.println(cause.getMessage());
-            cause.printStackTrace();
+            LOGGER.error(cause.getMessage(), cause);
             return List.of();
         }
     }

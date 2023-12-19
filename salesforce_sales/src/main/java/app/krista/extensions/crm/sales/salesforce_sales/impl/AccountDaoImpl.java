@@ -1,6 +1,6 @@
 package app.krista.extensions.crm.sales.salesforce_sales.impl;
 
-import app.krista.extensions.crm.sales.salesforce_sales.catalog.CatalogTypes;
+import app.krista.extensions.crm.sales.salesforce_sales.catalog.catalogtypes.AccountCatalogType;
 import app.krista.extensions.crm.sales.salesforce_sales.model.SFAccount;
 import app.krista.extensions.crm.sales.salesforce_sales.model.SFAccountHistory;
 import app.krista.extensions.crm.sales.salesforce_sales.service.Account;
@@ -53,8 +53,8 @@ public class AccountDaoImpl implements AccountDao {
     public void updateAccount(Account account) {
         if (account.getId() == null || account.getId().isEmpty())
             throw new IllegalArgumentException("Account Id can't be empty");
-        SFAccount updatedopportunity = SFAccount.from(CatalogTypes.fromSFAccount(account));
-        SFAccount oldOpportunity = SFAccount.from(CatalogTypes.fromSFAccount(getAccountById(updatedopportunity.id)));
+        SFAccount updatedopportunity = SFAccount.from(AccountCatalogType.fromSFAccount(account));
+        SFAccount oldOpportunity = SFAccount.from(AccountCatalogType.fromSFAccount(getAccountById(updatedopportunity.id)));
         Map<String, Object> diff = salesforceManager.getDifference(oldOpportunity, updatedopportunity);
         salesforceManager.updateRecord(updatedopportunity.id, GSON.toJson(diff), ACCOUNT);
     }

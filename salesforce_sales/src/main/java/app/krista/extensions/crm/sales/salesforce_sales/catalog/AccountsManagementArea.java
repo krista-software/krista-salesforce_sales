@@ -6,6 +6,8 @@ import app.krista.extension.impl.anno.Field;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.AccountDaoImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.util.Constants;
 import app.krista.model.base.FreeForm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.HashMap;
@@ -16,6 +18,8 @@ import static app.krista.extensions.crm.sales.salesforce_sales.util.SFHelper.ups
 @Domain(id = "catEntryDomain_086f33da-aaea-4d0c-816f-3d5f20b4a273", name = "Sales", ecosystemId = "catEntryEcosystem_8a0e8ce7-6289-492f-9202-52284024280c", ecosystemName = "CRM", ecosystemVersion = "c93e81ed-93eb-4f29-b36c-4186cabee3d1")
 public class AccountsManagementArea {
     private final AccountDaoImpl accountDao;
+    private static final Logger LOGGER = LoggerFactory.getLogger(AccountsManagementArea.class);
+
 
     @Inject
     private AccountsManagementArea(AccountDaoImpl accountDao) {
@@ -40,7 +44,7 @@ public class AccountsManagementArea {
                 updateAccountDetails(eventData, accountMap);
             }
         } catch (IllegalArgumentException cause) {
-            System.err.println("Unable to create alert for account change due to " + cause.getMessage());
+            LOGGER.error("Unable to create alert for account change due to " + cause.getMessage(), cause);
         }
         return accountMap;
     }

@@ -3,6 +3,9 @@ package app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser;
 import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.account_notification.AccountNotifications;
 import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.lead_notification.LeadNotifications;
 import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.opportunity_notification.OpportunityNotifications;
+import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.task_notification.TaskNotifications;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -14,6 +17,8 @@ import javax.xml.stream.XMLStreamReader;
 import java.io.StringReader;
 
 public final class XMlResponseParser {
+    private static final Logger LOGGER = LoggerFactory.getLogger(XMlResponseParser.class);
+
 
     private XMlResponseParser() {
     }
@@ -38,7 +43,7 @@ public final class XMlResponseParser {
             }
 
         } catch (XMLStreamException | JAXBException cause) {
-            System.err.println("XML Parsing Failed for " + notificationClass.getSimpleName() + " with error " + cause.getMessage());
+            LOGGER.error("XML Parsing Failed for " + notificationClass.getSimpleName() + " with error " + cause.getMessage(), cause);
         }
         return null;
     }
@@ -57,4 +62,7 @@ public final class XMlResponseParser {
         return parseXmlResponse(response, LeadNotifications.class);
     }
 
+    public static JAXBElement<TaskNotifications> parseTaskXmlResponse(String response) {
+        return parseXmlResponse(response, TaskNotifications.class);
+    }
 }

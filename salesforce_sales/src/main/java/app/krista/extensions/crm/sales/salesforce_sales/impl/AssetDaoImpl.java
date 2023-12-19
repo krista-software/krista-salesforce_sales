@@ -1,6 +1,6 @@
 package app.krista.extensions.crm.sales.salesforce_sales.impl;
 
-import app.krista.extensions.crm.sales.salesforce_sales.catalog.CatalogTypes;
+import app.krista.extensions.crm.sales.salesforce_sales.catalog.catalogtypes.AssetCatalogType;
 import app.krista.extensions.crm.sales.salesforce_sales.model.SFAsset;
 import app.krista.extensions.crm.sales.salesforce_sales.service.Asset;
 import app.krista.extensions.crm.sales.salesforce_sales.service.AssetDao;
@@ -19,8 +19,8 @@ import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.GS
 @Service
 public class AssetDaoImpl implements AssetDao {
 
-    public static final String ASSET = "Asset";
-    public static final String QUERY_FIELDS = " Id,ContactId,AccountId,RootAssetId,IsCompetitorProduct,CreatedDate,CreatedById,LastModifiedDate,IsDeleted,Name,OwnerId ";
+    private static final String ASSET = "Asset";
+    private static final String QUERY_FIELDS = " Id,ContactId,AccountId,RootAssetId,IsCompetitorProduct,CreatedDate,CreatedById,LastModifiedDate,IsDeleted,Name,OwnerId ";
     private final SalesforceManager salesforceManager;
 
     @Inject
@@ -52,8 +52,8 @@ public class AssetDaoImpl implements AssetDao {
     public void updateAsset(Asset asset) {
         if (asset.getId() == null || asset.getId().isEmpty())
             throw new RuntimeException("Asset Id cant be empty");
-        SFAsset updatedSFAsset = SFAsset.from(CatalogTypes.fromSFAsset(asset));
-        SFAsset oldAsset = SFAsset.from(CatalogTypes.fromSFAsset(getAssetById(asset.getId())));
+        SFAsset updatedSFAsset = SFAsset.from(AssetCatalogType.fromSFAsset(asset));
+        SFAsset oldAsset = SFAsset.from(AssetCatalogType.fromSFAsset(getAssetById(asset.getId())));
         Map<String, Object> diff = salesforceManager.getDifference(oldAsset, updatedSFAsset);
         salesforceManager.updateRecord(updatedSFAsset.id, GSON.toJson(diff), ASSET);
     }

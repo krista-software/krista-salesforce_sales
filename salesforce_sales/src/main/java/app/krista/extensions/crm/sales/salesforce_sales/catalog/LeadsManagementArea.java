@@ -3,9 +3,12 @@ package app.krista.extensions.crm.sales.salesforce_sales.catalog;
 import app.krista.extension.impl.anno.CatalogRequest;
 import app.krista.extension.impl.anno.Domain;
 import app.krista.extension.impl.anno.Field;
+import app.krista.extensions.crm.sales.salesforce_sales.catalog.catalogtypes.LeadCatalogType;
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.Lead;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.LeadDaoImpl;
 import app.krista.model.base.FreeForm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.HashMap;
@@ -25,6 +28,8 @@ import static app.krista.extensions.crm.sales.salesforce_sales.util.SFHelper.ups
         ecosystemVersion = "db320c64-6f6f-4c9e-8daa-41d3f796d6a6")
 public final class LeadsManagementArea {
     private final LeadDaoImpl leadDao;
+    private static final Logger LOGGER = LoggerFactory.getLogger(LeadsManagementArea.class);
+
 
     @Inject
     private LeadsManagementArea(LeadDaoImpl leadDao) {
@@ -50,18 +55,17 @@ public final class LeadsManagementArea {
                 if (ownerId == null || ownerId.isBlank()) {
                     throw new IllegalArgumentException("Please provide ownerId");
                 }
-                return leadDao.getLeadsByOwnerId(ownerId).stream().map(CatalogTypes::fromSFLead).collect(Collectors.toList());
+                return leadDao.getLeadsByOwnerId(ownerId).stream().map(LeadCatalogType::fromSFLead).collect(Collectors.toList());
             }
             if (field.equalsIgnoreCase("New Leads")) {
                 if (startDateTime == null || startDateTime.toString().isBlank()) {
                     throw new IllegalArgumentException("Please provide startDateTime");
                 }
-                return leadDao.getLeadByDate(startDateTime).stream().map(CatalogTypes::fromSFLead).collect(Collectors.toList());
+                return leadDao.getLeadByDate(startDateTime).stream().map(LeadCatalogType::fromSFLead).collect(Collectors.toList());
             }
             return List.of();
         } catch (IllegalArgumentException cause) {
-            System.err.println(cause.getMessage());
-            cause.printStackTrace();
+            LOGGER.error(cause.getMessage(), cause);
             return List.of();
         }
     }
@@ -84,7 +88,7 @@ public final class LeadsManagementArea {
                 updateLeadDetails(eventData, leadMap);
             }
         } catch (IllegalArgumentException cause) {
-            System.err.println("Unable to create alert for lead change due to " + cause.getMessage());
+            LOGGER.error("Unable to create alert for lead change due to " + cause.getMessage(), cause);
         }
         return leadMap;
     }

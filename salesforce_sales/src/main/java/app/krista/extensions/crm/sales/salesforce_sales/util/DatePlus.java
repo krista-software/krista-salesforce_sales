@@ -1,11 +1,15 @@
 package app.krista.extensions.crm.sales.salesforce_sales.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
 public final class DatePlus {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DatePlus.class);
 
     private DatePlus() {
     }
@@ -30,6 +34,7 @@ public final class DatePlus {
         return sdf.format(new Date(date));
     }
 
+
     public static Date fromYYYYMMDD(String date) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         try {
@@ -37,6 +42,19 @@ public final class DatePlus {
         } catch (ParseException e) {
             return null;
         }
+    }
+
+    public static Date parseDate(Object dueDate) {
+        if (dueDate != null && dueDate instanceof String) {
+            String dateString = (String) dueDate;
+            try {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                return dateFormat.parse(dateString);
+            } catch (ParseException cause) {
+                LOGGER.error(cause.getMessage());
+            }
+        }
+        return null;
     }
 
     public static QuarterDates getQuarterDates(String quarter) {

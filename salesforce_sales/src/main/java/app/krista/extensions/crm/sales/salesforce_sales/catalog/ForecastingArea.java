@@ -4,6 +4,8 @@ import app.krista.extension.impl.anno.CatalogRequest;
 import app.krista.extension.impl.anno.Domain;
 import app.krista.extension.impl.anno.Field;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.OpportunityDaoImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -16,6 +18,8 @@ import java.util.List;
 public final class ForecastingArea {
 
     private final OpportunityDaoImpl opportunityDao;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ForecastingArea.class);
+
 
     @Inject
     public ForecastingArea(OpportunityDaoImpl opportunityDao) {
@@ -38,8 +42,7 @@ public final class ForecastingArea {
         try {
             return opportunityDao.getExpectedRevenueOfQuarters(quarters, query);
         } catch (IllegalArgumentException cause) {
-            System.err.println(cause.getMessage());
-            cause.printStackTrace();
+            LOGGER.error(cause.getMessage(), cause);
             return List.of();
         }
     }

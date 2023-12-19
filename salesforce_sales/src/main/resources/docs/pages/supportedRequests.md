@@ -517,6 +517,89 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
   - Drag and drop the Lead History icon for account change alert in the Related Fields below and save the changes.
     ![Setup](../pages/../_media/addLeadTab.png)
 
+### Task Management Area
+
+#### Task Change Alert
+
+- **Description**: This request is for the changes(creation and update) in the tasks.
+- **Input Parameters**: No Parameters Required.
+
+- **Output Parameters**:
+
+| **Parameter Name** | **Parameter Type** |
+|--------------------|--------------------|
+| Response           | MultiField         |
+
+
+**Steps To Create Alert In Salesforce Sale**
+
+- Navigate to the Setup icon and then click **Setup**.
+  ![Setup](../_media/setup.png)
+
+- On the SETUP Home page, under the **Process Automation** menu on the left panel, under the **Workflow Actions**,
+  click **Outbound Messages**.
+  ![Outbound Messages](../_media/outboundMessages.png)
+
+- On the **Outbound Messages** page, click **New Outbound Message**.
+
+  - From the Object drop-down list, select **Task** as an object then click **Next**.
+
+  - On the next page enter **Name**.
+
+  - Enter **Endpoint URL**
+    - Go to the Detail's page of the extension and copy the Routing id from there. After that, append **'
+      /rest/salesforcesales/taskchanged'** at the end of the routing id (This is your endpoint uri).
+
+      ![Routing Id Reference](../_media/routingId.png)
+
+  - Select Task fields from task  entity list to send and then click, and then click **Save**.
+
+    ![Create Outbound Message](../_media/createTaskOutboundMessage.png)
+
+  - Now create **Flow**.
+
+  - On the SETUP Home page, under the **Process Automation** menu on the left panel, click **Flows**.
+
+  - On the **Flows**, click **New Flow** on upper right corner.
+
+  - Select **Record-Triggered Flow** then click **Create**.
+
+  - On the Flow Builder page of the Salesforce Portal, navigate to Select Elements > Select Objects.
+
+  - Select **Task** as **Object**.
+  
+  - Select  **When a record is created or updated** as **Configure Trigger**.
+  
+  - Select  **Flow API Name** as **Condition Requirements**.
+
+  - Insert **Formula** as attached in the screenshot below.
+  
+  ![](../_media/formula.png)
+
+  - Select **Every time a record is updated and meets the condition requirements** as **When to Run the Flow for Updated Records**.
+  
+  - Select **Actions and Related Records** as **Optimize the Flow for**.
+  
+  - On the left-hand side navigation panel under Record-Triggered Flow, hover over, a flow of visual steps would be displayed starting with a plus sign (+).
+  
+  - Click the + sign and under Add Element UI panel, search for Action.
+  
+  - Select **Action** under **Interaction**.
+  
+  - Scroll down and select **Outbound Message** on the right-hand side panel.
+  
+  - Search and select the desired **Outbound Message** under **Action**.
+  
+  - Provide **Label** and **API Name** and select **Done**.
+  
+  ![](../_media/flow.png)
+
+  - Click **Save** on the top right corner.
+  
+  - Provide **Flow Label** and **Flow API Name** and select **Save**.
+  
+  - Click **Activate** on the top right corner.
+
 ### Actions Area
 
 #### Send A Mail
@@ -701,6 +784,8 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 | **Parameter Name** | **Parameter Type** |
 |--------------------|--------------------|
 | Forecast           | List&lt;FreeForm>  |
+
+
 
 ## Entity Requests
 Krista Salesforce Sales Module Extension supports the following entity requests:
@@ -1369,3 +1454,108 @@ Krista Salesforce Sales Module Extension supports the following entity requests:
 * Delete Pricebook Entry
     * Description: Deletes the given Id pricebook entry.
     * Input Parameters: key
+
+
+#### Task
+
+* Search Task
+  * Description: Returns list of tasks.
+  * Input Parameters:
+
+| **Parameter Name** | **Parameter Type** | **Mandatory** | **Example** |
+|--------------------|--------------------|---------------|-------------|
+| Title              | Text               | No            | Demo        |
+| Priority           | Text               | No            | High        |
+| Due Date           | Date               | No            | 2022-10-30  |
+| Status             | Text               | No            | Completed   |
+| Assigned To Name   | Text               | No            | Name        |
+
+**Note:**
+
+* Assigned To Name supports equals operator only.
+* Priority supports equals operator only.
+* Status supports equals operator only.
+* Title supports equals,contains,startswith,endswith operator.
+* Due Date supports equals,greater than,less than operator only.
+
+* Output Parameters:
+
+| **Parameter Name** | **Parameter Type** |
+|--------------------|--------------------|
+| Task               | List&lt;Task>      |
+
+* Get Task
+  * Description: Returns selected task.
+  * Input Parameters: NA
+  * Output Parameters:
+
+| **Parameter Name** | **Parameter Type** |
+|--------------------|--------------------|
+| Task               | Task               |
+
+* Create Task
+  * Description: Returns created task.
+  * Input Parameters:
+
+| **Parameter Name**     | **Parameter Type** | **Mandatory** | **Example**             |
+|------------------------|--------------------|---------------|-------------------------|
+| Id                     | Text               | No            | 0065w00002AlDtDAAM      |
+| Title                  | Text               | Yes           | Task                    |
+| Priority               | Pick one           | Yes           | High                    |
+| Due Date               | Date               | No            | 2022-10-30              |
+| Description            | Text               | No            | desc                    |
+| Status                 | Text               | Yes           | Completed               |
+| Task Type              | Text               | No            | Closed                  |
+| Assigned To Name       | Text               | No            | 20000                   |
+| Assigned To Id         | Text               | Yes           | 0055w00000D9a8iAAC      |
+| Associated Entity Id   | Text               | No            | 0055w00000D9a8iAAC      |
+| Associated Entity Type | Text               | No            | 3000000                 |
+| Associated Entity Name | Text               | No            | 2022-07-12T14&#58;52:18 |
+
+**Note:**
+
+* To add Assigned To Name, Assigned To Id is required.
+* To add Associated Entity Type,Associated Entity Name, Associated Entity Id is required.
+* Task Type is not supported.
+
+* Output Parameters:
+
+| **Parameter Name** | **Parameter Type** |
+|--------------------|--------------------|
+| Task               | Task               |
+
+* Update Task
+  * Description: Returns updated task.
+  * Input Parameters:
+
+
+| **Parameter Name**     | **Parameter Type** | **Mandatory** | **Example**             |
+|------------------------|--------------------|---------------|-------------------------|
+| Id                     | Text               | No            | 0065w00002AlDtDAAM      |
+| Title                  | Text               | Yes           | Task                    |
+| Priority               | Pick one           | Yes           | High                    |
+| Due Date               | Date               | No            | 2022-10-30              |
+| Description            | Text               | No            | desc                    |
+| Status                 | Text               | Yes           | Completed               |
+| Task Type              | Text               | No            | Closed                  |
+| Assigned To Name       | Text               | No            | 20000                   |
+| Assigned To Id         | Text               | Yes           | 0055w00000D9a8iAAC      |
+| Associated Entity Id   | Text               | No            | 0055w00000D9a8iAAC      |
+| Associated Entity Type | Text               | No            | 3000000                 |
+| Associated Entity Name | Text               | No            | 2022-07-12T14&#58;52:18 |
+
+**Note:**
+
+* To add Assigned To Name, Assigned To Id is required.
+* To add Associated Entity Type,Associated Entity Name, Associated Entity Id is required.
+* Task Type is not supported.
+
+* Output Parameters:
+
+| **Parameter Name** | **Parameter Type** |
+|--------------------|--------------------|
+| Task               | Task               |
+
+* Delete Task Entry
+  * Description: Deletes the Task entry for given Id.
+  * Input Parameters: key

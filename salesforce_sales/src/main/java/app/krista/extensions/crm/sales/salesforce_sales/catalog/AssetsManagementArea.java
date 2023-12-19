@@ -3,10 +3,13 @@ package app.krista.extensions.crm.sales.salesforce_sales.catalog;
 import app.krista.extension.impl.anno.CatalogRequest;
 import app.krista.extension.impl.anno.Domain;
 import app.krista.extension.impl.anno.Field;
+import app.krista.extensions.crm.sales.salesforce_sales.catalog.catalogtypes.AssetCatalogType;
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.Asset;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.AssetDaoImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.AssetImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.model.SFAsset;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 
@@ -18,6 +21,8 @@ import javax.inject.Inject;
 public final class AssetsManagementArea {
 
     private final AssetDaoImpl assetDao;
+    private static final Logger LOGGER = LoggerFactory.getLogger(AssetsManagementArea.class);
+
 
     @Inject
     public AssetsManagementArea(AssetDaoImpl assetDao) {
@@ -40,9 +45,8 @@ public final class AssetsManagementArea {
             assetDao.deleteAssetById(id);
             return true;
         } catch (IllegalArgumentException cause) {
-            System.out.println("Provided asset ID does not exist or is not accessible");
-            System.out.println(cause.getMessage());
-            cause.printStackTrace();
+            LOGGER.error("Provided asset ID does not exist or is not accessible");
+            LOGGER.error(cause.getMessage(), cause);
             return false;
         }
     }
@@ -74,10 +78,9 @@ public final class AssetsManagementArea {
             updateAsset.isCompetitorProduct = isCompetitorProduct;
             updateAsset.name = name;
             assetDao.updateAsset(new AssetImpl(SFAsset.from(updateAsset)));
-            return CatalogTypes.fromSFAsset(assetDao.getAssetById(id));
+            return AssetCatalogType.fromSFAsset(assetDao.getAssetById(id));
         } catch (IllegalArgumentException cause) {
-            System.err.println(cause.getMessage());
-            cause.printStackTrace();
+            LOGGER.error(cause.getMessage(), cause);
             return null;
         }
     }

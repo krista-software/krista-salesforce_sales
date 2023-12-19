@@ -4,7 +4,9 @@ import app.krista.extension.impl.anno.CatalogRequest;
 import app.krista.extension.impl.anno.Domain;
 import app.krista.extension.impl.anno.Field;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.SalesforceManager;
-import app.krista.extensions.crm.sales.salesforce_sales.util.Constants;
+import app.krista.extensions.crm.sales.salesforce_sales.util.Validators;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.text.DecimalFormat;
@@ -18,6 +20,8 @@ import java.util.Random;
 public final class ActionsArea {
 
     private final SalesforceManager salesforceManager;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ActionsArea.class);
+
 
     @Inject
     public ActionsArea(SalesforceManager salesforceManager) {
@@ -35,13 +39,12 @@ public final class ActionsArea {
             @Field(name = "Email Addresses", type = "Text") String emailAddresses,
             @Field(name = "Subject", type = "Text") String subject,
             @Field(name = "Body", type = "Paragraph") String body) {
-        Constants.validation(emailAddresses, subject, body);
+        Validators.validation(emailAddresses, subject, body);
         try {
             salesforceManager.sendEmail(emailAddresses, subject, body);
             return true;
         } catch (IllegalArgumentException cause) {
-            System.err.println(cause.getMessage());
-            cause.printStackTrace();
+            LOGGER.error(cause.getMessage(), cause);
             return false;
         }
     }
@@ -57,7 +60,7 @@ public final class ActionsArea {
             @Field(name = "Email Addresses", type = "Text") String emailAddresses,
             @Field(name = "Subject", type = "Text") String subject,
             @Field(name = "Body", type = "Paragraph") String body) {
-        Constants.validation(emailAddresses, subject, body);
+        Validators.validation(emailAddresses, subject, body);
         try {
             String otp = new DecimalFormat("000000").format(new Random().nextInt(999999));
             boolean isOtpAdded = false;
@@ -76,8 +79,7 @@ public final class ActionsArea {
             salesforceManager.sendEmail(emailAddresses, subject, body);
             return otp;
         } catch (IllegalArgumentException cause) {
-            System.err.println(cause.getMessage());
-            cause.printStackTrace();
+            LOGGER.error(cause.getMessage(), cause);
             return "Failed to send verification mail";
         }
     }

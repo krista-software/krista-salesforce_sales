@@ -7,6 +7,7 @@ public interface AccountDao {
 
     /**
      * Returns {@link Account} object of salesforce from the account id provided.
+     *
      * @param id id of account to be searched
      * @return {@link Account} object of salesforce
      */
@@ -14,6 +15,7 @@ public interface AccountDao {
 
     /**
      * Returns {@link List<Account>} list of object of salesforce from the account name provided.
+     *
      * @param name name of the account
      * @param size number of accounts to be fetched
      * @param page page number to be fetched
@@ -24,6 +26,7 @@ public interface AccountDao {
 
     /**
      * Returns {@link List<Account>} list of object of salesforce.
+     *
      * @param size number of accounts to be fetched
      * @param page page number to be fetched
      * @return {@link List<Account>} list of object of salesforce
@@ -33,18 +36,21 @@ public interface AccountDao {
 
     /**
      * Add {@link Account} to salesforce from provided input fields
+     *
      * @param entityAttributeField fields which are added in the {@link Account} object of salesforce to create
      */
     void addAccount(Map<String, Object> entityAttributeField);
 
     /**
      * Update {@link Account} to salesforce from provided input fields
+     *
      * @param account {@link Account} object of salesforce to be updated
      */
     void updateAccount(Account account);
 
     /**
      * This function will return updated fields for account object.
+     *
      * @param query
      * @return
      */
@@ -52,6 +58,7 @@ public interface AccountDao {
 
     /**
      * This function will delete account from account object.
+     *
      * @param key
      */
     void deleteAccount(String key);

@@ -2,6 +2,7 @@ package app.krista.extensions.crm.sales.salesforce_sales.catalog.stores;
 
 import app.krista.extension.authorization.MustAuthorizeException;
 import app.krista.extensions.crm.sales.salesforce_sales.util.Constants;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.ClientBuilder;
@@ -16,7 +17,6 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
 
