@@ -3,11 +3,15 @@ package app.krista.extensions.crm.sales.salesforce_sales.catalog;
 import app.krista.extension.impl.anno.CatalogRequest;
 import app.krista.extension.impl.anno.Domain;
 import app.krista.extension.impl.anno.Field;
+import app.krista.extensions.crm.sales.salesforce_sales.impl.TaskDaoImpl;
 import app.krista.model.base.FreeForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static app.krista.extensions.crm.sales.salesforce_sales.util.SFHelper.upsertTaskDetails;
@@ -19,7 +23,29 @@ import static app.krista.extensions.crm.sales.salesforce_sales.util.SFHelper.ups
         ecosystemVersion = "4dc0ebeb-d312-4169-99d7-17ff46cc0a6e")
 public class TaskManagementArea {
 
+    private final TaskDaoImpl taskDao;
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskManagementArea.class);
+
+    @Inject
+    public TaskManagementArea(TaskDaoImpl taskDao) {
+        this.taskDao = taskDao;
+    }
+
+    @CatalogRequest(
+            id = "localDomainRequest_a3941861-dc65-41a1-b324-224de3929cb9",
+            name = "Get Task Status",
+            description = "desc",
+            area = "Task Management",
+            type = CatalogRequest.Type.CHANGE_SYSTEM)
+    @Field.Desc(name = "Task Status", type = "[ Text ]", required = false)
+    public List<String> getTaskStatus() {
+        try {
+            return taskDao.getTaskStatusByQuery();
+        } catch (Exception cause) {
+            LOGGER.error("Unable to get TaskStatus: " + cause.getMessage(), cause);
+            return new ArrayList<>();
+        }
+    }
 
     @CatalogRequest(
             id = "localDomainRequest_13ca2a59-9785-4020-ae99-7c5c7dc2abf7",

@@ -6,6 +6,9 @@ import app.krista.extensions.crm.sales.salesforce_sales.service.Task;
 import app.krista.extensions.crm.sales.salesforce_sales.service.TaskDao;
 import app.krista.extensions.crm.sales.salesforce_sales.util.Constants;
 import app.krista.extensions.crm.sales.salesforce_sales.util.SalesforceListResponse;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import org.jvnet.hk2.annotations.Service;
 import org.slf4j.Logger;
@@ -25,6 +28,7 @@ public class TaskDaoImpl implements TaskDao {
 
     private static final String TASK = "Task";
     private static final String Query_Fields = "Id, OwnerId, Owner.Name, Subject, Priority, ActivityDate, Description, Status, AccountId, WhatId, WhoId, Account.Name, What.Name, What.Type";
+    public static final String API_NAME = "ApiName";
     private final SalesforceManager salesforceManager;
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskDaoImpl.class);
 
@@ -84,4 +88,48 @@ public class TaskDaoImpl implements TaskDao {
         }
     }
 
+    @Override
+    public List<String> getTaskStatusByQuery() {
+        try {
+            String jsonResponse = salesforceManager.getRecordByQuery("SELECT ApiName FROM TaskStatus");
+
+            if (jsonResponse == null || jsonResponse.isEmpty()) {
+                LOGGER.info("Empty JSON response");
+                return new ArrayList<>();
+            }
+
+            JsonObject jsonObject = GSON.fromJson(jsonResponse, JsonObject.class);
+
+            if (!jsonObject.has("records")) {
+                LOGGER.info("records array not present in JSON response");
+                return new ArrayList<>();
+            }
+
+            JsonArray jsonArray = jsonObject.getAsJsonArray("records");
+
+            if (jsonArray == null || jsonArray.size() == 0) {
+                LOGGER.info("records array is empty");
+                return new ArrayList<>();
+            }
+
+            List<String> apiNamesList = new ArrayList<>();
+            for (JsonElement jsonElement : jsonArray) {
+                JsonObject object = jsonElement.getAsJsonObject();
+
+                if (object.has(API_NAME)) {
+                    String apiName = object.get(API_NAME).getAsString();
+                    apiNamesList.add(apiName);
+                } else {
+                    LOGGER.info("ApiName not found in a record");
+                }
+            }
+
+            return apiNamesList;
+
+        } catch (Exception cause) {
+            LOGGER.error(cause.getMessage(), cause);
+            return new ArrayList<>();
+        }
+
+    }
 }
