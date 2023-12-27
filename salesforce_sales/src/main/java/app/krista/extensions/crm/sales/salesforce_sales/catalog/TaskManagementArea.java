@@ -34,10 +34,10 @@ public class TaskManagementArea {
     @CatalogRequest(
             id = "localDomainRequest_a3941861-dc65-41a1-b324-224de3929cb9",
             name = "Get Task Status",
-            description = "desc",
+            description = "This request returns the available picklist values for the Status field of a task.",
             area = "Task Management",
             type = CatalogRequest.Type.CHANGE_SYSTEM)
-    @Field.Desc(name = "Task Status", type = "[ Text ]", required = false)
+    @Field.Desc(name = "Task Status", type = "[ Text ]",required = false)
     public List<String> getTaskStatus() {
         try {
             return taskDao.getTaskStatusByQuery();
