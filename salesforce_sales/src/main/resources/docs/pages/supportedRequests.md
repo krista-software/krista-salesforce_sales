@@ -600,6 +600,8 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
   
   - Click **Activate** on the top right corner.
 
+  - **Note:** Alert will be created only when a new task is created or when the **Status** or **Assigned To Id** of the existing task is changed and when an existing task becomes overdue.
+
 ### Actions Area
 
 #### Send A Mail
