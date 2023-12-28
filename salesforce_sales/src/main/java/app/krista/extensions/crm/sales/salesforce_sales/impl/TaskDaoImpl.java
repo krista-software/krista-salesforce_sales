@@ -29,6 +29,7 @@ public class TaskDaoImpl implements TaskDao {
     private static final String TASK = "Task";
     private static final String Query_Fields = "Id, OwnerId, Owner.Name, Subject, Priority, ActivityDate, Description, Status, AccountId, WhatId, WhoId, Account.Name, What.Name, What.Type";
     public static final String API_NAME = "ApiName";
+    public static final String RECORDS = "records";
     private final SalesforceManager salesforceManager;
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskDaoImpl.class);
 
@@ -100,12 +101,12 @@ public class TaskDaoImpl implements TaskDao {
 
             JsonObject jsonObject = GSON.fromJson(jsonResponse, JsonObject.class);
 
-            if (!jsonObject.has("records")) {
+            if (!jsonObject.has(RECORDS)) {
                 LOGGER.info("records array not present in JSON response");
                 return new ArrayList<>();
             }
 
-            JsonArray jsonArray = jsonObject.getAsJsonArray("records");
+            JsonArray jsonArray = jsonObject.getAsJsonArray(RECORDS);
 
             if (jsonArray == null || jsonArray.size() == 0) {
                 LOGGER.info("records array is empty");
