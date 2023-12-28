@@ -28,8 +28,8 @@ public class TaskDaoImpl implements TaskDao {
 
     private static final String TASK = "Task";
     private static final String Query_Fields = "Id, OwnerId, Owner.Name, Subject, Priority, ActivityDate, Description, Status, AccountId, WhatId, WhoId, Account.Name, What.Name, What.Type";
-    public static final String API_NAME = "ApiName";
-    public static final String RECORDS = "records";
+    private static final String API_NAME = "ApiName";
+    private static final String RECORDS = "records";
     private final SalesforceManager salesforceManager;
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskDaoImpl.class);
 
@@ -113,24 +113,26 @@ public class TaskDaoImpl implements TaskDao {
                 return new ArrayList<>();
             }
 
-            List<String> apiNamesList = new ArrayList<>();
-            for (JsonElement jsonElement : jsonArray) {
-                JsonObject object = jsonElement.getAsJsonObject();
-
-                if (object.has(API_NAME)) {
-                    String apiName = object.get(API_NAME).getAsString();
-                    apiNamesList.add(apiName);
-                } else {
-                    LOGGER.info("ApiName not found in a record");
-                }
-            }
-
-            return apiNamesList;
-
+            return getApiNamesList(jsonArray);
         } catch (Exception cause) {
             LOGGER.error(cause.getMessage(), cause);
             return new ArrayList<>();
         }
+    }
 
+    private static List<String> getApiNamesList(JsonArray jsonArray) {
+        List<String> apiNamesList = new ArrayList<>();
+        for (JsonElement jsonElement : jsonArray) {
+            JsonObject object = jsonElement.getAsJsonObject();
+
+            if (object.has(API_NAME)) {
+                String apiName = object.get(API_NAME).getAsString();
+                apiNamesList.add(apiName);
+            } else {
+                LOGGER.info("ApiName not found in a record");
+            }
+        }
+
+        return apiNamesList;
     }
 }
