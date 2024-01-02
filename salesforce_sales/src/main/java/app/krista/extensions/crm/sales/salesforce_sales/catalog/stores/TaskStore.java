@@ -72,10 +72,11 @@ public class TaskStore implements EntityStore<Task> {
     public Task update(Task task) throws IOException {
         if (task == null) {
             LOGGER.info("Task cannot be null");
+            return null;
         }
         try {
             taskDao.updateTask(new TaskImpl(SFTask.from(task)));
-            return task;
+            return get(task.id);
         } catch (IllegalArgumentException cause) {
             LOGGER.error(cause.getMessage(), cause);
             return null;

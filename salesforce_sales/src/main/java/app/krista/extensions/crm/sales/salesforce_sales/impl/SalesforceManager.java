@@ -56,7 +56,7 @@ public final class SalesforceManager {
                 field.setAccessible(true);
                 Object value1 = field.get(old);
                 Object value2 = field.get(newObj);
-                if (value1 != null && value2 != null && !Objects.equals(value1, value2) && !field.getName().contains("id")) {
+                if (value2 != null && !Objects.equals(value1, value2) && !field.getName().contains("id")) {
                     values.put(field.getName(), value2);
                 }
             }
