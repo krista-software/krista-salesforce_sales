@@ -16,4 +16,6 @@ public interface TaskDao {
     void updateTask(Task task);
 
     List<Task> getTasksByQuery(String query);
+
+    List<String> getTaskStatusByQuery();
 }

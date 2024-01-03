@@ -2,6 +2,7 @@ package app.krista.extensions.crm.sales.salesforce_sales.impl;
 
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.catalogtypes.TaskCatalogType;
 import app.krista.extensions.crm.sales.salesforce_sales.model.SFTask;
+import app.krista.extensions.crm.sales.salesforce_sales.model.SFTaskStatus;
 import app.krista.extensions.crm.sales.salesforce_sales.service.Task;
 import app.krista.extensions.crm.sales.salesforce_sales.service.TaskDao;
 import app.krista.extensions.crm.sales.salesforce_sales.util.Constants;
@@ -84,4 +85,16 @@ public class TaskDaoImpl implements TaskDao {
         }
     }
 
+    @Override
+    public List<String> getTaskStatusByQuery() {
+        String jsonResponse = salesforceManager.getRecordByQuery("SELECT ApiName FROM TaskStatus");
+
+        SalesforceListResponse<SFTaskStatus> taskList =
+                GSON.fromJson(jsonResponse, new TypeToken<SalesforceListResponse<SFTaskStatus>>() {
+                }.getType());
+
+        return taskList != null ? taskList.records.stream()
+                .map(SFTaskStatus::getApiName)
+                .collect(Collectors.toList()) : List.of();
+    }
 }
