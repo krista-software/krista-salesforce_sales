@@ -55,7 +55,7 @@ public final class SFTask {
         task.subject = sfTask.title;
         task.priority = sfTask.priority;
         task.activityDate = sfTask.dueDate != null && sfTask.dueDate > 0 ? DatePlus.getYYYYMMDD(sfTask.dueDate) : null;
-        task.description = sfTask.description;
+        task.description = sfTask.description != null ? sfTask.description : "";
         task.whatId = sfTask.associatedEntityId;
         task.status = sfTask.status;
         return task;
