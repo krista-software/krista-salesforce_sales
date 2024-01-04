@@ -1,9 +1,12 @@
 package app.krista.extensions.crm.sales.salesforce_sales.util;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 public final class Constants {
     public static final Gson GSON = new Gson();
+    public static final Gson gsonBuilder = new GsonBuilder().serializeNulls().create();
+
     public static final String CREATED = "created";
     public static final String TEXT = "Text";
     public static final String DOUBLE = "Double";

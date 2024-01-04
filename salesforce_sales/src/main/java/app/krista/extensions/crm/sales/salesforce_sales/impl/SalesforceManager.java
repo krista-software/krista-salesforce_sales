@@ -59,6 +59,9 @@ public final class SalesforceManager {
                 if (value2 != null && !Objects.equals(value1, value2) && !field.getName().contains("id")) {
                     values.put(field.getName(), value2);
                 }
+                if (value2 == null && value1 != null) {
+                    values.put(field.getName(), null);
+                }
             }
             return values;
         } catch (IllegalAccessException cause) {

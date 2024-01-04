@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.GSON;
+import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.gsonBuilder;
 
 @Service
 public class TaskDaoImpl implements TaskDao {
@@ -60,7 +61,7 @@ public class TaskDaoImpl implements TaskDao {
         SFTask updatedTask = SFTask.from(TaskCatalogType.fromSFTask(task));
         SFTask oldTask = SFTask.from(TaskCatalogType.fromSFTask(getTaskById(updatedTask.id)));
         Map<String, Object> diff = salesforceManager.getDifference(oldTask, updatedTask);
-        salesforceManager.updateRecord(updatedTask.id, GSON.toJson(diff), TASK);
+        salesforceManager.updateRecord(updatedTask.id, gsonBuilder.toJson(diff), TASK);
     }
 
     @Override
