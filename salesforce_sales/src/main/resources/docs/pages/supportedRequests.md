@@ -1497,6 +1497,11 @@ Krista Salesforce Sales Module Extension supports the following entity requests:
 
 * Create Task
   * Description: Returns created task.
+  * Limitation: 
+  * Salesforce UI Behavior:
+   * When creating a task through the Salesforce UI and assigning it to more than two individuals, it correctly generates a separate task for each assignee. Each task is associated with a specific assignee, allowing for tasks with multiple assignees.
+  * Salesforce API Behavior:
+   * On the other hand, when attempting to create a task using the Salesforce API with multiple assignees specified in the API request, only one task is created, and it is associated with the latest assignee mentioned in the request.
   * Input Parameters:
 
 | **Parameter Name**     | **Parameter Type** | **Mandatory** | **Example**             |
