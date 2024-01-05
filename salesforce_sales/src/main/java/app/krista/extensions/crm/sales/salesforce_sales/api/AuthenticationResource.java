@@ -118,7 +118,7 @@ public final class AuthenticationResource {
             eventHandler.handleEvent("opportunityChanged", notificationSObject);
         }
 
-        return getResponse();
+        return prepareAlertResponse();
     }
 
     @POST
@@ -132,7 +132,7 @@ public final class AuthenticationResource {
             eventHandler.handleEvent("Account Change Alert", accountNotificationSObject);
         }
 
-        return getResponse();
+        return prepareAlertResponse();
     }
 
     @POST
@@ -145,7 +145,7 @@ public final class AuthenticationResource {
             eventHandler.handleEvent("Lead Change Alert", leadNotificationSObject);
         }
 
-        return getResponse();
+        return prepareAlertResponse();
     }
 
     @POST
@@ -158,10 +158,10 @@ public final class AuthenticationResource {
             eventHandler.handleEvent("Task Change Alert", taskNotificationSObject);
         }
 
-        return getResponse();
+        return prepareAlertResponse();
     }
 
-    private static Response getResponse() {
+    private static Response prepareAlertResponse() {
         StringWriter sw = new StringWriter();
         JAXB.marshal(SOAPEnvelope.SUCCESS, sw);
 
