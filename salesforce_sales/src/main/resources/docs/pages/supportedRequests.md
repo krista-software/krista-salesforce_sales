@@ -604,14 +604,14 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 
 #### Get Task Statuses
 
-- **Description**: This request returns the available pickone values for the Status field of a task. .
-- **Input Parameters**:No Input Parameters Required
+- **Description**: This request returns the available pickone values for the Status field of a task.
+- **Input Parameters**: No Input Parameters Required.
 
 - **Output Parameters**:
 
 | **Parameter Name** | **Parameter Type** |
 |--------------------|--------------------|
-| Task Status        | List<String>       |
+| Task Status        | List&lt;String>    |
 
 ### Actions Area
 
