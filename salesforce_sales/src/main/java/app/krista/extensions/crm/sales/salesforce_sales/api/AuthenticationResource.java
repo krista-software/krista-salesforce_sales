@@ -118,10 +118,7 @@ public final class AuthenticationResource {
             eventHandler.handleEvent("opportunityChanged", notificationSObject);
         }
 
-        StringWriter sw = new StringWriter();
-        JAXB.marshal(SOAPEnvelope.SUCCESS, sw);
-
-        return Response.ok(new ByteArrayInputStream(sw.toString().getBytes(StandardCharsets.UTF_8))).header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML).build();
+        return getResponse();
     }
 
     @POST
@@ -135,10 +132,7 @@ public final class AuthenticationResource {
             eventHandler.handleEvent("Account Change Alert", accountNotificationSObject);
         }
 
-        StringWriter sw = new StringWriter();
-        JAXB.marshal(SOAPEnvelope.SUCCESS, sw);
-
-        return Response.ok(new ByteArrayInputStream(sw.toString().getBytes(StandardCharsets.UTF_8))).header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML).build();
+        return getResponse();
     }
 
     @POST
@@ -151,10 +145,7 @@ public final class AuthenticationResource {
             eventHandler.handleEvent("Lead Change Alert", leadNotificationSObject);
         }
 
-        StringWriter sw = new StringWriter();
-        JAXB.marshal(SOAPEnvelope.SUCCESS, sw);
-
-        return Response.ok(new ByteArrayInputStream(sw.toString().getBytes(StandardCharsets.UTF_8))).header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML).build();
+        return getResponse();
     }
 
     @POST
@@ -167,6 +158,10 @@ public final class AuthenticationResource {
             eventHandler.handleEvent("Task Change Alert", taskNotificationSObject);
         }
 
+        return getResponse();
+    }
+
+    private static Response getResponse() {
         StringWriter sw = new StringWriter();
         JAXB.marshal(SOAPEnvelope.SUCCESS, sw);
 
