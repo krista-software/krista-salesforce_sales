@@ -602,6 +602,17 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 
   - **Note:** Alert will be created only when a new task is created or when the **Task Status** or **Task Assigned To Id** of the existing task is changed and when an existing task becomes overdue.
 
+#### Get Task Statuses
+
+- **Description**: This request returns the available pickone values for the Status field of a task.
+- **Input Parameters**: No Input Parameters Required.
+
+- **Output Parameters**:
+
+| **Parameter Name** | **Parameter Type** |
+|--------------------|--------------------|
+| Task Status        | List&lt;String>    |
+
 ### Actions Area
 
 #### Send A Mail

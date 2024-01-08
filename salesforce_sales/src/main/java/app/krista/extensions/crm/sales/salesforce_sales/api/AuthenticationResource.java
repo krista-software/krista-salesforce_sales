@@ -5,6 +5,7 @@ import app.krista.extensions.crm.sales.salesforce_sales.impl.connectores.Salesfo
 import app.krista.extensions.crm.sales.salesforce_sales.impl.connectores.SalesforceTokenProviderFactory;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.stores.RefreshTokenStore;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.stores.SalesforceSaleAttributeStore;
+import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.SOAPEnvelope;
 import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.XMlResponseParser;
 import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.account_notification.AccountNotifications;
 import app.krista.extensions.crm.sales.salesforce_sales.util.xmlparser.lead_notification.LeadNotifications;
@@ -20,9 +21,15 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.xml.bind.JAXB;
 import javax.xml.bind.JAXBElement;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
@@ -110,7 +117,8 @@ public final class AuthenticationResource {
                     .toOpportunityFreeForm();
             eventHandler.handleEvent("opportunityChanged", notificationSObject);
         }
-        return Response.ok().build();
+
+        return prepareAlertResponse();
     }
 
     @POST
@@ -123,7 +131,8 @@ public final class AuthenticationResource {
 
             eventHandler.handleEvent("Account Change Alert", accountNotificationSObject);
         }
-        return Response.ok().build();
+
+        return prepareAlertResponse();
     }
 
     @POST
@@ -135,7 +144,8 @@ public final class AuthenticationResource {
                     .toLeadFreeForm();
             eventHandler.handleEvent("Lead Change Alert", leadNotificationSObject);
         }
-        return Response.ok().build();
+
+        return prepareAlertResponse();
     }
 
     @POST
@@ -147,7 +157,15 @@ public final class AuthenticationResource {
                     .toTaskFreeForm();
             eventHandler.handleEvent("Task Change Alert", taskNotificationSObject);
         }
-        return Response.ok().build();
+
+        return prepareAlertResponse();
+    }
+
+    private static Response prepareAlertResponse() {
+        StringWriter sw = new StringWriter();
+        JAXB.marshal(SOAPEnvelope.SUCCESS, sw);
+
+        return Response.ok(new ByteArrayInputStream(sw.toString().getBytes(StandardCharsets.UTF_8))).header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML).build();
     }
 
 }
