@@ -36,7 +36,6 @@ public final class SFTask {
 
     public static SFTask from(Map<String, Object> entityAttributeField) {
         SFTask task = new SFTask();
-        task.id = (String) entityAttributeField.get("Id");
         task.ownerId = (String) entityAttributeField.get("Assigned To Id");
         task.subject = (String) entityAttributeField.get("Title");
         task.priority = (String) entityAttributeField.get("Priority");
