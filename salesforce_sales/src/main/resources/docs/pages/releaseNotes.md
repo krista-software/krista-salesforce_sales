@@ -13,7 +13,7 @@
 * [KE-1343](https://antbrains.atlassian.net/browse/KE-1343) Salesforce Sales:Status of Task accept any input value
 * [KE-1344](https://antbrains.atlassian.net/browse/KE-1344) Salesforce Sales: Multiple  Assignee for new task not Allowed
 * [KE-1372](https://antbrains.atlassian.net/browse/KE-1372) Salesforce Sales: One change in a task send Multiple Alert
-
+* [KE-1385](https://antbrains.atlassian.net/browse/KE-1385) Salesforce Sales: Unable to create task with Entity Input Field
 
 ## Known Issues
 
