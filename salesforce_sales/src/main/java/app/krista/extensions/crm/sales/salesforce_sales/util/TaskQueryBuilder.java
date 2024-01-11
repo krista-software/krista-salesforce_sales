@@ -7,7 +7,8 @@ public final class TaskQueryBuilder {
     private static final String Query_Fields = "Id, OwnerId, Owner.Name, Subject, Priority, ActivityDate, Description, Status, AccountId, WhatId, WhoId, Account.Name, What.Name, What.Type";
     private static final String WHERE = "WHERE";
 
-    private String assignedToName;
+    private String assignedToNameEquals;
+    private String assignedToNameContains;
     private String priority;
     private String status;
     private String titleEquals;
@@ -27,8 +28,13 @@ public final class TaskQueryBuilder {
         return new TaskQueryBuilder();
     }
 
-    public TaskQueryBuilder assignedToName(String assignedToName) {
-        this.assignedToName = assignedToName;
+    public TaskQueryBuilder assignedToNameEquals(String assignedToNameEquals) {
+        this.assignedToNameEquals = assignedToNameEquals;
+        return this;
+    }
+
+    public TaskQueryBuilder assignedToNameContains(String assignedToNameContains) {
+        this.assignedToNameContains = assignedToNameContains;
         return this;
     }
 
@@ -88,17 +94,18 @@ public final class TaskQueryBuilder {
     }
 
     public String build() {
-        return createQuery(assignedToName, priority, status, titleEquals, titleContains, titleStartsWith, titleEndsWith,
+        return createQuery(assignedToNameEquals, assignedToNameContains, priority, status, titleEquals, titleContains, titleStartsWith, titleEndsWith,
                 dueDateEquals, dueDateLessThan, dueDateGreaterThan, size, page);
     }
 
 
-    private String createQuery(String assignedToName, String priority, String status, String titleEquals,
+    private String createQuery(String assignedToNameEquals, String assignedToNameContains, String priority, String status, String titleEquals,
                                String titleContains, String titleStartsWith, String titleEndsWith, String dueDateEquals,
                                String dueDateLessThan, String dueDateGreaterThan, long size, long page) {
         StringBuilder builder = new StringBuilder();
         builder.append("Select " + Query_Fields + " from Task WHERE")
-                .append((isAvailable(assignedToName) ? " Owner.Name = '" + assignedToName + "' " + AND : ""))
+                .append((isAvailable(assignedToNameEquals) ? " Owner.Name = '" + assignedToNameEquals + "' " + AND : ""))
+                .append((isAvailable(assignedToNameContains) ? " Owner.Name LIKE '%" + assignedToNameContains + "%' " + AND : ""))
                 .append((isAvailable(priority) ? " Priority = '" + priority + "' " + AND : ""))
                 .append((isAvailable(status) ? " Status = '" + status + "' " + AND : ""))
                 .append((isAvailable(titleEquals) ? " Subject = '" + titleEquals + "' " + AND : ""))

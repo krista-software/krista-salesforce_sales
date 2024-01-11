@@ -126,7 +126,8 @@ public class TaskStore implements EntityStore<Task> {
 
     private static String createQuery(long pageIndex, int pageSize, List<SearchCondition> conditions) {
         return TaskQueryBuilder.builder()
-                .assignedToName(getStringConditionValue(conditions, "Assigned To Name"))
+                .assignedToNameEquals(getStringConditionValue(conditions, "Assigned To Name", "equals"))
+                .assignedToNameContains(getStringConditionValue(conditions, "Assigned To Name", "contains"))
                 .priority(getStringConditionValue(conditions, "Priority"))
                 .status(getStringConditionValue(conditions, "Status"))
                 .titleEquals(getStringConditionValue(conditions, TITLE, "equals"))
