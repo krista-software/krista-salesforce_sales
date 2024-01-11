@@ -17,6 +17,8 @@
 
 ## Known Issues
 
-* **Not Available**
+* [KE-1384](https://antbrains.atlassian.net/browse/KE-1384) Salesforce Sales:Unable to search Assignee name in Partial term
+* [KE-1382](https://antbrains.atlassian.net/browse/KE-1382) Salesforce Sales:Unable to Search accurate result for Due Date
+* [KE-1356](https://antbrains.atlassian.net/browse/KE-1356) Salesforce Sales: Conversations are run in draft and Test mode without providing any Extension setup
 
 
