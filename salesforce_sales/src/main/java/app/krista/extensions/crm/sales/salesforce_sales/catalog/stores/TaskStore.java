@@ -27,6 +27,9 @@ public class TaskStore implements EntityStore<Task> {
 
     private static final String DUE_DATE = "Due Date";
     private static final String TITLE = "Title";
+    private static final String EQUALS = "equals";
+    private static final String CONTAINS = "contains";
+    private static final String ASSIGNED_TO_NAME = "Assigned To Name";
     private final TaskDaoImpl taskDao;
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskStore.class);
 
@@ -126,14 +129,15 @@ public class TaskStore implements EntityStore<Task> {
 
     private static String createQuery(long pageIndex, int pageSize, List<SearchCondition> conditions) {
         return TaskQueryBuilder.builder()
-                .assignedToName(getStringConditionValue(conditions, "Assigned To Name"))
+                .assignedToNameEquals(getStringConditionValue(conditions, ASSIGNED_TO_NAME, EQUALS))
+                .assignedToNameContains(getStringConditionValue(conditions, ASSIGNED_TO_NAME, CONTAINS))
                 .priority(getStringConditionValue(conditions, "Priority"))
                 .status(getStringConditionValue(conditions, "Status"))
-                .titleEquals(getStringConditionValue(conditions, TITLE, "equals"))
-                .titleContains(getStringConditionValue(conditions, TITLE, "contains"))
+                .titleEquals(getStringConditionValue(conditions, TITLE, EQUALS))
+                .titleContains(getStringConditionValue(conditions, TITLE, CONTAINS))
                 .titleStartsWith(getStringConditionValue(conditions, TITLE, "startswith"))
                 .titleEndsWith(getStringConditionValue(conditions, TITLE, "endswith"))
-                .dueDateEquals(getLongConditionValue(conditions, DUE_DATE, "equals"))
+                .dueDateEquals(getLongConditionValue(conditions, DUE_DATE, EQUALS))
                 .dueDateLessThan(getLongConditionValue(conditions, DUE_DATE, "lt"))
                 .dueDateGreaterThan(getLongConditionValue(conditions, DUE_DATE, "gt"))
                 .size(pageSize)

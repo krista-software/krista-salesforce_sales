@@ -1484,8 +1484,8 @@ Krista Salesforce Sales Module Extension supports the following entity requests:
 | Assigned To Name   | Text               | No            | Name        |
 
 **Note:**
-
-* Assigned To Name supports equals operator only.
+ 
+* Assigned To Name supports equals ,contains operator.
 * Priority supports equals operator only.
 * Status supports equals operator only.
 * Title supports equals,contains,startswith,endswith operator.
