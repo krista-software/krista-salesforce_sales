@@ -8,17 +8,29 @@ public final class TaskQueryBuilder {
     private static final String WHERE = "WHERE";
 
     private String assignedToNameEquals;
+
     private String assignedToNameContains;
+
     private String priority;
+
     private String status;
+
     private String titleEquals;
+
     private String titleContains;
+
     private String titleStartsWith;
+
     private String titleEndsWith;
+
     private String dueDateEquals;
+
     private String dueDateLessThan;
+
     private String dueDateGreaterThan;
+
     private long size;
+
     private long page;
 
     private TaskQueryBuilder() {
