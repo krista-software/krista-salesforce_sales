@@ -27,6 +27,7 @@ public class TaskStore implements EntityStore<Task> {
 
     private static final String DUE_DATE = "Due Date";
     private static final String TITLE = "Title";
+    public static final String EQUALS = "equals";
     private final TaskDaoImpl taskDao;
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskStore.class);
 
@@ -126,15 +127,15 @@ public class TaskStore implements EntityStore<Task> {
 
     private static String createQuery(long pageIndex, int pageSize, List<SearchCondition> conditions) {
         return TaskQueryBuilder.builder()
-                .assignedToNameEquals(getStringConditionValue(conditions, "Assigned To Name", "equals"))
+                .assignedToNameEquals(getStringConditionValue(conditions, "Assigned To Name", EQUALS))
                 .assignedToNameContains(getStringConditionValue(conditions, "Assigned To Name", "contains"))
                 .priority(getStringConditionValue(conditions, "Priority"))
                 .status(getStringConditionValue(conditions, "Status"))
-                .titleEquals(getStringConditionValue(conditions, TITLE, "equals"))
+                .titleEquals(getStringConditionValue(conditions, TITLE, EQUALS))
                 .titleContains(getStringConditionValue(conditions, TITLE, "contains"))
                 .titleStartsWith(getStringConditionValue(conditions, TITLE, "startswith"))
                 .titleEndsWith(getStringConditionValue(conditions, TITLE, "endswith"))
-                .dueDateEquals(getLongConditionValue(conditions, DUE_DATE, "equals"))
+                .dueDateEquals(getLongConditionValue(conditions, DUE_DATE, EQUALS))
                 .dueDateLessThan(getLongConditionValue(conditions, DUE_DATE, "lt"))
                 .dueDateGreaterThan(getLongConditionValue(conditions, DUE_DATE, "gt"))
                 .size(pageSize)
