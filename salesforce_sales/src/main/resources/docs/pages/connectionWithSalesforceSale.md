@@ -2,7 +2,7 @@
 
 ### Configuration Steps
 
-* Username, Password, Client ID, Client Secret and Security Token:
+* Username, Password, Client ID, Client Secret, Security Token and Time Zone:
   * In order to make connection, you have to provide username, password, client id, client secret and security token in setup parameters.
   * You can use salesforce login credentials as username and password.
   * You can get client id and client secret from your registered web application in salesforce portal. You can get these parameters by clicking on **Manage Consumer Details** from **App Manager** tab on the setup page.
@@ -12,6 +12,8 @@
   * For **Security Token**, you must use the security token that you received on your registered email after you reset it on Salesforce system.
 
 * Once you have provided the username, password, client id and client secret you must authorize yourself with the same account which is used to register the application in salesforce portal. Click on the view button of your registered app.
+
+* In the **Timezone** field, enter the name of the time zone that you want to set. To refer to the list of supported time zones see [here](https://learn.microsoft.com/en-us/graph/api/resources/datetimetimezone?view=graph-rest-1.0).
 
 
 * In order to authorize yourself you are required to follow these steps:
