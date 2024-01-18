@@ -19,6 +19,7 @@ import java.util.Map;
 @Field.Text(value = SalesforceSalesAttributes.PASS_WORD, isSecured = true, required = false)
 @Field.Text(value = SalesforceSalesAttributes.SECURITY_TOKEN, isSecured = true, required = false)
 @Field.Boolean(value = SalesforceSalesAttributes.SANDBOX, required = false)
+@Field.Text(value = SalesforceSalesAttributes.TIME_ZONE, required = false)
 @Extension
 @StaticResource(path = "docs", file = "docs")
 public final class SalesforceSalesExtension {

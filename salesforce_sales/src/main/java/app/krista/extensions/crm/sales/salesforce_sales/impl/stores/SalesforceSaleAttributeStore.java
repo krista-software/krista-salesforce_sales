@@ -40,6 +40,7 @@ public final class SalesforceSaleAttributeStore {
                 (String) attributes.get(SalesforceSalesAttributes.PASS_WORD),
                 (String) attributes.get(SalesforceSalesAttributes.SECURITY_TOKEN),
                 (Boolean) attributes.get(SalesforceSalesAttributes.SANDBOX),
+                (String) attributes.get(SalesforceSalesAttributes.TIME_ZONE),
                 invoker.getRoutingInfo().getRoutingURL(HttpProtocol.PROTOCOL_NAME, RoutingInfo.Type.APPLIANCE));
     }
 
