@@ -13,8 +13,6 @@
 
 * Once you have provided the username, password, client id and client secret you must authorize yourself with the same account which is used to register the application in salesforce portal. Click on the view button of your registered app.
 
-* In the **Timezone** field, enter the name of the time zone that you want to set. To refer to the list of supported time zones see [here](https://learn.microsoft.com/en-us/graph/api/resources/datetimetimezone?view=graph-rest-1.0).
-
 
 * In order to authorize yourself you are required to follow these steps:
    * Go to the Detail's page of the extension and copy the Routing id from there. After that, append **"/rest/salesforcesales/callback"** at the end of the routing id (This is you redirect uri). Now add this uri in Authorized redirect uri in credentials of your registered app in salesforce portal.
