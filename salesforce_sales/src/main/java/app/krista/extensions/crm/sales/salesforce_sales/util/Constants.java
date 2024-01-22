@@ -20,6 +20,8 @@ public final class Constants {
     public static final String DATA = "Data";
     public static final String SERVICES_DATA_V_48_0_SOBJECTS = "/services/data/v48.0/sobjects/";
     public static final String ENTITY_MAP_IS_NULL_OR_EMPTY = "Entity map is null or empty. ";
+    public static final String PLEASE_PROVIDE_SUPPORTED_TIME_ZONE = "Please provide supported time zone.";
+
 
     private Constants() {
     }

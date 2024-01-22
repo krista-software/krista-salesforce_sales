@@ -10,6 +10,7 @@
     ![Client ID and Client Secret Reference](../_media/manageConsumerDetails.png)
 
   * For **Security Token**, you must use the security token that you received on your registered email after you reset it on Salesforce system.
+  * In the **Time Zone** field, enter the name of the time zone that you want to set. If no time zone is entered then default time zone will be considered. To refer to the list of supported time zones see [here](supportedTimeZones.md).
 
 * Once you have provided the username, password, client id and client secret you must authorize yourself with the same account which is used to register the application in salesforce portal. Click on the view button of your registered app.
 

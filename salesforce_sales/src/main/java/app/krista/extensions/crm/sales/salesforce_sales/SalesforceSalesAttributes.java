@@ -117,6 +117,7 @@ public final class SalesforceSalesAttributes {
         password = InvokerAttributes.getStringOrNull(newAttributes, PASS_WORD);
         securityToken = InvokerAttributes.getStringOrNull(newAttributes, SECURITY_TOKEN);
         isSandbox = InvokerAttributes.getBooleanOrNull(newAttributes, SANDBOX);
+        timezone = InvokerAttributes.getStringOrNull(newAttributes, TIME_ZONE);
 
     }
 }

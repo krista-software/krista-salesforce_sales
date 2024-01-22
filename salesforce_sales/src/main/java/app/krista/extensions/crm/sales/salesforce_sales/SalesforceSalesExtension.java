@@ -8,6 +8,7 @@ import app.krista.extension.impl.anno.InvokerRequest;
 import app.krista.extension.impl.anno.StaticResource;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.connectores.SalesforceTokenProviderFactory;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.stores.SalesforceSaleAttributeStore;
+import app.krista.extensions.crm.sales.salesforce_sales.util.Validators;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -61,6 +62,7 @@ public final class SalesforceSalesExtension {
     }
 
     private void validateSalesAttributes(SalesforceSalesAttributes salesforceSalesAttributes) throws IOException {
+        Validators.validateTimeZone(salesforceSalesAttributes.getTimezone());
         if (salesforceSalesAttributes.getUserName() == null || salesforceSalesAttributes.getUserName().isBlank() ||
                 salesforceSalesAttributes.getPassword() == null || salesforceSalesAttributes.getPassword().isBlank() ||
                 salesforceSalesAttributes.getSecurityToken() == null || salesforceSalesAttributes.getSecurityToken().isBlank()) {
