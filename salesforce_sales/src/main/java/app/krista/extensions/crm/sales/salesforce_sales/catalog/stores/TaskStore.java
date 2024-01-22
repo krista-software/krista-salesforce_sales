@@ -16,13 +16,12 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
+
+import static app.krista.extensions.crm.sales.salesforce_sales.util.DatePlus.getDateForGivenTimeZone;
 
 @Service
 public class TaskStore implements EntityStore<Task> {
@@ -142,9 +141,9 @@ public class TaskStore implements EntityStore<Task> {
                 .titleContains(getStringConditionValue(conditions, TITLE, CONTAINS))
                 .titleStartsWith(getStringConditionValue(conditions, TITLE, "startswith"))
                 .titleEndsWith(getStringConditionValue(conditions, TITLE, "endswith"))
-                .dueDateEquals(getLongConditionValue(conditions, DUE_DATE, EQUALS, timeZone))
-                .dueDateLessThan(getLongConditionValue(conditions, DUE_DATE, "lt", timeZone))
-                .dueDateGreaterThan(getLongConditionValue(conditions, DUE_DATE, "gt", timeZone))
+                .dueDateEquals(getDateForGivenTimeZone(conditions, DUE_DATE, EQUALS, timeZone))
+                .dueDateLessThan(getDateForGivenTimeZone(conditions, DUE_DATE, "lt", timeZone))
+                .dueDateGreaterThan(getDateForGivenTimeZone(conditions, DUE_DATE, "gt", timeZone))
                 .size(pageSize)
                 .page(pageIndex)
                 .build();
@@ -176,24 +175,6 @@ public class TaskStore implements EntityStore<Task> {
             }
         }
         return "";
-    }
-
-    private static String getLongConditionValue(List<SearchCondition> conditions, String fieldName, String queryOperand, String timeZone) {
-        for (SearchCondition con : conditions) {
-            if (fieldName.equalsIgnoreCase(con.getFieldName()) && con.getOperator().toString().equalsIgnoreCase(queryOperand)) {
-                if (con.getOperand() == null) {
-                    return null;
-                } else {
-                    double timestamp = Double.parseDouble(String.valueOf(con.getOperand()));
-                    long epoch = (long) timestamp;
-                    Date date = new Date(epoch);
-                    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                    dateFormat.setTimeZone(TimeZone.getTimeZone(timeZone));
-                    return dateFormat.format(date);
-                }
-            }
-        }
-        return null;
     }
 
 }

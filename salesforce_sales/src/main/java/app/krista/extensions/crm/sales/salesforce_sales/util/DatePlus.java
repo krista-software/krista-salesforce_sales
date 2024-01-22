@@ -1,11 +1,14 @@
 package app.krista.extensions.crm.sales.salesforce_sales.util;
 
+import app.krista.extension.executor.SearchCondition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 public final class DatePlus {
@@ -52,6 +55,24 @@ public final class DatePlus {
                 return dateFormat.parse(dateString);
             } catch (ParseException cause) {
                 LOGGER.error(cause.getMessage());
+            }
+        }
+        return null;
+    }
+
+    public static String getDateForGivenTimeZone(List<SearchCondition> conditions, String fieldName, String queryOperand, String timeZone) {
+        for (SearchCondition con : conditions) {
+            if (fieldName.equalsIgnoreCase(con.getFieldName()) && con.getOperator().toString().equalsIgnoreCase(queryOperand)) {
+                if (con.getOperand() == null) {
+                    return null;
+                } else {
+                    double timestamp = Double.parseDouble(String.valueOf(con.getOperand()));
+                    long epoch = (long) timestamp;
+                    Date date = new Date(epoch);
+                    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    dateFormat.setTimeZone(TimeZone.getTimeZone(timeZone));
+                    return dateFormat.format(date);
+                }
             }
         }
         return null;
