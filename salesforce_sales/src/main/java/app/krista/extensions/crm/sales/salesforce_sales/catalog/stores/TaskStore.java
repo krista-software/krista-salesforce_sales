@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 
-import static app.krista.extensions.crm.sales.salesforce_sales.util.DatePlus.formatDateForConditionalTimeZone;
+import static app.krista.extensions.crm.sales.salesforce_sales.util.DatePlus.getDateForGivenTimeZoneWithQueryOperand;
 
 @Service
 public class TaskStore implements EntityStore<Task> {
@@ -141,9 +141,9 @@ public class TaskStore implements EntityStore<Task> {
                 .titleContains(getStringConditionValue(conditions, TITLE, CONTAINS))
                 .titleStartsWith(getStringConditionValue(conditions, TITLE, "startswith"))
                 .titleEndsWith(getStringConditionValue(conditions, TITLE, "endswith"))
-                .dueDateEquals(formatDateForConditionalTimeZone(conditions, DUE_DATE, EQUALS, timeZone))
-                .dueDateLessThan(formatDateForConditionalTimeZone(conditions, DUE_DATE, "lt", timeZone))
-                .dueDateGreaterThan(formatDateForConditionalTimeZone(conditions, DUE_DATE, "gt", timeZone))
+                .dueDateEquals(getDateForGivenTimeZoneWithQueryOperand(conditions, DUE_DATE, EQUALS, timeZone))
+                .dueDateLessThan(getDateForGivenTimeZoneWithQueryOperand(conditions, DUE_DATE, "lt", timeZone))
+                .dueDateGreaterThan(getDateForGivenTimeZoneWithQueryOperand(conditions, DUE_DATE, "gt", timeZone))
                 .size(pageSize)
                 .page(pageIndex)
                 .build();

@@ -60,7 +60,7 @@ public final class DatePlus {
         return null;
     }
 
-    public static String formatDateForConditionalTimeZone(List<SearchCondition> conditions, String fieldName, String queryOperand, String timeZone) {
+    public static String getDateForGivenTimeZoneWithQueryOperand(List<SearchCondition> conditions, String fieldName, String queryOperand, String timeZone) {
         for (SearchCondition con : conditions) {
             if (fieldName.equalsIgnoreCase(con.getFieldName()) && con.getOperator().toString().equalsIgnoreCase(queryOperand)) {
                 if (con.getOperand() == null) {
@@ -78,7 +78,7 @@ public final class DatePlus {
         return null;
     }
 
-    public static String formatDateForField(List<SearchCondition> conditions, String fieldName, String timeZone) {
+    public static String getDateForGivenTimeZone(List<SearchCondition> conditions, String fieldName, String timeZone) {
         for (SearchCondition con : conditions) {
             if (fieldName.equalsIgnoreCase(con.getFieldName())) {
                 if (con.getOperand() == null) {

@@ -10,7 +10,7 @@ import java.util.TimeZone;
 
 import static app.krista.extensions.crm.sales.salesforce_sales.impl.OpportunityDaoImpl.QUERY_FIELDS;
 import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.AND;
-import static app.krista.extensions.crm.sales.salesforce_sales.util.DatePlus.formatDateForField;
+import static app.krista.extensions.crm.sales.salesforce_sales.util.DatePlus.getDateForGivenTimeZone;
 
 public final class OpportunityQueryBuilder {
 
@@ -38,7 +38,7 @@ public final class OpportunityQueryBuilder {
         String createdOnGreaterThan = getLongConditionValue(searchConditions, "Created Date", "gt");
         String modifiedOnLessThan = getLongConditionValue(searchConditions, "Last Modified Date", "lt");
         String modifiedOnGreaterThan = getLongConditionValue(searchConditions, "Last Modified Date", "gt");
-        String closeDate = formatDateForField(searchConditions, "Close Date", timeZone);
+        String closeDate = getDateForGivenTimeZone(searchConditions, "Close Date", timeZone);
         return createQuery(name, id, stageName, nextStep, ownerId, ownerName,
                 accountId, accountName, type, leadSource, partner, competition, amount, amountLessThan, amountGreaterThan, acv, probability, probabilityGreaterThan, probabilityLessThan,
                 createdOnLessThan, createdOnGreaterThan, modifiedOnLessThan, modifiedOnGreaterThan, closeDate, size, page);
