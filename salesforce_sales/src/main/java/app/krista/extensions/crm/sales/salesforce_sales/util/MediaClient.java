@@ -1,7 +1,6 @@
-package app.krista.extensions.crm.sales.salesforce_sales.catalog.stores;
+package app.krista.extensions.crm.sales.salesforce_sales.util;
 
 import app.krista.extension.authorization.MustAuthorizeException;
-import app.krista.extensions.crm.sales.salesforce_sales.util.Constants;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
 import javax.ws.rs.ClientErrorException;

@@ -2,7 +2,7 @@ package app.krista.extensions.crm.sales.salesforce_sales.impl;
 
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.catalogtypes.OpportunityCatalogType;
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.LatestPosts;
-import app.krista.extensions.crm.sales.salesforce_sales.catalog.stores.MediaClient;
+import app.krista.extensions.crm.sales.salesforce_sales.util.MediaClient;
 import app.krista.extensions.crm.sales.salesforce_sales.model.Quota;
 import app.krista.extensions.crm.sales.salesforce_sales.model.RegionWiseSummary;
 import app.krista.extensions.crm.sales.salesforce_sales.model.SFAggOpportunityOwnerTotal;
