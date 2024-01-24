@@ -39,7 +39,7 @@ public interface AccountDao {
      *
      * @param entityAttributeField fields which are added in the {@link Account} object of salesforce to create
      */
-    void addAccount(Map<String, Object> entityAttributeField);
+    String addAccount(Map<String, Object> entityAttributeField);
 
     /**
      * Update {@link Account} to salesforce from provided input fields
