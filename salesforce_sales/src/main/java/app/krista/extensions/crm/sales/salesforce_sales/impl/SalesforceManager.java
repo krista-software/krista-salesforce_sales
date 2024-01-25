@@ -62,6 +62,10 @@ public final class SalesforceManager {
                 if (value2 == null && value1 != null) {
                     values.put(field.getName(), null);
                 }
+
+                if (value1 == null && (value2 != null && value2.equals(""))) {
+                    values.put(field.getName(), null);
+                }
             }
             return values;
         } catch (IllegalAccessException cause) {

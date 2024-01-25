@@ -4,6 +4,8 @@ import app.krista.model.base.PhoneNumber;
 
 import java.util.Map;
 
+import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.returnNullOrValue;
+
 public final class SFUser {
 
     public String Id;
@@ -27,16 +29,15 @@ public final class SFUser {
 
     public static SFUser from(Map<String, Object> entityAttributeField) {
         SFUser user = new SFUser();
-        user.CompanyName = (String) entityAttributeField.get("Company Name");
-        user.MobilePhone = (String) entityAttributeField.get("Mobile Number");
-        user.Email = (String) entityAttributeField.get("Email");
-        user.Username = (String) entityAttributeField.get("User name");
-        user.Alias = (String) entityAttributeField.get("Alias");
-        user.FirstName = (String) entityAttributeField.get("First Name");
-        user.Id = (String) entityAttributeField.get("Id");
-        user.LastName = (String) entityAttributeField.get("Last Name");
-        user.Name = (String) entityAttributeField.get("Name");
-        user.CommunityNickname = (String) entityAttributeField.get("Community Nickname");
+        user.CompanyName = returnNullOrValue((String) entityAttributeField.get("Company Name"));
+        user.MobilePhone = returnNullOrValue((String) entityAttributeField.get("Mobile Number"));
+        user.Email = returnNullOrValue((String) entityAttributeField.get("Email"));
+        user.Username = returnNullOrValue((String) entityAttributeField.get("User name"));
+        user.Alias = returnNullOrValue((String) entityAttributeField.get("Alias"));
+        user.FirstName = returnNullOrValue((String) entityAttributeField.get("First Name"));
+        user.LastName = returnNullOrValue((String) entityAttributeField.get("Last Name"));
+        user.Name = returnNullOrValue((String) entityAttributeField.get("Name"));
+        user.CommunityNickname = returnNullOrValue((String) entityAttributeField.get("Community Nickname"));
         user.TimeZoneSidKey = "America/Los_Angeles";
         user.LocaleSidKey = "en_US";
         user.EmailEncodingKey = "ISO-8859-1";

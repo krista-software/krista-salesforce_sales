@@ -37,8 +37,8 @@ public class AccountStore implements EntityStore<Account> {
             LOGGER.info("Entity attribute field map cannot be null or empty");
         }
         try {
-            accountDao.addAccount(entityAttributeField);
-            return Account.fromFields(entityAttributeField);
+            String id = accountDao.addAccount(entityAttributeField);
+            return get(id);
         } catch (IllegalArgumentException cause) {
             LOGGER.error(cause.getMessage(), cause);
             return new Account();

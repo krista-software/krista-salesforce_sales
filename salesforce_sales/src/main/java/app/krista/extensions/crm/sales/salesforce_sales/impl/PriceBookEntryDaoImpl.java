@@ -4,9 +4,12 @@ import app.krista.extensions.crm.sales.salesforce_sales.catalog.catalogtypes.Pri
 import app.krista.extensions.crm.sales.salesforce_sales.model.SFPricebookEntry;
 import app.krista.extensions.crm.sales.salesforce_sales.service.PriceBookEntry;
 import app.krista.extensions.crm.sales.salesforce_sales.service.PriceBookEntryDao;
+import app.krista.extensions.crm.sales.salesforce_sales.util.Constants;
 import app.krista.extensions.crm.sales.salesforce_sales.util.SalesforceListResponse;
 import com.google.gson.reflect.TypeToken;
 import org.jvnet.hk2.annotations.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -21,6 +24,8 @@ public class PriceBookEntryDaoImpl implements PriceBookEntryDao {
     private static final String QUERY_FIELDS = "Id, Name, Pricebook2Id, Product2Id, UnitPrice, IsActive, CreatedDate, LastModifiedDate, ProductCode";
     private static final String PRICEBOOK_ENTRY = "PricebookEntry";
     private final SalesforceManager salesforceManager;
+    private static final Logger LOGGER = LoggerFactory.getLogger(PriceBookEntryDaoImpl.class);
+
 
     @Inject
     public PriceBookEntryDaoImpl(SalesforceManager salesforceManager) {
@@ -44,8 +49,12 @@ public class PriceBookEntryDaoImpl implements PriceBookEntryDao {
     }
 
     @Override
-    public void addPriceBookEntry(Map<String, Object> entityAttributeField) {
-        salesforceManager.createRecord(GSON.toJson(SFPricebookEntry.from(entityAttributeField)), PRICEBOOK_ENTRY);
+    public String addPriceBookEntry(Map<String, Object> entityAttributeField) {
+        if (entityAttributeField == null || entityAttributeField.isEmpty()) {
+            LOGGER.info("Failed create pricebookentry request. " + Constants.ENTITY_MAP_IS_NULL_OR_EMPTY);
+        }
+        var response = GSON.fromJson(salesforceManager.createRecord(GSON.toJson(SFPricebookEntry.from(entityAttributeField)), PRICEBOOK_ENTRY), Map.class);
+        return String.valueOf(response.get("id"));
     }
 
     @Override

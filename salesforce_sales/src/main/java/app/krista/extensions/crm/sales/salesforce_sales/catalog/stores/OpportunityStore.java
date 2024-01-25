@@ -3,6 +3,7 @@ package app.krista.extensions.crm.sales.salesforce_sales.catalog.stores;
 import app.krista.extension.executor.SearchCondition;
 import app.krista.extension.executor.SearchQuery;
 import app.krista.extension.util.EntityStore;
+import app.krista.extensions.crm.sales.salesforce_sales.SalesforceSalesAttributes;
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.catalogtypes.OpportunityCatalogType;
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.Opportunity;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.OpportunityDaoImpl;
@@ -18,6 +19,7 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,11 +27,13 @@ public class OpportunityStore implements EntityStore<Opportunity> {
 
     private final OpportunityDao opportunityDao;
     private static final Logger LOGGER = LoggerFactory.getLogger(OpportunityStore.class);
+    private final SalesforceSalesAttributes salesforceSalesAttributes;
 
 
     @Inject
-    public OpportunityStore(OpportunityDaoImpl opportunityDao) {
+    public OpportunityStore(OpportunityDaoImpl opportunityDao, SalesforceSalesAttributes salesforceSalesAttributes) {
         this.opportunityDao = opportunityDao;
+        this.salesforceSalesAttributes = salesforceSalesAttributes;
     }
 
     @Override
@@ -38,8 +42,8 @@ public class OpportunityStore implements EntityStore<Opportunity> {
             LOGGER.info("Entity attribute field map cannot be null or empty");
         }
         try {
-            opportunityDao.addOpportunity(entityAttributeField);
-            return Opportunity.fromFields(entityAttributeField);
+            String opportunityId = opportunityDao.addOpportunity(entityAttributeField);
+            return get(opportunityId);
         } catch (IllegalArgumentException cause) {
             LOGGER.error(cause.getMessage(), cause);
             return new Opportunity();
@@ -97,12 +101,13 @@ public class OpportunityStore implements EntityStore<Opportunity> {
             LOGGER.info("Search conditions cannot be null or empty");
         }
         List<SearchCondition> conditions = searchQuery.getSearchConditions();
+        String timeZone = salesforceSalesAttributes.getTimezone() != null ? salesforceSalesAttributes.getTimezone() : TimeZone.getDefault().getID();
         try {
             List<Opportunity> opportunities;
             if (conditions.size() == 1) {
                 opportunities = opportunityDao.getOpportunities(pageSize, pageIndex).stream().map(OpportunityCatalogType::fromSFOpportunity).collect(Collectors.toList());
             } else {
-                String query = OpportunityQueryBuilder.getQuery(conditions, pageSize, pageIndex);
+                String query = OpportunityQueryBuilder.getQuery(conditions, pageSize, pageIndex, timeZone);
                 opportunities = opportunityDao.getOpportunitiesByQuery(query).stream().map(OpportunityCatalogType::fromSFOpportunity).collect(Collectors.toList());
             }
             return opportunities;

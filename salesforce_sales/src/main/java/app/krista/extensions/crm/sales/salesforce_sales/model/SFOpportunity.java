@@ -7,6 +7,8 @@ import com.google.gson.annotations.SerializedName;
 import java.util.Date;
 import java.util.Map;
 
+import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.returnNullOrValue;
+
 public final class SFOpportunity {
 
     public static class AttributeClass {
@@ -100,23 +102,22 @@ public final class SFOpportunity {
 
     public static SFOpportunity from(Map<String, Object> entityAttributeField) {
         SFOpportunity opportunity = new SFOpportunity();
-        opportunity.id = (String) entityAttributeField.get("Id");
         Long lastModifiedDate = (Long) entityAttributeField.get("Last Modified Date");
         opportunity.lastModifiedDate = lastModifiedDate != null && lastModifiedDate > 0 ? new Date(lastModifiedDate) : null;
-        opportunity.description = (String) entityAttributeField.get("Description");
+        opportunity.description = returnNullOrValue((String) entityAttributeField.get("Description"));
         opportunity.expectedRevenue = (Double) entityAttributeField.get("Expected Revenue");
-        opportunity.ownerId = (String) entityAttributeField.get("Owner Id");
-        opportunity.stageName = (String) entityAttributeField.get("Stage Name");
+        opportunity.ownerId = returnNullOrValue((String) entityAttributeField.get("Owner Id"));
+        opportunity.stageName = returnNullOrValue((String) entityAttributeField.get("Stage Name"));
         opportunity.amount = (Double) entityAttributeField.get("Amount");
-        opportunity.accountId = (String) entityAttributeField.get("Account Id");
-        opportunity.Pricebook2Id = (String) entityAttributeField.get("Pricebook Id");
+        opportunity.accountId = returnNullOrValue((String) entityAttributeField.get("Account Id"));
+        opportunity.Pricebook2Id = returnNullOrValue((String) entityAttributeField.get("Pricebook Id"));
         opportunity.probability = (Double) entityAttributeField.get("Probability");
         Long createdDate = (Long) entityAttributeField.get("Created Date");
         opportunity.createdDate = createdDate != null && createdDate > 0 ? new Date(createdDate) : null;
-        opportunity.contactId = (String) entityAttributeField.get("Contact Id");
+        opportunity.contactId = returnNullOrValue((String) entityAttributeField.get("Contact Id"));
         Long closeDate = (Long) entityAttributeField.get("Close Date");
         opportunity.closeDate = closeDate != null && closeDate > 0 ? DatePlus.getYYYYMMDD(closeDate) : null;
-        opportunity.name = (String) entityAttributeField.get("Name");
+        opportunity.name = returnNullOrValue((String) entityAttributeField.get("Name"));
         return opportunity;
     }
 }

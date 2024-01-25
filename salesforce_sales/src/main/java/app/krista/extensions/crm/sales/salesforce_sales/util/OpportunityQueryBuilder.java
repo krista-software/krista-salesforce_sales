@@ -10,10 +10,11 @@ import java.util.TimeZone;
 
 import static app.krista.extensions.crm.sales.salesforce_sales.impl.OpportunityDaoImpl.QUERY_FIELDS;
 import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.AND;
+import static app.krista.extensions.crm.sales.salesforce_sales.util.DatePlus.getDateForGivenTimeZone;
 
 public final class OpportunityQueryBuilder {
 
-    public static String getQuery(List<SearchCondition> searchConditions, long size, long page) {
+    public static String getQuery(List<SearchCondition> searchConditions, long size, long page, String timeZone) {
         String name = getStringConditionValue(searchConditions, "Name");
         String id = getStringConditionValue(searchConditions, "Id");
         String stageName = getStringConditionValue(searchConditions, "Stage Name");
@@ -37,7 +38,7 @@ public final class OpportunityQueryBuilder {
         String createdOnGreaterThan = getLongConditionValue(searchConditions, "Created Date", "gt");
         String modifiedOnLessThan = getLongConditionValue(searchConditions, "Last Modified Date", "lt");
         String modifiedOnGreaterThan = getLongConditionValue(searchConditions, "Last Modified Date", "gt");
-        String closeDate = getLongConditionValue(searchConditions, "Close Date");
+        String closeDate = getDateForGivenTimeZone(searchConditions, "Close Date", timeZone);
         return createQuery(name, id, stageName, nextStep, ownerId, ownerName,
                 accountId, accountName, type, leadSource, partner, competition, amount, amountLessThan, amountGreaterThan, acv, probability, probabilityGreaterThan, probabilityLessThan,
                 createdOnLessThan, createdOnGreaterThan, modifiedOnLessThan, modifiedOnGreaterThan, closeDate, size, page);
@@ -61,22 +62,6 @@ public final class OpportunityQueryBuilder {
         return null;
     }
 
-    private static String getLongConditionValue(List<SearchCondition> conditions, String fieldName) {
-        for (SearchCondition con : conditions) {
-            if (fieldName.equalsIgnoreCase(con.getFieldName())) {
-                if (con.getOperand() == null) {
-                    return null;
-                } else {
-                    String dateString = String.valueOf(con.getOperand()).trim().replace("E", "").replace(".", "");
-                    long epoch = Long.parseLong(dateString) * 1000;
-                    Date date = new Date(dateString.length() == 9 ? epoch * 10 : epoch);
-                    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                    return dateFormat.format(date);
-                }
-            }
-        }
-        return null;
-    }
 
     private static String getLongConditionValue(List<SearchCondition> conditions, String fieldName, String queryOperand) {
         for (SearchCondition con : conditions) {

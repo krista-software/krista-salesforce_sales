@@ -58,7 +58,7 @@ public class Opportunity {
 
     @Searchable
     @ToString
-    @Field(name = "Stage Name", type = "PickOne")
+    @Field.PickOne(name = "Stage Name", values = {"Appointment scheduled","Qualified to buy","Presentation scheduled","Decision maker bought-in","Contract sent","Closed won","Closed lost"}, required = true, attributes = {}, options = {})
     public String stageName;
 
     @Custom

@@ -77,7 +77,7 @@ public interface QuoteDao {
      *
      * @param entityAttributeField fields which are added in the {@link Quote} object of salesforce to create
      */
-    void addQuote(Map<String, Object> entityAttributeField);
+    String addQuote(Map<String, Object> entityAttributeField);
 
     /**
      * Add {@link PriceBookEntry} to the quote of salesforce from provided input fields

@@ -4,9 +4,12 @@ import app.krista.extensions.crm.sales.salesforce_sales.catalog.catalogtypes.Eve
 import app.krista.extensions.crm.sales.salesforce_sales.model.SFEvent;
 import app.krista.extensions.crm.sales.salesforce_sales.service.Event;
 import app.krista.extensions.crm.sales.salesforce_sales.service.EventDao;
+import app.krista.extensions.crm.sales.salesforce_sales.util.Constants;
 import app.krista.extensions.crm.sales.salesforce_sales.util.SalesforceListResponse;
 import com.google.gson.reflect.TypeToken;
 import org.jvnet.hk2.annotations.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -21,6 +24,8 @@ public class EventDaoImpl implements EventDao {
     private static final String EVENT = "Event";
     private static final String QUERY_FIELDS = "Id, WhoId, Subject, Location, StartDateTime, EndDateTime, Description, AccountId, OwnerId, IsPrivate, ShowAs, IsGroupEvent, CreatedDate, LastModifiedDate";
     private final SalesforceManager salesforceManager;
+    private static final Logger LOGGER = LoggerFactory.getLogger(EventDaoImpl.class);
+
 
     @Inject
     public EventDaoImpl(SalesforceManager salesforceManager) {
@@ -49,8 +54,12 @@ public class EventDaoImpl implements EventDao {
     }
 
     @Override
-    public void addEvent(Map<String, Object> entityAttributeField) {
-        salesforceManager.createRecord(GSON.toJson(SFEvent.from(entityAttributeField)), EVENT);
+    public String addEvent(Map<String, Object> entityAttributeField) {
+        if (entityAttributeField == null || entityAttributeField.isEmpty()) {
+            LOGGER.info("Failed create event request. " + Constants.ENTITY_MAP_IS_NULL_OR_EMPTY);
+        }
+        var response = GSON.fromJson(salesforceManager.createRecord(GSON.toJson(SFEvent.from(entityAttributeField)), EVENT), Map.class);
+        return String.valueOf(response.get("id"));
     }
 
     @Override

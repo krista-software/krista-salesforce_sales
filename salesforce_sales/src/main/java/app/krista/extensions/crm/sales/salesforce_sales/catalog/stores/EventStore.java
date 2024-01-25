@@ -37,8 +37,8 @@ public class EventStore implements EntityStore<Event> {
             LOGGER.info("Entity attribute field map cannot be null or empty");
         }
         try {
-            eventDao.addEvent(entityAttributeField);
-            return Event.fromFields(entityAttributeField);
+            String eventId = eventDao.addEvent(entityAttributeField);
+            return get(eventId);
         } catch (IllegalArgumentException cause) {
             LOGGER.error(cause.getMessage(), cause);
             return new Event();

@@ -828,6 +828,10 @@ Krista Salesforce Sales Module Extension supports the following entity requests:
 |--------------------|----------------------|
 | Opportunity        | List&lt;Opportunity> |
 
+**Note:**
+
+* For Due Date if no time zone is specified, then default time zone is considered.
+
 * Get Opportunity
     * Description: Returns selected opportunity.
     * Input Parameters: NA
@@ -1458,6 +1462,10 @@ Krista Salesforce Sales Module Extension supports the following entity requests:
 | Last Modified Date | Date               | No            | 2022-07-11T05&#58;27:43 |
 | Unit Price         | Currency           | Yes           | 5555                    |
 
+**Note:**
+
+* Only Unit Price can be updated.
+
 * Output Parameters:
 
 | **Parameter Name** | **Parameter Type** |
@@ -1490,6 +1498,7 @@ Krista Salesforce Sales Module Extension supports the following entity requests:
 * Status supports equals operator only.
 * Title supports equals,contains,startswith,endswith operator.
 * Due Date supports equals,greater than,less than operator only.
+* For Due Date if no time zone is specified, then default time zone is considered.
 
 * Output Parameters:
 

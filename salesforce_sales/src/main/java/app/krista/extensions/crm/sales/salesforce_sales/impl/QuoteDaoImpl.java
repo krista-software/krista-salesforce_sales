@@ -7,6 +7,7 @@ import app.krista.extensions.crm.sales.salesforce_sales.service.PriceBook;
 import app.krista.extensions.crm.sales.salesforce_sales.service.PriceBookEntry;
 import app.krista.extensions.crm.sales.salesforce_sales.service.Quote;
 import app.krista.extensions.crm.sales.salesforce_sales.service.QuoteDao;
+import app.krista.extensions.crm.sales.salesforce_sales.util.Constants;
 import app.krista.extensions.crm.sales.salesforce_sales.util.SalesforceListResponse;
 import app.krista.model.base.FreeForm;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -17,6 +18,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import org.jvnet.hk2.annotations.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -34,6 +37,8 @@ public class QuoteDaoImpl implements QuoteDao {
     public static final String QUERY_FIELDS = "Id, OwnerId, Name, CreatedDate, LastModifiedDate, OpportunityId, Pricebook2Id, ContactId, QuoteNumber, Tax, Status, ExpirationDate, Description, Subtotal, TotalPrice, LineItemCount, BillingName, ShippingName, ShippingHandling, QuoteToName, AdditionalName, Email, Phone, Fax, ContractId, AccountId, Discount, GrandTotal";
     private final SalesforceManager salesforceManager;
     private final PriceBookDaoImpl priceBookDao;
+    private static final Logger LOGGER = LoggerFactory.getLogger(QuoteDaoImpl.class);
+
 
     @Inject
     public QuoteDaoImpl(SalesforceManager salesforceManager, PriceBookDaoImpl priceBookDao) {
@@ -139,14 +144,19 @@ public class QuoteDaoImpl implements QuoteDao {
     }
 
     @Override
-    public void addQuote(Map<String, Object> entityAttributeField) {
+    public String addQuote(Map<String, Object> entityAttributeField) {
+        if (entityAttributeField == null || entityAttributeField.isEmpty()) {
+            LOGGER.info("Failed create quote request. " + Constants.ENTITY_MAP_IS_NULL_OR_EMPTY);
+        }
         SFQuote sfQuote = SFQuote.from(entityAttributeField);
+
         if (sfQuote.pricebookId == null) {
             PriceBook priceBook = priceBookDao.getPriceBook();
             if (priceBook.getId() != null)
                 sfQuote.pricebookId = priceBook.getId();
         }
-        salesforceManager.createRecord(GSON.toJson(sfQuote), QUOTE);
+        var response = GSON.fromJson(salesforceManager.createRecord(GSON.toJson(sfQuote), QUOTE), Map.class);
+        return String.valueOf(response.get("id"));
     }
 
     @Override

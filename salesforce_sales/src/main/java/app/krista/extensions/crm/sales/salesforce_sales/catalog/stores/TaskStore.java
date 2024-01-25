@@ -3,6 +3,7 @@ package app.krista.extensions.crm.sales.salesforce_sales.catalog.stores;
 import app.krista.extension.executor.SearchCondition;
 import app.krista.extension.executor.SearchQuery;
 import app.krista.extension.util.EntityStore;
+import app.krista.extensions.crm.sales.salesforce_sales.SalesforceSalesAttributes;
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.catalogtypes.TaskCatalogType;
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.Task;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.TaskDaoImpl;
@@ -15,12 +16,12 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
+
+import static app.krista.extensions.crm.sales.salesforce_sales.util.DatePlus.getDateForGivenTimeZoneWithQueryOperand;
 
 @Service
 public class TaskStore implements EntityStore<Task> {
@@ -31,12 +32,14 @@ public class TaskStore implements EntityStore<Task> {
     private static final String CONTAINS = "contains";
     private static final String ASSIGNED_TO_NAME = "Assigned To Name";
     private final TaskDaoImpl taskDao;
+    private final SalesforceSalesAttributes salesforceSalesAttributes;
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskStore.class);
 
 
     @Inject
-    public TaskStore(TaskDaoImpl taskDao) {
+    public TaskStore(TaskDaoImpl taskDao, SalesforceSalesAttributes salesforceSalesAttributes) {
         this.taskDao = taskDao;
+        this.salesforceSalesAttributes = salesforceSalesAttributes;
     }
 
     @Override
@@ -111,12 +114,13 @@ public class TaskStore implements EntityStore<Task> {
             LOGGER.info("Search conditions cannot be null or empty");
         }
         List<SearchCondition> conditions = searchQuery.getSearchConditions();
+        String timeZone = salesforceSalesAttributes.getTimezone() != null ? salesforceSalesAttributes.getTimezone() : TimeZone.getDefault().getID();
         try {
             List<Task> tasks;
             if (conditions.size() == 1) {
                 tasks = taskDao.getTasks(pageSize, pageIndex).stream().map(TaskCatalogType::fromSFTask).collect(Collectors.toList());
             } else {
-                String query = createQuery(pageIndex, pageSize, conditions);
+                String query = createQuery(pageIndex, pageSize, conditions, timeZone);
 
                 tasks = taskDao.getTasksByQuery(query).stream().map(TaskCatalogType::fromSFTask).collect(Collectors.toList());
             }
@@ -127,7 +131,7 @@ public class TaskStore implements EntityStore<Task> {
         }
     }
 
-    private static String createQuery(long pageIndex, int pageSize, List<SearchCondition> conditions) {
+    private static String createQuery(long pageIndex, int pageSize, List<SearchCondition> conditions, String timeZone) {
         return TaskQueryBuilder.builder()
                 .assignedToNameEquals(getStringConditionValue(conditions, ASSIGNED_TO_NAME, EQUALS))
                 .assignedToNameContains(getStringConditionValue(conditions, ASSIGNED_TO_NAME, CONTAINS))
@@ -137,9 +141,9 @@ public class TaskStore implements EntityStore<Task> {
                 .titleContains(getStringConditionValue(conditions, TITLE, CONTAINS))
                 .titleStartsWith(getStringConditionValue(conditions, TITLE, "startswith"))
                 .titleEndsWith(getStringConditionValue(conditions, TITLE, "endswith"))
-                .dueDateEquals(getLongConditionValue(conditions, DUE_DATE, EQUALS))
-                .dueDateLessThan(getLongConditionValue(conditions, DUE_DATE, "lt"))
-                .dueDateGreaterThan(getLongConditionValue(conditions, DUE_DATE, "gt"))
+                .dueDateEquals(getDateForGivenTimeZoneWithQueryOperand(conditions, DUE_DATE, EQUALS, timeZone))
+                .dueDateLessThan(getDateForGivenTimeZoneWithQueryOperand(conditions, DUE_DATE, "lt", timeZone))
+                .dueDateGreaterThan(getDateForGivenTimeZoneWithQueryOperand(conditions, DUE_DATE, "gt", timeZone))
                 .size(pageSize)
                 .page(pageIndex)
                 .build();
@@ -172,23 +176,5 @@ public class TaskStore implements EntityStore<Task> {
         }
         return "";
     }
-
-    private static String getLongConditionValue(List<SearchCondition> conditions, String fieldName, String queryOperand) {
-        for (SearchCondition con : conditions) {
-            if (fieldName.equalsIgnoreCase(con.getFieldName()) && con.getOperator().toString().equalsIgnoreCase(queryOperand)) {
-                if (con.getOperand() == null) {
-                    return null;
-                } else {
-                    double timestamp = Double.parseDouble(String.valueOf(con.getOperand()));
-                    long epoch = (long) timestamp;
-                    Date date = new Date(epoch);
-                    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                    return dateFormat.format(date);
-                }
-            }
-        }
-        return null;
-    }
-
 
 }

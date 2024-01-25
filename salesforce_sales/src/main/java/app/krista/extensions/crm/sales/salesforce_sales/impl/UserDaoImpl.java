@@ -4,9 +4,12 @@ import app.krista.extensions.crm.sales.salesforce_sales.model.Me;
 import app.krista.extensions.crm.sales.salesforce_sales.model.SFUser;
 import app.krista.extensions.crm.sales.salesforce_sales.service.User;
 import app.krista.extensions.crm.sales.salesforce_sales.service.UserDao;
+import app.krista.extensions.crm.sales.salesforce_sales.util.Constants;
 import app.krista.extensions.crm.sales.salesforce_sales.util.SalesforceListResponse;
 import com.google.gson.reflect.TypeToken;
 import org.jvnet.hk2.annotations.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -19,6 +22,8 @@ import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.GS
 public class UserDaoImpl implements UserDao {
     private static final String USER = "User";
     private final SalesforceManager salesforceManager;
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserDaoImpl.class);
+
 
     @Inject
     public UserDaoImpl(SalesforceManager salesforceManager) {
@@ -55,8 +60,13 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void addUser(Map<String, Object> entityAttributeField) {
-        salesforceManager.createRecord(GSON.toJson(SFUser.from(entityAttributeField)), USER);
+    public String addUser(Map<String, Object> entityAttributeField) {
+        if (entityAttributeField == null || entityAttributeField.isEmpty()) {
+            LOGGER.info("Failed create user request. " + Constants.ENTITY_MAP_IS_NULL_OR_EMPTY);
+        }
+        var response = GSON.fromJson(salesforceManager.createRecord(GSON.toJson(SFUser.from(entityAttributeField)), USER), Map.class);
+        return String.valueOf(response.get("id"));
+
     }
 
     public void deleteUser(String key) {

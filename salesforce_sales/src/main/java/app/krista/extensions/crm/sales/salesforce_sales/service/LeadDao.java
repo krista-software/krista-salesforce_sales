@@ -55,7 +55,7 @@ public interface LeadDao {
      *
      * @param entityAttributeField fields which are added in the {@link Lead} object of salesforce to create
      */
-    void addLead(Map<String, Object> entityAttributeField);
+    String addLead(Map<String, Object> entityAttributeField);
 
     /**
      * Update {@link Lead} to salesforce from provided input fields

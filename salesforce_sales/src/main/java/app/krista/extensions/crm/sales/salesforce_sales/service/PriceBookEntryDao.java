@@ -39,7 +39,7 @@ public interface PriceBookEntryDao {
      *
      * @param entityAttributeField fields which are added in the {@link PriceBookEntry} object of salesforce to create
      */
-    void addPriceBookEntry(Map<String, Object> entityAttributeField);
+    String addPriceBookEntry(Map<String, Object> entityAttributeField);
 
     /**
      * Update {@link PriceBookEntry} to salesforce from provided input fields

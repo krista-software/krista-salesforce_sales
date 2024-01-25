@@ -45,8 +45,9 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     @Override
-    public void addAccount(Map<String, Object> entityAttributeField) {
-        salesforceManager.createRecord(GSON.toJson(SFAccount.from(entityAttributeField)), ACCOUNT);
+    public String addAccount(Map<String, Object> entityAttributeField) {
+        Map<String, Object> response = GSON.fromJson(salesforceManager.createRecord(GSON.toJson(SFAccount.from(entityAttributeField)), ACCOUNT), Map.class);
+        return String.valueOf(response.get("id"));
     }
 
     @Override

@@ -35,8 +35,8 @@ public class AssetStore implements EntityStore<Asset> {
             LOGGER.info("Entity attribute field map cannot be null or empty");
         }
         try {
-            assetDao.addAsset(entityAttributeField);
-            return Asset.fromFields(entityAttributeField);
+            String assetId = assetDao.addAsset(entityAttributeField);
+            return get(assetId);
         } catch (IllegalArgumentException cause) {
             LOGGER.error(cause.getMessage(), cause);
             return new Asset();

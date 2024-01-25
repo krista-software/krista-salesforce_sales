@@ -5,10 +5,13 @@ import app.krista.extensions.crm.sales.salesforce_sales.model.SFLead;
 import app.krista.extensions.crm.sales.salesforce_sales.model.SFLeadHistory;
 import app.krista.extensions.crm.sales.salesforce_sales.service.Lead;
 import app.krista.extensions.crm.sales.salesforce_sales.service.LeadDao;
+import app.krista.extensions.crm.sales.salesforce_sales.util.Constants;
 import app.krista.extensions.crm.sales.salesforce_sales.util.DatePlus;
 import app.krista.extensions.crm.sales.salesforce_sales.util.SalesforceListResponse;
 import com.google.gson.reflect.TypeToken;
 import org.jvnet.hk2.annotations.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.Date;
@@ -24,6 +27,8 @@ public class LeadDaoImpl implements LeadDao {
     public static final String QUERY_FIELDS = "Id, LastName, FirstName, Salutation, Name, Title, Company, Address, Phone, MobilePhone, Fax, Email, Website, Description, LeadSource, Status, Industry, Rating, AnnualRevenue, NumberOfEmployees, OwnerId, IsConverted, ConvertedDate, ConvertedAccountId, ConvertedContactId, ConvertedOpportunityId, IsUnreadByOwner, CreatedDate, LastModifiedDate, CleanStatus";
     private static final String LEAD = "Lead";
     private static final String SELECT = "Select ";
+    private static final Logger LOGGER = LoggerFactory.getLogger(LeadDaoImpl.class);
+
 
     private final SalesforceManager salesforceManager;
 
@@ -66,8 +71,12 @@ public class LeadDaoImpl implements LeadDao {
     }
 
     @Override
-    public void addLead(Map<String, Object> entityAttributeField) {
-        salesforceManager.createRecord(GSON.toJson(SFLead.from(entityAttributeField)), LEAD);
+    public String addLead(Map<String, Object> entityAttributeField) {
+        if (entityAttributeField == null || entityAttributeField.isEmpty()) {
+            LOGGER.info("Failed create lead request. " + Constants.ENTITY_MAP_IS_NULL_OR_EMPTY);
+        }
+        var response = GSON.fromJson(salesforceManager.createRecord(GSON.toJson(SFLead.from(entityAttributeField)), LEAD), Map.class);
+        return String.valueOf(response.get("id"));
     }
 
     @Override

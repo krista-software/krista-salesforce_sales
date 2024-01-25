@@ -2,7 +2,6 @@ package app.krista.extensions.crm.sales.salesforce_sales.impl;
 
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.catalogtypes.OpportunityCatalogType;
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.LatestPosts;
-import app.krista.extensions.crm.sales.salesforce_sales.catalog.stores.MediaClient;
 import app.krista.extensions.crm.sales.salesforce_sales.model.Quota;
 import app.krista.extensions.crm.sales.salesforce_sales.model.RegionWiseSummary;
 import app.krista.extensions.crm.sales.salesforce_sales.model.SFAggOpportunityOwnerTotal;
@@ -11,13 +10,17 @@ import app.krista.extensions.crm.sales.salesforce_sales.service.Opportunity;
 import app.krista.extensions.crm.sales.salesforce_sales.service.OpportunityDao;
 import app.krista.extensions.crm.sales.salesforce_sales.service.PriceBook;
 import app.krista.extensions.crm.sales.salesforce_sales.service.User;
+import app.krista.extensions.crm.sales.salesforce_sales.util.Constants;
 import app.krista.extensions.crm.sales.salesforce_sales.util.DatePlus;
+import app.krista.extensions.crm.sales.salesforce_sales.util.MediaClient;
 import app.krista.extensions.crm.sales.salesforce_sales.util.SalesforceListResponse;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.scribejava.core.model.Response;
 import com.google.gson.reflect.TypeToken;
 import org.jvnet.hk2.annotations.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -54,6 +57,8 @@ public class OpportunityDaoImpl implements OpportunityDao {
     private final SalesforceManager salesforceManager;
     private final PriceBookDaoImpl priceBookDao;
     private final UserDaoImpl userDao;
+    private static final Logger LOGGER = LoggerFactory.getLogger(OpportunityDaoImpl.class);
+
 
     @Inject
     public OpportunityDaoImpl(SalesforceManager salesforceManager, PriceBookDaoImpl priceBookDao, UserDaoImpl userDao) {
@@ -136,14 +141,20 @@ public class OpportunityDaoImpl implements OpportunityDao {
     }
 
     @Override
-    public void addOpportunity(Map<String, Object> entityAttributeField) {
+    public String addOpportunity(Map<String, Object> entityAttributeField) {
+        if (entityAttributeField == null || entityAttributeField.isEmpty()) {
+            LOGGER.info("Failed create opportunity request. " + Constants.ENTITY_MAP_IS_NULL_OR_EMPTY);
+        }
         SFOpportunity opportunity1 = SFOpportunity.from(entityAttributeField);
         if (opportunity1.Pricebook2Id == null) {
             PriceBook priceBook = priceBookDao.getPriceBook();
             if (priceBook.getId() != null)
                 opportunity1.Pricebook2Id = priceBook.getId();
         }
-        salesforceManager.createRecord(GSON.toJson(opportunity1), OPPORTUNITY);
+
+        var response = GSON.fromJson(salesforceManager.createRecord(GSON.toJson(opportunity1), OPPORTUNITY), Map.class);
+        return String.valueOf(response.get("id"));
+        //salesforceManager.createRecord(GSON.toJson(opportunity1), OPPORTUNITY);
     }
 
     @Override

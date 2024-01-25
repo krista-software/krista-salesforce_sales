@@ -21,7 +21,9 @@ public final class SalesforceSalesAttributes {
     public static final String PASS_WORD = "password";
     public static final String SECURITY_TOKEN = "securityToken";
     public static final String SANDBOX = "sandbox";
+    public static final String TIME_ZONE = "timezone";
     private final String routingUrl;
+    private String timezone;
     private String clientId;
     private String clientSecret;
     private String userName;
@@ -43,10 +45,13 @@ public final class SalesforceSalesAttributes {
                 (String) attributes.get(PASS_WORD),
                 (String) attributes.get(SECURITY_TOKEN),
                 (Boolean) attributes.get(SANDBOX),
-                routingUrl);
+                routingUrl, (String) attributes.get(TIME_ZONE));
     }
 
-    public SalesforceSalesAttributes(String clientId, String clientSecret, String userName, String password, String securityToken, Boolean isSandbox, String routingUrl) {
+    public SalesforceSalesAttributes(String clientId, String clientSecret, String userName,
+                                     String password, String securityToken, Boolean isSandbox,
+                                     String routingUrl,
+                                     String timeZone) {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
         this.userName = userName;
@@ -54,6 +59,7 @@ public final class SalesforceSalesAttributes {
         this.securityToken = securityToken;
         this.routingUrl = routingUrl;
         this.isSandbox = isSandbox;
+        this.timezone = timeZone;
     }
 
     public static SalesforceSalesAttributes create(Invoker invoker, Map<String, Object> attributes) {
@@ -84,6 +90,10 @@ public final class SalesforceSalesAttributes {
         return isSandbox != null ? isSandbox : false;
     }
 
+    public String getTimezone() {
+        return timezone;
+    }
+
     public String getCallbackUrl() {
         String callBackUrl = this.routingUrl.contains("extension.local.eng.krista.app")
                 ? this.routingUrl.replace("extension.local.eng.krista.app", "localhost:8765") : this.routingUrl;
@@ -107,5 +117,7 @@ public final class SalesforceSalesAttributes {
         password = InvokerAttributes.getStringOrNull(newAttributes, PASS_WORD);
         securityToken = InvokerAttributes.getStringOrNull(newAttributes, SECURITY_TOKEN);
         isSandbox = InvokerAttributes.getBooleanOrNull(newAttributes, SANDBOX);
+        timezone = InvokerAttributes.getStringOrNull(newAttributes, TIME_ZONE);
+
     }
 }

@@ -44,5 +44,5 @@ public interface UserDao {
      *
      * @param entityAttributeField fields which are added in the {@link User} object of salesforce to create
      */
-    void addUser(Map<String, Object> entityAttributeField);
+    String addUser(Map<String, Object> entityAttributeField);
 }
