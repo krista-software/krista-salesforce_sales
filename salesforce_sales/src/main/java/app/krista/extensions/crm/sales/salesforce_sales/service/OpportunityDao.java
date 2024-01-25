@@ -72,7 +72,7 @@ public interface OpportunityDao {
      *
      * @param entityAttributeField fields which are added in the {@link Opportunity} object of salesforce to create
      */
-    void addOpportunity(Map<String, Object> entityAttributeField);
+    String addOpportunity(Map<String, Object> entityAttributeField);
 
     /**
      * Returns sum of amount of closed opportunities in current quarter

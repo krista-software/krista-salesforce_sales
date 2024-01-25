@@ -6,6 +6,8 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.*;
 
+import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.returnNullIfEmptyValue;
+
 public final class SFLead {
     @SerializedName("Status")
     public String status;
@@ -103,8 +105,8 @@ public final class SFLead {
         lead.email = sfLead.email;
         lead.industry = sfLead.industry;
         lead.leadSource = sfLead.leadSource;
-        lead.mobilePhone = sfLead.mobilePhone.toString();
-        lead.phone = sfLead.phone.toString();
+        lead.mobilePhone = sfLead.mobilePhone != null ? sfLead.mobilePhone.toString() : "";
+        lead.phone = sfLead.phone != null ? sfLead.phone.toString() : "";
         lead.rating = sfLead.rating;
         lead.title = sfLead.title;
         lead.status = sfLead.status;
@@ -124,33 +126,32 @@ public final class SFLead {
 
     public static SFLead from(Map<String, Object> entityAttributeField) {
         SFLead lead = new SFLead();
-        lead.id = (String) entityAttributeField.get("Id");
         if (entityAttributeField.get("Last Modified Date") != null)
             lead.lastModifiedDate = new Date((Long) entityAttributeField.get("Last Modified Date"));
-        lead.description = (String) entityAttributeField.get("Description");
-        lead.ownerId = (String) entityAttributeField.get("Owner Id");
+        lead.description = returnNullIfEmptyValue((String) entityAttributeField.get("Description"));
+        lead.ownerId = returnNullIfEmptyValue((String) entityAttributeField.get("Owner Id"));
         if (entityAttributeField.get("Created Date") != null)
             lead.createdDate = new Date((Long) entityAttributeField.get("Created Date"));
         lead.isConverted = (Boolean) entityAttributeField.get("Is Converted");
         lead.annualRevenue = (Double) entityAttributeField.get("Annual Revenue");
-        lead.cleanStatus = (String) entityAttributeField.get("Clean Status");
-        lead.company = (String) entityAttributeField.get("Company");
-        lead.convertedAccountId = (String) entityAttributeField.get("Converted Account Id");
-        lead.convertedContactId = (String) entityAttributeField.get("Converted Contact Id");
+        lead.cleanStatus = returnNullIfEmptyValue((String) entityAttributeField.get("Clean Status"));
+        lead.company = returnNullIfEmptyValue((String) entityAttributeField.get("Company"));
+        lead.convertedAccountId = returnNullIfEmptyValue((String) entityAttributeField.get("Converted Account Id"));
+        lead.convertedContactId = returnNullIfEmptyValue((String) entityAttributeField.get("Converted Contact Id"));
         Long convertedDate = (Long) entityAttributeField.get("Converted Date");
         if (convertedDate != null && convertedDate > 0)
             lead.convertedDate = DatePlus.getYYYYMMDD(convertedDate);
-        lead.convertedOpportunityId = (String) entityAttributeField.get("Converted Opportunity Id");
-        lead.email = (String) entityAttributeField.get("Email");
-        lead.industry = (String) entityAttributeField.get("Industry");
-        lead.leadSource = (String) entityAttributeField.get("LeadSource");
-        lead.mobilePhone = (String) entityAttributeField.get("MobilePhone");
-        lead.phone = (String) entityAttributeField.get("Phone");
-        lead.rating = (String) entityAttributeField.get("Rating");
-        lead.title = (String) entityAttributeField.get("Title");
-        lead.status = (String) entityAttributeField.get("Status");
-        lead.website = (String) entityAttributeField.get("Website");
-        String name = (String) entityAttributeField.get("Name");
+        lead.convertedOpportunityId = returnNullIfEmptyValue((String) entityAttributeField.get("Converted Opportunity Id"));
+        lead.email = returnNullIfEmptyValue((String) entityAttributeField.get("Email"));
+        lead.industry = returnNullIfEmptyValue((String) entityAttributeField.get("Industry"));
+        lead.leadSource = returnNullIfEmptyValue((String) entityAttributeField.get("LeadSource"));
+        lead.mobilePhone = returnNullIfEmptyValue((String) entityAttributeField.get("MobilePhone"));
+        lead.phone = returnNullIfEmptyValue((String) entityAttributeField.get("Phone"));
+        lead.rating = returnNullIfEmptyValue((String) entityAttributeField.get("Rating"));
+        lead.title = returnNullIfEmptyValue((String) entityAttributeField.get("Title"));
+        lead.status = returnNullIfEmptyValue((String) entityAttributeField.get("Status"));
+        lead.website = returnNullIfEmptyValue((String) entityAttributeField.get("Website"));
+        String name = returnNullIfEmptyValue((String) entityAttributeField.get("Name"));
         List<String> nameList = new ArrayList<>(Arrays.asList(name.split("\\s+")));
         if (nameList.size() == 1)
             lead.lastName = name;

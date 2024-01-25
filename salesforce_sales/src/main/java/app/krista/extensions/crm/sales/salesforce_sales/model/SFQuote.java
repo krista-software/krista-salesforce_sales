@@ -7,6 +7,8 @@ import com.google.gson.annotations.SerializedName;
 import java.util.Date;
 import java.util.Map;
 
+import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.returnNullIfEmptyValue;
+
 public final class SFQuote {
     @SerializedName("Status")
     public String status;
@@ -141,23 +143,22 @@ public final class SFQuote {
 
     public static SFQuote from(Map<String, Object> entityAttributeField) {
         SFQuote quote = new SFQuote();
-        quote.id = (String) entityAttributeField.get("Id");
-        quote.accountId = (String) entityAttributeField.get("Account Id");
-        quote.name = (String) entityAttributeField.get("Name");
-        quote.billingName = (String) entityAttributeField.get("Billing Name");
-        quote.description = (String) entityAttributeField.get(" Description");
-        quote.contactId = (String) entityAttributeField.get("Contact Id");
+        quote.accountId = returnNullIfEmptyValue((String) entityAttributeField.get("Account Id"));
+        quote.name = returnNullIfEmptyValue((String) entityAttributeField.get("Name"));
+        quote.billingName = returnNullIfEmptyValue((String) entityAttributeField.get("Billing Name"));
+        quote.description = returnNullIfEmptyValue((String) entityAttributeField.get(" Description"));
+        quote.contactId = returnNullIfEmptyValue((String) entityAttributeField.get("Contact Id"));
         quote.discount = (Double) entityAttributeField.get("Discount");
         quote.grandTotal = (Double) entityAttributeField.get("Grand Total");
         quote.quoteNumber = (Double) entityAttributeField.get("Quote Number");
         quote.shippingHandling = (Double) entityAttributeField.get("Shipping Handling");
-        quote.status = (String) entityAttributeField.get("Status");
+        quote.status = returnNullIfEmptyValue((String) entityAttributeField.get("Status"));
         quote.subtotal = (Double) entityAttributeField.get("Subtotal");
         quote.tax = (Double) entityAttributeField.get("Tax");
         quote.totalPrice = (Double) entityAttributeField.get("Total Price");
-        quote.pricebookId = (String) entityAttributeField.get("Pricebook Id");
+        quote.pricebookId = returnNullIfEmptyValue((String) entityAttributeField.get("Pricebook Id"));
         quote.lineItemCount = (Double) entityAttributeField.get("Line Item Count");
-        quote.opportunityId = (String) entityAttributeField.get("Opportunity Id");
+        quote.opportunityId = returnNullIfEmptyValue((String) entityAttributeField.get("Opportunity Id"));
         if (entityAttributeField.get("Created Date") != null)
             quote.createdDate = new Date((Long) entityAttributeField.get("Created Date"));
         if (entityAttributeField.get("Expiration Date") != null && (Long) entityAttributeField.get("Expiration Date") > 0)

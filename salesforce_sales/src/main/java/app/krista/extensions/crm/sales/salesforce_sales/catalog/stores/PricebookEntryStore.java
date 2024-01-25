@@ -37,8 +37,8 @@ public class PricebookEntryStore implements EntityStore<PricebookEntry> {
             LOGGER.info("Entity attribute field map cannot be null or empty");
         }
         try {
-            priceBookEntryDao.addPriceBookEntry(entityAttributeField);
-            return PricebookEntry.fromFields(entityAttributeField);
+            String priceBookEntryId = priceBookEntryDao.addPriceBookEntry(entityAttributeField);
+            return get(priceBookEntryId);
         } catch (IllegalArgumentException cause) {
             LOGGER.error(cause.getMessage(), cause);
             return new PricebookEntry();

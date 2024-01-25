@@ -6,6 +6,8 @@ import com.google.gson.annotations.SerializedName;
 import java.util.Date;
 import java.util.Map;
 
+import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.returnNullIfEmptyValue;
+
 public final class SFAsset {
 
     @SerializedName("Id")
@@ -61,20 +63,18 @@ public final class SFAsset {
 
     public static SFAsset fromField(Map<String, Object> entityAttributeField) {
         SFAsset asset = new SFAsset();
-        asset.id = (String) entityAttributeField.get("Id");
-        asset.contactId = (String) entityAttributeField.get("Contact Id");
-        asset.accountId = (String) entityAttributeField.get("Account Id");
+        asset.contactId = returnNullIfEmptyValue((String) entityAttributeField.get("Contact Id"));
+        asset.accountId = returnNullIfEmptyValue((String) entityAttributeField.get("Account Id"));
         if (asset.contactId == null && asset.accountId == null) {
             throw new IllegalArgumentException("Provide an account, a contact, or both");
         }
-        asset.rootAssetId = (String) entityAttributeField.get("Root Asset Id");
+        asset.rootAssetId = returnNullIfEmptyValue((String) entityAttributeField.get("Root Asset Id"));
         asset.isCompetitorProduct = (Boolean) entityAttributeField.get("Is Competitor Product");
         asset.createdDate = (Date) entityAttributeField.get("Created Date");
-        asset.createdById = (String) entityAttributeField.get("Created By Id");
+        asset.createdById = returnNullIfEmptyValue((String) entityAttributeField.get("Created By Id"));
         asset.lastModifiedDate = (Date) entityAttributeField.get("Last Modified Date");
-        asset.isDeleted = (Boolean) entityAttributeField.get("Is Deleted");
-        asset.name = (String) entityAttributeField.get("Name");
-        asset.ownerId = (String) entityAttributeField.get("Owner Id");
+        asset.name = returnNullIfEmptyValue((String) entityAttributeField.get("Name"));
+        asset.ownerId = returnNullIfEmptyValue((String) entityAttributeField.get("Owner Id"));
         return asset;
     }
 }

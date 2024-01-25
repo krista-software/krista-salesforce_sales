@@ -51,7 +51,7 @@ public interface EventDao {
      *
      * @param entityAttributeField fields which are added in the {@link Event} object of salesforce to create
      */
-    void addEvent(Map<String, Object> entityAttributeField);
+    String addEvent(Map<String, Object> entityAttributeField);
 
     /**
      * Update {@link Event} to salesforce from provided input fields

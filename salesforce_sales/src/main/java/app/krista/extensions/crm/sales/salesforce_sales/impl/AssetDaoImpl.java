@@ -4,9 +4,12 @@ import app.krista.extensions.crm.sales.salesforce_sales.catalog.catalogtypes.Ass
 import app.krista.extensions.crm.sales.salesforce_sales.model.SFAsset;
 import app.krista.extensions.crm.sales.salesforce_sales.service.Asset;
 import app.krista.extensions.crm.sales.salesforce_sales.service.AssetDao;
+import app.krista.extensions.crm.sales.salesforce_sales.util.Constants;
 import app.krista.extensions.crm.sales.salesforce_sales.util.SalesforceListResponse;
 import com.google.gson.reflect.TypeToken;
 import org.jvnet.hk2.annotations.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -22,6 +25,8 @@ public class AssetDaoImpl implements AssetDao {
     private static final String ASSET = "Asset";
     private static final String QUERY_FIELDS = " Id,ContactId,AccountId,RootAssetId,IsCompetitorProduct,CreatedDate,CreatedById,LastModifiedDate,IsDeleted,Name,OwnerId ";
     private final SalesforceManager salesforceManager;
+    private static final Logger LOGGER = LoggerFactory.getLogger(AssetDaoImpl.class);
+
 
     @Inject
     public AssetDaoImpl(SalesforceManager salesforceManager) {
@@ -44,8 +49,12 @@ public class AssetDaoImpl implements AssetDao {
     }
 
     @Override
-    public void addAsset(Map<String, Object> entityAttributeField) {
-        salesforceManager.createRecord(GSON.toJson(SFAsset.fromField(entityAttributeField)), ASSET);
+    public String addAsset(Map<String, Object> entityAttributeField) {
+        if (entityAttributeField == null || entityAttributeField.isEmpty()) {
+            LOGGER.info("Failed create asset request. " + Constants.ENTITY_MAP_IS_NULL_OR_EMPTY);
+        }
+        var response = GSON.fromJson(salesforceManager.createRecord(GSON.toJson(SFAsset.fromField(entityAttributeField)), ASSET), Map.class);
+        return String.valueOf(response.get("id"));
     }
 
     @Override

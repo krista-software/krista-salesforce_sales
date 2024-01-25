@@ -42,8 +42,8 @@ public class OpportunityStore implements EntityStore<Opportunity> {
             LOGGER.info("Entity attribute field map cannot be null or empty");
         }
         try {
-            opportunityDao.addOpportunity(entityAttributeField);
-            return Opportunity.fromFields(entityAttributeField);
+            String opportunityId = opportunityDao.addOpportunity(entityAttributeField);
+            return get(opportunityId);
         } catch (IllegalArgumentException cause) {
             LOGGER.error(cause.getMessage(), cause);
             return new Opportunity();

@@ -38,8 +38,8 @@ public class QuoteStore implements EntityStore<Quote> {
             LOGGER.info("Entity attribute field map cannot be null or empty");
         }
         try {
-            quoteDao.addQuote(entityAttributeField);
-            return Quote.fromFields(entityAttributeField);
+            String quoteId = quoteDao.addQuote(entityAttributeField);
+            return get(quoteId);
         } catch (IllegalArgumentException cause) {
             LOGGER.error(cause.getMessage(), cause);
             return new Quote();

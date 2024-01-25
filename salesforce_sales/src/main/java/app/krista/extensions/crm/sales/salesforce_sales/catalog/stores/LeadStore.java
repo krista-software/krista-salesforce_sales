@@ -39,8 +39,8 @@ public class LeadStore implements EntityStore<Lead> {
             LOGGER.info("Entity attribute field map cannot be null or empty");
         }
         try {
-            leadDao.addLead(entityAttributeField);
-            return Lead.fromFields(entityAttributeField);
+            String leadId = leadDao.addLead(entityAttributeField);
+            return get(leadId);
         } catch (IllegalArgumentException cause) {
             LOGGER.error(cause.getMessage(), cause);
             return new Lead();

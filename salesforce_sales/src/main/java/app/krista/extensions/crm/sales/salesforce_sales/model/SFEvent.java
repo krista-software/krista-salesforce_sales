@@ -7,6 +7,8 @@ import com.google.gson.annotations.SerializedName;
 import java.util.Date;
 import java.util.Map;
 
+import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.returnNullIfEmptyValue;
+
 public final class SFEvent {
     @SerializedName("AccountId")
     public String accountId;
@@ -65,12 +67,11 @@ public final class SFEvent {
 
     public static SFEvent from(Map<String, Object> entityAttributeField) {
         SFEvent event = new SFEvent();
-        event.id = (String) entityAttributeField.get("Id");
-        event.ownerId = (String) entityAttributeField.get("Owner Id");
-        event.location = (String) entityAttributeField.get("Location");
-        event.leadId = (String) entityAttributeField.get("Lead Id");
-        event.subject = (String) entityAttributeField.get("Subject");
-        event.accountId = (String) entityAttributeField.get("Account Id");
+        event.ownerId = returnNullIfEmptyValue((String) entityAttributeField.get("Owner Id"));
+        event.location = returnNullIfEmptyValue((String) entityAttributeField.get("Location"));
+        event.leadId = returnNullIfEmptyValue((String) entityAttributeField.get("Lead Id"));
+        event.subject = returnNullIfEmptyValue((String) entityAttributeField.get("Subject"));
+        event.accountId = returnNullIfEmptyValue((String) entityAttributeField.get("Account Id"));
         if (entityAttributeField.get("Last Modified Date") != null)
             event.lastModifiedDate = new Date((Long) entityAttributeField.get("Last Modified Date"));
         if (entityAttributeField.get("Created Date") != null)

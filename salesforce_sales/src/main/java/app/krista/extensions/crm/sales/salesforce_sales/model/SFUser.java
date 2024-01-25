@@ -4,6 +4,8 @@ import app.krista.model.base.PhoneNumber;
 
 import java.util.Map;
 
+import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.returnNullIfEmptyValue;
+
 public final class SFUser {
 
     public String Id;
@@ -27,16 +29,15 @@ public final class SFUser {
 
     public static SFUser from(Map<String, Object> entityAttributeField) {
         SFUser user = new SFUser();
-        user.CompanyName = (String) entityAttributeField.get("Company Name");
-        user.MobilePhone = (String) entityAttributeField.get("Mobile Number");
-        user.Email = (String) entityAttributeField.get("Email");
-        user.Username = (String) entityAttributeField.get("User name");
-        user.Alias = (String) entityAttributeField.get("Alias");
-        user.FirstName = (String) entityAttributeField.get("First Name");
-        user.Id = (String) entityAttributeField.get("Id");
-        user.LastName = (String) entityAttributeField.get("Last Name");
-        user.Name = (String) entityAttributeField.get("Name");
-        user.CommunityNickname = (String) entityAttributeField.get("Community Nickname");
+        user.CompanyName = returnNullIfEmptyValue((String) entityAttributeField.get("Company Name"));
+        user.MobilePhone = returnNullIfEmptyValue((String) entityAttributeField.get("Mobile Number"));
+        user.Email = returnNullIfEmptyValue((String) entityAttributeField.get("Email"));
+        user.Username = returnNullIfEmptyValue((String) entityAttributeField.get("User name"));
+        user.Alias = returnNullIfEmptyValue((String) entityAttributeField.get("Alias"));
+        user.FirstName = returnNullIfEmptyValue((String) entityAttributeField.get("First Name"));
+        user.LastName = returnNullIfEmptyValue((String) entityAttributeField.get("Last Name"));
+        user.Name = returnNullIfEmptyValue((String) entityAttributeField.get("Name"));
+        user.CommunityNickname = returnNullIfEmptyValue((String) entityAttributeField.get("Community Nickname"));
         user.TimeZoneSidKey = "America/Los_Angeles";
         user.LocaleSidKey = "en_US";
         user.EmailEncodingKey = "ISO-8859-1";

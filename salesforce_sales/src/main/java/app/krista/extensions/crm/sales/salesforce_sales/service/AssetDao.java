@@ -39,7 +39,7 @@ public interface AssetDao {
      *
      * @param entityAttributeField fields which are added in the {@link Asset} object of salesforce to create
      */
-    void addAsset(Map<String, Object> entityAttributeField);
+    String addAsset(Map<String, Object> entityAttributeField);
 
     /**
      * Update {@link Asset} to salesforce from provided input fields

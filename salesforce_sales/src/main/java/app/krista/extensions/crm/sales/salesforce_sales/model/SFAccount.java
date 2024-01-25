@@ -7,6 +7,8 @@ import com.google.gson.annotations.SerializedName;
 import java.util.Date;
 import java.util.Map;
 
+import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.returnNullIfEmptyValue;
+
 public final class SFAccount {
     @SerializedName("AccountNumber")
     public String accountNumber;
@@ -128,10 +130,6 @@ public final class SFAccount {
         account.fax = returnNullIfEmptyValue((String) entityAttributeField.get("Fax"));
         account.annualRevenue = (Double) entityAttributeField.get(" Annual Revenue");
         return account;
-    }
-
-    private static String returnNullIfEmptyValue(String value) {
-        return value != null && value.isEmpty() ? null : value;
     }
 
     public static SFAccount from(Account sfAccount) {

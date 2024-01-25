@@ -37,8 +37,8 @@ public class UserStore implements EntityStore<User> {
             LOGGER.info("Entity attribute field map cannot be null or empty");
         }
         try {
-            userDaoImpl.addUser(entityAttributeField);
-            return User.fromFields(entityAttributeField);
+            String userId = userDaoImpl.addUser(entityAttributeField);
+            return get(userId);
         } catch (IllegalArgumentException cause) {
             LOGGER.error(cause.getMessage(), cause);
             return new User();

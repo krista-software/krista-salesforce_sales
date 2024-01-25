@@ -47,6 +47,10 @@ public class Validators {
         }
     }
 
+    public static String returnNullIfEmptyValue(String value) {
+        return value != null && value.isEmpty() ? null : value;
+    }
+
     private Validators() {
     }
 }
