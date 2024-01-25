@@ -1,3 +1,5 @@
+[<span style = "color : blue ; text-decoration: none">< Back<span>](/pages/connectionWithSalesforceSale?id=configuration-steps)
+
 | **Time Zone**                     | 
 |-----------------------------------|
 | Etc/GMT+12                        | 
