@@ -3,7 +3,6 @@ package app.krista.extensions.crm.sales.salesforce_sales.util;
 import app.krista.extension.impl.anno.Field;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.TimeZone;
