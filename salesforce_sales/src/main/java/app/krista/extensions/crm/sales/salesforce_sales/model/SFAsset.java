@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.Date;
 import java.util.Map;
 
-import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.returnNullIfEmptyValue;
+import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.returnNullOrValue;
 
 public final class SFAsset {
 
@@ -63,18 +63,18 @@ public final class SFAsset {
 
     public static SFAsset fromField(Map<String, Object> entityAttributeField) {
         SFAsset asset = new SFAsset();
-        asset.contactId = returnNullIfEmptyValue((String) entityAttributeField.get("Contact Id"));
-        asset.accountId = returnNullIfEmptyValue((String) entityAttributeField.get("Account Id"));
+        asset.contactId = returnNullOrValue((String) entityAttributeField.get("Contact Id"));
+        asset.accountId = returnNullOrValue((String) entityAttributeField.get("Account Id"));
         if (asset.contactId == null && asset.accountId == null) {
             throw new IllegalArgumentException("Provide an account, a contact, or both");
         }
-        asset.rootAssetId = returnNullIfEmptyValue((String) entityAttributeField.get("Root Asset Id"));
+        asset.rootAssetId = returnNullOrValue((String) entityAttributeField.get("Root Asset Id"));
         asset.isCompetitorProduct = (Boolean) entityAttributeField.get("Is Competitor Product");
         asset.createdDate = (Date) entityAttributeField.get("Created Date");
-        asset.createdById = returnNullIfEmptyValue((String) entityAttributeField.get("Created By Id"));
+        asset.createdById = returnNullOrValue((String) entityAttributeField.get("Created By Id"));
         asset.lastModifiedDate = (Date) entityAttributeField.get("Last Modified Date");
-        asset.name = returnNullIfEmptyValue((String) entityAttributeField.get("Name"));
-        asset.ownerId = returnNullIfEmptyValue((String) entityAttributeField.get("Owner Id"));
+        asset.name = returnNullOrValue((String) entityAttributeField.get("Name"));
+        asset.ownerId = returnNullOrValue((String) entityAttributeField.get("Owner Id"));
         return asset;
     }
 }

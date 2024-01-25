@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.Date;
 import java.util.Map;
 
-import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.returnNullIfEmptyValue;
+import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.returnNullOrValue;
 
 public final class SFAccount {
     @SerializedName("AccountNumber")
@@ -99,35 +99,35 @@ public final class SFAccount {
 
     public static SFAccount from(Map<String, Object> entityAttributeField) {
         SFAccount account = new SFAccount();
-        account.accountNumber = returnNullIfEmptyValue((String) entityAttributeField.get("Account Number"));
-        account.ownership = returnNullIfEmptyValue((String) entityAttributeField.get("Ownership"));
+        account.accountNumber = returnNullOrValue((String) entityAttributeField.get("Account Number"));
+        account.ownership = returnNullOrValue((String) entityAttributeField.get("Ownership"));
         Long createdDate = (Long) entityAttributeField.get("Created Date");
         account.createdDate = createdDate != null ? new Date(createdDate) : null;
-        account.website = returnNullIfEmptyValue((String) entityAttributeField.get("Website"));
+        account.website = returnNullOrValue((String) entityAttributeField.get("Website"));
         Long sLAExpirationDate = (Long) entityAttributeField.get("SLA Expiration Date");
         account.sLAExpirationDate = sLAExpirationDate != null && sLAExpirationDate > 0 ? DatePlus.getYYYYMMDD(sLAExpirationDate) : null;
-        account.name = returnNullIfEmptyValue((String) entityAttributeField.get("Name"));
-        account.industry = returnNullIfEmptyValue((String) entityAttributeField.get("Industry"));
+        account.name = returnNullOrValue((String) entityAttributeField.get("Name"));
+        account.industry = returnNullOrValue((String) entityAttributeField.get("Industry"));
         account.numberOfEmployees = (Double) entityAttributeField.get("Number Of Employees");
-        account.billingCity = returnNullIfEmptyValue((String) entityAttributeField.get("Billing City"));
-        account.ownerId = returnNullIfEmptyValue((String) entityAttributeField.get("Owner Id"));
-        account.shippingStreet = returnNullIfEmptyValue((String) entityAttributeField.get("Shipping Street"));
+        account.billingCity = returnNullOrValue((String) entityAttributeField.get("Billing City"));
+        account.ownerId = returnNullOrValue((String) entityAttributeField.get("Owner Id"));
+        account.shippingStreet = returnNullOrValue((String) entityAttributeField.get("Shipping Street"));
         account.phone = entityAttributeField.get("Phone") != null ? entityAttributeField.get("Phone").toString() : "";
-        account.sLASerialNumber = returnNullIfEmptyValue((String) entityAttributeField.get("SLA Serial Number"));
-        account.shippingState = returnNullIfEmptyValue((String) entityAttributeField.get("Shipping State"));
-        account.createdById = returnNullIfEmptyValue((String) entityAttributeField.get("Created By Id"));
-        account.billingState = returnNullIfEmptyValue((String) entityAttributeField.get("Billing State"));
-        account.shippingCity = returnNullIfEmptyValue((String) entityAttributeField.get("Shipping City"));
-        account.billingCountry = returnNullIfEmptyValue((String) entityAttributeField.get("Billing Country"));
-        account.sic = returnNullIfEmptyValue((String) entityAttributeField.get("Sic"));
-        account.shippingCountry = returnNullIfEmptyValue((String) entityAttributeField.get("Shipping Country"));
-        account.shippingPostalCode = returnNullIfEmptyValue((String) entityAttributeField.get("Shipping Postal Code"));
-        account.type = returnNullIfEmptyValue((String) entityAttributeField.get("Type"));
-        account.billingStreet = returnNullIfEmptyValue((String) entityAttributeField.get("Billing Street"));
-        account.billingPostalCode = returnNullIfEmptyValue((String) entityAttributeField.get("Billing Postal Code"));
-        account.customerPriority = returnNullIfEmptyValue((String) entityAttributeField.get("CustomerPriority"));
-        account.cleanStatus = returnNullIfEmptyValue((String) entityAttributeField.get("Clean Status"));
-        account.fax = returnNullIfEmptyValue((String) entityAttributeField.get("Fax"));
+        account.sLASerialNumber = returnNullOrValue((String) entityAttributeField.get("SLA Serial Number"));
+        account.shippingState = returnNullOrValue((String) entityAttributeField.get("Shipping State"));
+        account.createdById = returnNullOrValue((String) entityAttributeField.get("Created By Id"));
+        account.billingState = returnNullOrValue((String) entityAttributeField.get("Billing State"));
+        account.shippingCity = returnNullOrValue((String) entityAttributeField.get("Shipping City"));
+        account.billingCountry = returnNullOrValue((String) entityAttributeField.get("Billing Country"));
+        account.sic = returnNullOrValue((String) entityAttributeField.get("Sic"));
+        account.shippingCountry = returnNullOrValue((String) entityAttributeField.get("Shipping Country"));
+        account.shippingPostalCode = returnNullOrValue((String) entityAttributeField.get("Shipping Postal Code"));
+        account.type = returnNullOrValue((String) entityAttributeField.get("Type"));
+        account.billingStreet = returnNullOrValue((String) entityAttributeField.get("Billing Street"));
+        account.billingPostalCode = returnNullOrValue((String) entityAttributeField.get("Billing Postal Code"));
+        account.customerPriority = returnNullOrValue((String) entityAttributeField.get("CustomerPriority"));
+        account.cleanStatus = returnNullOrValue((String) entityAttributeField.get("Clean Status"));
+        account.fax = returnNullOrValue((String) entityAttributeField.get("Fax"));
         account.annualRevenue = (Double) entityAttributeField.get(" Annual Revenue");
         return account;
     }

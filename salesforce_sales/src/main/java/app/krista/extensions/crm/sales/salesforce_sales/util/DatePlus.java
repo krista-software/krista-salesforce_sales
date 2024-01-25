@@ -63,34 +63,29 @@ public final class DatePlus {
     public static String getDateForGivenTimeZoneWithQueryOperand(List<SearchCondition> conditions, String fieldName, String queryOperand, String timeZone) {
         for (SearchCondition con : conditions) {
             if (fieldName.equalsIgnoreCase(con.getFieldName()) && con.getOperator().toString().equalsIgnoreCase(queryOperand)) {
-                if (con.getOperand() == null) {
-                    return null;
-                } else {
-                    double timestamp = Double.parseDouble(String.valueOf(con.getOperand()));
-                    long epoch = (long) timestamp;
-                    Date date = new Date(epoch);
-                    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                    dateFormat.setTimeZone(TimeZone.getTimeZone(timeZone));
-                    return dateFormat.format(date);
-                }
+                return convertDateToSpecificTimeZone(timeZone, con);
             }
         }
         return null;
     }
 
+    private static String convertDateToSpecificTimeZone(String timeZone, SearchCondition con) {
+        if (con.getOperand() == null) {
+            return null;
+        } else {
+            double timestamp = Double.parseDouble(String.valueOf(con.getOperand()));
+            long epoch = (long) timestamp;
+            Date date = new Date(epoch);
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            dateFormat.setTimeZone(TimeZone.getTimeZone(timeZone));
+            return dateFormat.format(date);
+        }
+    }
+
     public static String getDateForGivenTimeZone(List<SearchCondition> conditions, String fieldName, String timeZone) {
         for (SearchCondition con : conditions) {
             if (fieldName.equalsIgnoreCase(con.getFieldName())) {
-                if (con.getOperand() == null) {
-                    return null;
-                } else {
-                    double timestamp = Double.parseDouble(String.valueOf(con.getOperand()));
-                    long epoch = (long) timestamp;
-                    Date date = new Date(epoch);
-                    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                    dateFormat.setTimeZone(TimeZone.getTimeZone(timeZone));
-                    return dateFormat.format(date);
-                }
+                return convertDateToSpecificTimeZone(timeZone, con);
             }
         }
         return null;

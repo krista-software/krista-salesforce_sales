@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.Date;
 import java.util.Map;
 
-import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.returnNullIfEmptyValue;
+import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.returnNullOrValue;
 
 public final class SFPricebookEntry {
     @SerializedName("Product2Id")
@@ -55,11 +55,11 @@ public final class SFPricebookEntry {
         entry.lastModifiedDate = lastModifiedDate != null ? new Date(lastModifiedDate) : null;
         Long createdDate = (Long) entityAttributeField.get("Created Date");
         entry.createdDate = createdDate != null ? new Date(createdDate) : null;
-        entry.name = returnNullIfEmptyValue((String) entityAttributeField.get("Name"));
-        entry.pricebookId = returnNullIfEmptyValue((String) entityAttributeField.get("Pricebook Id"));
-        entry.productCode = returnNullIfEmptyValue((String) entityAttributeField.get("Product Code"));
+        entry.name = returnNullOrValue((String) entityAttributeField.get("Name"));
+        entry.pricebookId = returnNullOrValue((String) entityAttributeField.get("Pricebook Id"));
+        entry.productCode = returnNullOrValue((String) entityAttributeField.get("Product Code"));
         entry.unitPrice = (Double) entityAttributeField.get("Unit Price");
-        entry.productId = returnNullIfEmptyValue((String) entityAttributeField.get("Product Id"));
+        entry.productId = returnNullOrValue((String) entityAttributeField.get("Product Id"));
         return entry;
     }
 
