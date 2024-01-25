@@ -51,7 +51,6 @@ public final class SFPricebookEntry {
 
     public static SFPricebookEntry from(Map<String, Object> entityAttributeField) {
         SFPricebookEntry entry = new SFPricebookEntry();
-        //entry.id = (String) entityAttributeField.get("Id");
         Long lastModifiedDate = (Long) entityAttributeField.get("Last Modified Date");
         entry.lastModifiedDate = lastModifiedDate != null ? new Date(lastModifiedDate) : null;
         Long createdDate = (Long) entityAttributeField.get("Created Date");

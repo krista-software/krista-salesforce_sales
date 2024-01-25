@@ -1462,6 +1462,10 @@ Krista Salesforce Sales Module Extension supports the following entity requests:
 | Last Modified Date | Date               | No            | 2022-07-11T05&#58;27:43 |
 | Unit Price         | Currency           | Yes           | 5555                    |
 
+**Note:**
+
+* Only Unit Price can be updated.
+
 * Output Parameters:
 
 | **Parameter Name** | **Parameter Type** |
