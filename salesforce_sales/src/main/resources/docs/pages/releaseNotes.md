@@ -9,7 +9,8 @@
 
 ## Resolved Bugs
 
-* [KC-1862](https://antbrains.atlassian.net/browse/KC-1862) Salesforce Sales Better error Message to User In configure Extension Screen
+* [KC-1862](https://antbrains.atlassian.net/browse/KC-1862) Salesforce Sales Better error Message to User In configure Extension Screen.
+* [KE-1493](https://antbrains.atlassian.net/browse/KE-1493) Friendly Message on invalid input for Salesforce Sales.
 
 ## Known Issues
 
