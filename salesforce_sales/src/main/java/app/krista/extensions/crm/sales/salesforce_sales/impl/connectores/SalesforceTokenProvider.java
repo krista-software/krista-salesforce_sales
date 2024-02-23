@@ -88,7 +88,7 @@ public final class SalesforceTokenProvider {
                         salesforceSalesAttributes.getOauthService().getAccessTokenPasswordGrant(String.valueOf(username),
                                 password + String.valueOf(securityToken)));
             } catch (Exception cause) {
-                throw new MustAuthorizeException(cause.getMessage());
+                throw new IllegalArgumentException(cause.getMessage());
             }
         }
     }
