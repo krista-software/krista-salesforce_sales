@@ -88,7 +88,7 @@ public final class SalesforceTokenProvider {
                         salesforceSalesAttributes.getOauthService().getAccessTokenPasswordGrant(String.valueOf(username),
                                 password + String.valueOf(securityToken)));
             } catch (Exception cause) {
-                throw new MustAuthorizeException(cause.getMessage());
+                throw new IllegalArgumentException(cause.getMessage());
             }
         }
     }
@@ -117,7 +117,7 @@ public final class SalesforceTokenProvider {
             NamedValuedField contextIdField = new NamedValuedField("authContextId", "Text", authContextId, new HashMap<>(), new HashMap<>());
             details.add(contextIdField);
         }
-        return new MustAuthorizeException(reAuthentication ? "Refresh Token Expired. Please reauthorize yourself" : "You are not authorized. Please authorize yourself", details);
+        return new MustAuthorizeException(reAuthentication ? "Refresh Token Expired. Please reauthorize yourself" : "Authorize yourself and click 'Validate Attributes' before saving changes to proceed further", details);
     }
 
 }

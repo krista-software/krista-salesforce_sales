@@ -3,13 +3,14 @@
 ## Version 2.0.10
 
 - **Developer Name** : Srushti Ekmode
-- **Krista Service APIs Java** : 1.0.92
-- **Global Catalog Version** : 1.0.41
-- **Appliance Release Version** : 3.2.5
+- **Krista Service APIs Java** : 1.0.94
+- **Global Catalog Version** : 1.0.42
+- **Appliance Release Version** : 3.2.6
 
 ## Resolved Bugs
 
-* [KE-1382](https://antbrains.atlassian.net/browse/KE-1382) Salesforce Sales:Unable to Search accurate result for Due Date
+* [KC-1862](https://antbrains.atlassian.net/browse/KC-1862) Salesforce Sales Better error Message to User In configure Extension Screen.
+* [KE-1493](https://antbrains.atlassian.net/browse/KE-1493) Friendly Message on invalid input for Salesforce Sales.
 
 ## Known Issues
 
