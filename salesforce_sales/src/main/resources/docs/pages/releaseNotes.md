@@ -1,6 +1,6 @@
 # Release Notes - Krista Salesforce Sale Module Extension
 
-## Version 2.0.10
+## Version 2.0.11
 
 - **Developer Name** : Srushti Ekmode
 - **Krista Service APIs Java** : 1.0.94
