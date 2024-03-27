@@ -12,7 +12,6 @@ import org.json.JSONObject;
 
 import javax.inject.Inject;
 import java.util.List;
-import java.util.Map;
 
 @Domain(id = "catEntryDomain_086f33da-aaea-4d0c-816f-3d5f20b4a273",
         name = "Sales",
@@ -21,11 +20,11 @@ import java.util.Map;
         ecosystemVersion = "dc440ce1-a1c6-42eb-89b4-cfbfe1ca9f70")
 public class CustomArea {
     private final SalesforceManager salesforceManager;
-@Inject
+
+    @Inject
     public CustomArea(SalesforceManager salesforceManager) {
         this.salesforceManager = salesforceManager;
     }
-
 
     @CatalogRequest(
             id = "localDomainRequest_db413776-e8f0-47f5-bf3a-d868b7fe5634",
@@ -36,60 +35,46 @@ public class CustomArea {
     @Field(name = "Field Details", type = "FreeForm", required = false, attributes = {}, options = {})
     public FreeForm retrieveCustomFieldsForGivenObject(
             @Field.Text(name = "Object Id", required = true, attributes = {@Attribute(name = "visualWidth", value = "S")}, options = {}) String objectId,
-            @Field.PickOne(name = "Object Type", values = {"Account","Asset","Event","Lead","Opportunity","PricebookEntry","Quote","Task","User"}, required = true, attributes = {@Attribute(name = "visualWidth", value = "S")}, options = {}) String objectType,
-            @Field.Desc(name = "Custom Fields", type = "[ Text ]",required = true) List<String> customFields) {
-        StringBuilder sb = new StringBuilder();
-
-        // Iterate through the list of strings
+            @Field.PickOne(name = "Object Type", values = {"Account", "Asset", "Event", "Lead", "Opportunity", "PricebookEntry", "Quote", "Task", "User"}, required = true, attributes = {@Attribute(name = "visualWidth", value = "S")}, options = {}) String objectType,
+            @Field.Desc(name = "Custom Fields", type = "[ Text ]", required = true) List<String> customFields) {
+        StringBuilder stringBuilder = new StringBuilder();
         for (String str : customFields) {
-            // Append each string followed by a comma
-            sb.append(str).append(",");
+            stringBuilder.append(str).append(",");
         }
-
-        // Remove the trailing comma if the list is not empty
         if (!customFields.isEmpty()) {
-            sb.deleteCharAt(sb.length() - 1);
+            stringBuilder.deleteCharAt(stringBuilder.length() - 1);
         }
-        String s = sb.toString();
-        String query = "Select "+s+" from " + objectType +" where id = '" + objectId+"'";
+        String queryFields = stringBuilder.toString();
+        String query = "Select " + queryFields + " from " + objectType + " where id = '" + objectId + "'";
         String recordByQuery = salesforceManager.getRecordByQuery(query);
-        //GSON.fromJson(recordByQuery, SFAccount.class);
-        FreeForm resultMap = parseJSONToMap(recordByQuery,customFields);
-
-        // Output the map
-        System.out.println("Resulting Map:");
-        for (Map.Entry<String, Object> entry : resultMap.entrySet()) {
-            System.out.println(entry.getKey() + ": " + entry.getValue());
+        if (recordByQuery != null) {
+            return parseJSONToMap(recordByQuery, customFields);
         }
-return resultMap;
-        //return  new FreeForm();
-        //throw new UnsupportedOperationException("This method is not yet implemented! If you don't want to support this method, please remove the complete method");
+        return new FreeForm();
     }
+
     public static FreeForm parseJSONToMap(String jsonResponse, List<String> customFields) {
         FreeForm resultMap = new FreeForm();
-
         try {
             JSONObject jsonObject = new JSONObject(jsonResponse);
             JSONArray records = jsonObject.getJSONArray("records");
-
             JSONObject record = records.getJSONObject(0);
-
 
             for (String key : customFields) {
                 if (record.has(key)) {
                     Object value = record.get(key);
-                    resultMap.put(key, value);
+                    if (value.equals(null)) {
+                        resultMap.put(key, "Text", "");
+                    } else {
+                        resultMap.put(key, "Text", value);
+                    }
+
                 }
             }
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
         return resultMap;
     }
 }
-//            for (String key : record.keySet()) {
-//                Object value = record.get(key);
-//                resultMap.put(key, value);
-//            }
