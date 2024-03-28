@@ -17,12 +17,12 @@ import java.util.List;
         name = "Sales",
         ecosystemId = "catEntryEcosystem_8a0e8ce7-6289-492f-9202-52284024280c",
         ecosystemName = "CRM",
-        ecosystemVersion = "5c9f0856-fc56-43b5-96da-b74231143dd3")
-public class CustomFieldRetrieverArea {
+        ecosystemVersion = "d2511b1f-4e1f-4ef7-80d8-52c6300a365c")
+public class ContentArea {
     private final SalesforceManager salesforceManager;
 
     @Inject
-    public CustomFieldRetrieverArea(SalesforceManager salesforceManager) {
+    public ContentArea(SalesforceManager salesforceManager) {
         this.salesforceManager = salesforceManager;
     }
 
@@ -30,13 +30,13 @@ public class CustomFieldRetrieverArea {
             id = "localDomainRequest_db413776-e8f0-47f5-bf3a-d868b7fe5634",
             name = "Retrieve Custom Fields For Given Object",
             description = "Retrieve Custom Fields For Given Object",
-            area = "CustomFieldRetriever",
+            area = "Content",
             type = CatalogRequest.Type.CHANGE_SYSTEM)
     @Field(name = "Field Details", type = "FreeForm", required = false, attributes = {}, options = {})
     public FreeForm retrieveCustomFieldsForGivenObject(
             @Field.Text(name = "Object Id", required = true, attributes = {@Attribute(name = "visualWidth", value = "S")}, options = {}) String objectId,
-            @Field.PickOne(name = "Object Type", values = {"Account","Asset","Event","Lead","Opportunity","PricebookEntry","Quote","Task","User"}, required = true, attributes = {@Attribute(name = "visualWidth", value = "S")}, options = {}) String objectType,
-            @Field.Desc(name = "Custom Fields", type = "[ Text ]",required = true) List<String> customFields) {
+            @Field.PickOne(name = "Object Type", values = {"Account", "Asset", "Event", "Lead", "Opportunity", "PricebookEntry", "Quote", "Task", "User"}, required = true, attributes = {@Attribute(name = "visualWidth", value = "S")}, options = {}) String objectType,
+            @Field.Desc(name = "Custom Fields", type = "[ Text ]", required = true) List<String> customFields) {
         StringBuilder stringBuilder = new StringBuilder();
         for (String str : customFields) {
             stringBuilder.append(str).append(",");
