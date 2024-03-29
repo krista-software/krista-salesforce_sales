@@ -799,6 +799,26 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 | Forecast           | List&lt;FreeForm>  |
 
 
+### Content Area
+
+#### Retrieve Custom Fields For Given Object
+
+- **Description**: Retrieve Custom Fields For Given Object
+- **Input Parameters**:
+
+| **Parameter Name** | **Parameter Type** | **Mandatory** | **Example**    |
+|--------------------|--------------------|---------------|----------------|
+| Object Id          | Text               | Yes           | 123456         |
+| Object Type        | Pick List          | Yes           | Account        |
+| Custom Fields      | List<String>       | Yes           | Competition__c |
+
+- **Output Parameters**:
+
+| **Parameter Name** | **Parameter Type** |
+|--------------------|--------------------|
+| Field Details      | FreeForm           |
+
+
 
 ## Entity Requests
 Krista Salesforce Sales Module Extension supports the following entity requests:

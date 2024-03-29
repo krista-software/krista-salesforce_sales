@@ -17,7 +17,7 @@ import java.util.List;
         name = "Sales",
         ecosystemId = "catEntryEcosystem_8a0e8ce7-6289-492f-9202-52284024280c",
         ecosystemName = "CRM",
-        ecosystemVersion = "d2511b1f-4e1f-4ef7-80d8-52c6300a365c")
+        ecosystemVersion = "ed97ad0a-c01c-4cfd-8855-ce14af770527")
 public class ContentArea {
     private final SalesforceManager salesforceManager;
 
@@ -27,16 +27,16 @@ public class ContentArea {
     }
 
     @CatalogRequest(
-            id = "localDomainRequest_db413776-e8f0-47f5-bf3a-d868b7fe5634",
+            id = "localDomainRequest_b6f197c8-1886-44ac-b938-02cdb3ee922d",
             name = "Retrieve Custom Fields For Given Object",
             description = "Retrieve Custom Fields For Given Object",
             area = "Content",
-            type = CatalogRequest.Type.CHANGE_SYSTEM)
+            type = CatalogRequest.Type.QUERY_SYSTEM)
     @Field(name = "Field Details", type = "FreeForm", required = false, attributes = {}, options = {})
     public FreeForm retrieveCustomFieldsForGivenObject(
             @Field.Text(name = "Object Id", required = true, attributes = {@Attribute(name = "visualWidth", value = "S")}, options = {}) String objectId,
-            @Field.PickOne(name = "Object Type", values = {"Account", "Asset", "Event", "Lead", "Opportunity", "PricebookEntry", "Quote", "Task", "User"}, required = true, attributes = {@Attribute(name = "visualWidth", value = "S")}, options = {}) String objectType,
-            @Field.Desc(name = "Custom Fields", type = "[ Text ]", required = true) List<String> customFields) {
+            @Field.PickOne(name = "Object Type", values = {"Account","Asset","Event","Lead","Opportunity","PricebookEntry","Quote","Task","User"}, required = true, attributes = {@Attribute(name = "visualWidth", value = "S")}, options = {}) String objectType,
+            @Field.Desc(name = "Custom Fields", type = "[ Text ]",required = true) List<String> customFields) {
         StringBuilder stringBuilder = new StringBuilder();
         for (String str : customFields) {
             stringBuilder.append(str).append(",");
