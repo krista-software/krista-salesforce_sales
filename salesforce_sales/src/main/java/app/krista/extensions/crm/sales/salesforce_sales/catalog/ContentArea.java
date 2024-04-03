@@ -7,9 +7,8 @@ import app.krista.extension.impl.anno.Field;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.SalesforceManager;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.stores.ContentDaoImpl;
 import app.krista.model.base.FreeForm;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -22,7 +21,7 @@ import java.util.List;
 public class ContentArea {
     private final SalesforceManager salesforceManager;
     private final ContentDaoImpl contentDao;
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(ContentArea.class);
 
     @Inject
     public ContentArea(SalesforceManager salesforceManager, ContentDaoImpl contentDao) {
@@ -39,10 +38,14 @@ public class ContentArea {
     @Field(name = "Field Details", type = "FreeForm", required = false, attributes = {}, options = {})
     public FreeForm retrieveCustomFieldsForGivenObject(
             @Field.Text(name = "Object Id", required = true, attributes = {@Attribute(name = "visualWidth", value = "S")}, options = {}) String objectId,
-            @Field.PickOne(name = "Object Type", values = {"Account","Asset","Event","Lead","Opportunity","PricebookEntry","Quote","Task","User"}, required = true, attributes = {@Attribute(name = "visualWidth", value = "S")}, options = {}) String objectType,
-            @Field.Desc(name = "Custom Fields", type = "[ Text ]",required = true) List<String> customFields) {
+            @Field.PickOne(name = "Object Type", values = {"Account", "Asset", "Event", "Lead", "Opportunity", "PricebookEntry", "Quote", "Task", "User"}, required = true, attributes = {@Attribute(name = "visualWidth", value = "S")}, options = {}) String objectType,
+            @Field.Desc(name = "Custom Fields", type = "[ Text ]", required = true) List<String> customFields) {
         StringBuilder customField = new StringBuilder();
         for (String str : customFields) {
+            if (!str.endsWith("__c")) { // custom fields ends with __c
+                LOGGER.info("{} is not a custom field", str);
+                return new FreeForm();
+            }
             customField.append(str).append(",");
         }
         if (!customFields.isEmpty()) {
