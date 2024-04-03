@@ -5,6 +5,7 @@ import app.krista.extension.impl.anno.CatalogRequest;
 import app.krista.extension.impl.anno.Domain;
 import app.krista.extension.impl.anno.Field;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.SalesforceManager;
+import app.krista.extensions.crm.sales.salesforce_sales.impl.stores.ContentDaoImpl;
 import app.krista.model.base.FreeForm;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,10 +21,13 @@ import java.util.List;
         ecosystemVersion = "ed97ad0a-c01c-4cfd-8855-ce14af770527")
 public class ContentArea {
     private final SalesforceManager salesforceManager;
+    private final ContentDaoImpl contentDao;
+
 
     @Inject
-    public ContentArea(SalesforceManager salesforceManager) {
+    public ContentArea(SalesforceManager salesforceManager, ContentDaoImpl contentDao) {
         this.salesforceManager = salesforceManager;
+        this.contentDao = contentDao;
     }
 
     @CatalogRequest(
@@ -37,44 +41,20 @@ public class ContentArea {
             @Field.Text(name = "Object Id", required = true, attributes = {@Attribute(name = "visualWidth", value = "S")}, options = {}) String objectId,
             @Field.PickOne(name = "Object Type", values = {"Account","Asset","Event","Lead","Opportunity","PricebookEntry","Quote","Task","User"}, required = true, attributes = {@Attribute(name = "visualWidth", value = "S")}, options = {}) String objectType,
             @Field.Desc(name = "Custom Fields", type = "[ Text ]",required = true) List<String> customFields) {
-        StringBuilder stringBuilder = new StringBuilder();
+        StringBuilder customField = new StringBuilder();
         for (String str : customFields) {
-            stringBuilder.append(str).append(",");
+            customField.append(str).append(",");
         }
         if (!customFields.isEmpty()) {
-            stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+            customField.deleteCharAt(customField.length() - 1);
         }
-        String queryFields = stringBuilder.toString();
+        String queryFields = customField.toString();
         String query = "Select " + queryFields + " from " + objectType + " where id = '" + objectId + "'";
         String recordByQuery = salesforceManager.getRecordByQuery(query);
         if (recordByQuery != null) {
-            return parseJSONToMap(recordByQuery, customFields);
+            return contentDao.parseJSONToMap(recordByQuery, customFields);
         }
         return new FreeForm();
     }
 
-    public static FreeForm parseJSONToMap(String jsonResponse, List<String> customFields) {
-        FreeForm resultMap = new FreeForm();
-        try {
-            JSONObject jsonObject = new JSONObject(jsonResponse);
-            JSONArray records = jsonObject.getJSONArray("records");
-            JSONObject record = records.getJSONObject(0);
-
-            for (String key : customFields) {
-                if (record.has(key)) {
-                    Object value = record.get(key);
-                    if (value.equals(null)) {
-                        resultMap.put(key, "Text", "");
-                    } else {
-                        resultMap.put(key, "Text", value);
-                    }
-
-                }
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return resultMap;
-    }
 }
