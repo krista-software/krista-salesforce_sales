@@ -5,7 +5,7 @@
 - **Developer Name** : Srushti Ekmode
 - **Krista Service APIs Java** : 1.0.94
 - **Global Catalog Version** : 1.0.44
-- **Appliance Release Version** : 3.2.8
+- **Appliance Release Version** : 3.3.1
 
 ## Resolved Bugs
 
