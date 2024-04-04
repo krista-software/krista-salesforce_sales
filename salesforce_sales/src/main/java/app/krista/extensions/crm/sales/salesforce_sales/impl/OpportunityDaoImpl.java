@@ -2,6 +2,7 @@ package app.krista.extensions.crm.sales.salesforce_sales.impl;
 
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.catalogtypes.OpportunityCatalogType;
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.LatestPosts;
+import app.krista.extensions.crm.sales.salesforce_sales.impl.stores.KristaMediaClient;
 import app.krista.extensions.crm.sales.salesforce_sales.model.Quota;
 import app.krista.extensions.crm.sales.salesforce_sales.model.RegionWiseSummary;
 import app.krista.extensions.crm.sales.salesforce_sales.model.SFAggOpportunityOwnerTotal;
@@ -12,7 +13,6 @@ import app.krista.extensions.crm.sales.salesforce_sales.service.PriceBook;
 import app.krista.extensions.crm.sales.salesforce_sales.service.User;
 import app.krista.extensions.crm.sales.salesforce_sales.util.Constants;
 import app.krista.extensions.crm.sales.salesforce_sales.util.DatePlus;
-import app.krista.extensions.crm.sales.salesforce_sales.util.MediaClient;
 import app.krista.extensions.crm.sales.salesforce_sales.util.SalesforceListResponse;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -58,13 +58,15 @@ public class OpportunityDaoImpl implements OpportunityDao {
     private final PriceBookDaoImpl priceBookDao;
     private final UserDaoImpl userDao;
     private static final Logger LOGGER = LoggerFactory.getLogger(OpportunityDaoImpl.class);
+    private final KristaMediaClient kristaMediaClient;
 
 
     @Inject
-    public OpportunityDaoImpl(SalesforceManager salesforceManager, PriceBookDaoImpl priceBookDao, UserDaoImpl userDao) {
+    public OpportunityDaoImpl(SalesforceManager salesforceManager, PriceBookDaoImpl priceBookDao, UserDaoImpl userDao, KristaMediaClient kristaMediaClient) {
         this.salesforceManager = salesforceManager;
         this.priceBookDao = priceBookDao;
         this.userDao = userDao;
+        this.kristaMediaClient = kristaMediaClient;
     }
 
     @Override
@@ -315,36 +317,19 @@ public class OpportunityDaoImpl implements OpportunityDao {
     private app.krista.model.base.File downloadFile(String downloadUrl) throws IOException {
 
         Response fileResponse = salesforceManager.getFileResponse(downloadUrl);
-        MediaClient mediaClient = MediaClient.getInstance();
 
         String contentDisposition = fileResponse.getHeader("Content-Disposition");
         Pattern pattern = Pattern.compile("filename=\"(.*)\"");
         Matcher matcher = pattern.matcher(contentDisposition);
         String fileName = matcher.find() ? matcher.group(1) : "unknown";
-
         File localFile = saveToLocalTempDir(fileResponse.getStream(), fileName);
-        String fileExtension = getFileExtension(localFile.getName());
-        String mediaId = mediaClient.getMediaID(fileExtension);
-
-        uploadFileToMediaClient(localFile, mediaId);
-
-        return new app.krista.model.base.File(localFile.length(), localFile.getName(),
-                fileExtension, mediaId);
-    }
-
-    private String getFileExtension(String fileName) {
-        return fileName.substring(fileName.lastIndexOf(".") + 1);
+        return kristaMediaClient.toKristaFile(localFile);
     }
 
     private File saveToLocalTempDir(InputStream inputStream, String filePath) throws IOException {
         File localFile = new File(filePath);
         Files.copy(inputStream, localFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
         return localFile;
-    }
-
-    private void uploadFileToMediaClient(File file, String mediaId) {
-        MediaClient mediaClient = MediaClient.getInstance();
-        mediaClient.upload(mediaClient.createMediaUrl(mediaId), file);
     }
 
 }
