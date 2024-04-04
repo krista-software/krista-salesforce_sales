@@ -10,10 +10,9 @@
 ## Resolved Bugs
 
 * [KC-1847](https://antbrains.atlassian.net/browse/KC-1847) Salesforce | retrieve custom fields from the Objects.
+* [KE-1567](https://antbrains.atlassian.net/browse/KE-1567) Salesforce Sales Extension Adding support of New Media Server.
 
 ## Known Issues
-
-* [KE-1356](https://antbrains.atlassian.net/browse/KE-1356) Salesforce Sales: Conversations are run in draft and Test mode without providing any Extension setup
 
 
 
