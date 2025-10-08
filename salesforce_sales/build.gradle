@@ -51,8 +51,6 @@ tasks.register('updateVersion') {
         System.setProperty("extensionVersion", version.toString() + "-" + newbuildnr)
     }
 }
-compileJava.dependsOn clean
-compileJava.dependsOn updateVersion
 
 System.setProperty("extensionVersion", version.toString())
 
