@@ -10,7 +10,7 @@ import java.util.Map;
         ecosystemId = "catEntryEcosystem_8a0e8ce7-6289-492f-9202-52284024280c",
         ecosystemName = "CRM",
         ecosystemVersion = "db320c64-6f6f-4c9e-8daa-41d3f796d6a6")
-@Entity(name = "Opportunity", id = "localDomainEntity_011cea38-c7d1-40c1-99e3-295ab76af557", primaryKey = "Id")
+@Entity(name = "Opportunity", id = "localDomainEntity_011cea38-c7d1-40c1-99e3-295ab76af557", primaryKey = "Id", supportStore = false)
 public class Opportunity {
 
     @Searchable

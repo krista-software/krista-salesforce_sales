@@ -11,7 +11,7 @@ import java.util.Map;
         ecosystemId = "catEntryEcosystem_8a0e8ce7-6289-492f-9202-52284024280c",
         ecosystemName = "CRM",
         ecosystemVersion = "db320c64-6f6f-4c9e-8daa-41d3f796d6a6")
-@Entity(name = "User", id = "localDomainEntity_c64a8b45-ea45-4a20-9326-b680a2accac2", primaryKey = "Id")
+@Entity(name = "User", id = "localDomainEntity_c64a8b45-ea45-4a20-9326-b680a2accac2", primaryKey = "Id", supportStore = false)
 public class User {
 
     @Field(name = "Id", type = "Text", required = false)

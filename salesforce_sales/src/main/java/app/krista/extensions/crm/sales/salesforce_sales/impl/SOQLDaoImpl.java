@@ -75,10 +75,6 @@ public class SOQLDaoImpl implements SOQLDao {
 
     @Override
     public void validateRefreshToken() {
-        try {
-            salesforceManager.getTokenProvider().getSalesforceTokenForUser();
-        } catch (IOException cause) {
-            LOGGER.error(cause.getMessage());
-        }
+        salesforceManager.getTokenProvider().getSalesforceTokenForUser();
     }
 }
