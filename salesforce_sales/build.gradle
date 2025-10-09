@@ -1,12 +1,12 @@
 apply plugin: 'java-library'
-jar.archiveBaseName = "salesforce_sales-extension"
+jar.archiveBaseName = "salesforce_sales"
 group = 'app.krista.extensions.crm.sales'
 
 /*
  * Use extension.name for archiveBaseName, extension.version for version.
  * Resulting jar: <extension.name>-<extension.version>.jar e.g. Salesforce customer service-2.0.13.jar
  */
-def computedBaseName = "SalesforceSales"
+def computedBaseName = "salesforce_sales"
 def computedVersion = "local"
 
 compileJava.dependsOn clean
@@ -181,8 +181,8 @@ tasks.register('generateReleaseProperties') {
 
         // Set default extension name if not found
         if (!properties.getProperty('extension.name')) {
-            properties.setProperty("extension.name", "Salesforce Sales")
-            logger.lifecycle("Set default extension name: Salesforce Sales")
+            properties.setProperty("extension.name", "Salesforce sales")
+            logger.lifecycle("Set default extension name: Salesforce sales")
         }
 
         // Try to extract Domain annotation information from all area files
@@ -214,8 +214,8 @@ tasks.register('generateReleaseProperties') {
 
         // Set default values if not found in annotations
         if (!properties.getProperty('domain.name')) {
-            properties.setProperty("domain.name", "salesforce_sales")
-            logger.lifecycle("Set default domain name: salesforce_sales")
+            properties.setProperty("domain.name", "Sales")
+            logger.lifecycle("Set default domain name: Sales")
         }
 
         if (!properties.getProperty('ecosystem.name')) {
@@ -267,7 +267,7 @@ jar {
     // Gradle's configuration phase runs before tasks like `generateReleaseProperties` execute,
     // so directly reading the release.properties file earlier results in missing or default values.
     dependsOn tasks.named("setReleaseProperties")
-    archiveBaseName = project.ext.has("finalBaseName") ? project.ext.finalBaseName : "SalesforceSales"
+    archiveBaseName = project.ext.has("finalBaseName") ? project.ext.finalBaseName : "salesforce_sales"
     manifest {}
     from {
         configurations.jarClasspath.collect {
