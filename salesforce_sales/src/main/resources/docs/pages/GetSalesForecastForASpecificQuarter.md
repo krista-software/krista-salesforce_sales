@@ -1,4 +1,4 @@
-# Creating Salesforce Connected App
+# Get Sales Forecast For A Specific Quarter
 
 * Enable access of forecast entity. To enable access need salesforce lightning.
 
