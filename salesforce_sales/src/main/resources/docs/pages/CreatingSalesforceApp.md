@@ -103,22 +103,26 @@ Fill in the following required fields:
 
 ### Step 7: Select OAuth Scopes
 
-In the **Selected OAuth Scopes** section:
+In the **Selected OAuth Scopes** section, add the following scope entries:
 
-1. Find **"Access and manage your data (api)"** in the Available OAuth Scopes list
+* **Access Analytics REST API Charts Geodata resources (eclair_api)**
+* **Access Analytics REST API resources (wave_api)**
+* **Access Analytics REST API resources (chatter_api)**
+* **Access Visualforce applications (visualforce)**
+* **Access custom permissions (custom_permissions)**
+* **Access the identity URL service (id, profile, email, address, phone)**
+* **Access unique user identifiers (openid)**
+* **Full access (full)**
+* **Manage user data via APIs (api)**
+* **Manage user data via Web browsers (web)**
+* **Perform requests at any time (refresh_token, offline_access)**
+
+To add these scopes:
+1. In the Available OAuth Scopes list, find each scope listed above
 2. Click to select it, then click the **Add** arrow button to move it to Selected OAuth Scopes
-3. Find **"Perform requests on your behalf at any time (refresh_token, offline_access)"**
-4. Click to select it, then click the **Add** arrow button
+3. Repeat for all scopes in the list
 
-**Required Scopes**:
-- ✅ **Access and manage your data (api)**
-- ✅ **Perform requests on your behalf at any time (refresh_token, offline_access)**
-
-**Optional Scopes** (add if needed for your use case):
-- **Full access (full)**: Only if you need unrestricted access (not recommended for security reasons)
-- **Access your basic information (id, profile, email, address, phone)**: For user profile information
-
-> **💡 Tip**: Use the minimum scopes necessary for your integration. The `api` and `refresh_token` scopes are sufficient for most use cases.
+> **📝 Note**: These scopes provide comprehensive access to Salesforce APIs and services required for the extension's full functionality.
 
 ### Step 8: Additional OAuth Settings
 
@@ -126,7 +130,7 @@ In the **Selected OAuth Scopes** section:
 - Leave unchecked unless you're using device authentication
 
 **Require Secret for Web Server Flow**:
-- Leave checked (default) for enhanced security
+- ✅ **Select this checkbox** - This is required for the extension to function properly
 
 **Require Secret for Refresh Token Flow**:
 - Leave checked (default) for enhanced security
@@ -234,7 +238,8 @@ Users must be assigned to these permission sets to authenticate with the Connect
 4. Verify:
    - ✅ OAuth is enabled
    - ✅ Callback URL is correct
-   - ✅ Required scopes are selected (api, refresh_token)
+   - ✅ All required scopes are selected (eclair_api, wave_api, chatter_api, visualforce, custom_permissions, id/profile/email/address/phone, openid, full, api, web, refresh_token/offline_access)
+   - ✅ "Require Secret for Web Server Flow" is checked
    - ✅ Consumer Key and Consumer Secret are available
 
 ### Test Authentication

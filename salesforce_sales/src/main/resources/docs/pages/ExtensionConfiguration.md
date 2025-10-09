@@ -47,7 +47,7 @@ Before configuring the extension, you must create a Connected App in Salesforce 
 
 ### Step 4: Choose Authentication Type
 
-The extension supports two authentication modes:
+The extension supports three authentication modes:
 
 #### Option A: User Authentication (Authorization Code Flow)
 - **When to use**: When you want each user to authenticate with their own Salesforce account
@@ -65,9 +65,27 @@ Sandbox: [true/false]
 Leave Username, Password, and Security Token empty
 ```
 
-![Input Attributes for User Authentication](../_media/ExtensionConfiguration_InputAttributes1.png)
+![Input Attributes for User Authentication](../_media/attributesClientIdClientSecretInstanceUrl.png)
 
-#### Option B: Service Account Authentication (Username-Password Flow)
+#### Option B: Client Credentials Flow
+- **When to use**: When you want server-to-server authentication without user interaction
+- **Configuration**: Requires Client ID, Client Secret, and Instance URL
+- **How it works**: The extension authenticates directly using OAuth 2.0 Client Credentials flow
+- **Best for**: Automated background processes, system integrations, scheduled tasks
+
+**Configuration for Client Credentials Flow:**
+```
+Client ID: [Your Client ID]
+Client Secret: [Your Client Secret]
+Instance URL: [Required - Your Salesforce Instance URL]
+Sandbox: [true/false]
+
+Leave Username, Password, and Security Token empty
+```
+
+![Input Attributes for Client Credentials Flow](../_media/attributesSectionBox.png)
+
+#### Option C: Service Account Authentication (Username-Password Flow)
 - **When to use**: When you want automated workflows using a single service account
 - **Configuration**: Requires Client ID, Client Secret, Username, Password, and Security Token
 - **How it works**: The extension authenticates automatically using the provided credentials
@@ -84,7 +102,7 @@ Instance URL: [Optional]
 Sandbox: [true/false]
 ```
 
-![Input Attributes for Service Account Authentication](../_media/ExtensionConfiguration_InputAttributes2.png)
+![Input Attributes for Service Account Authentication](../_media/attributesAllFields.png)
 
 > **📝 Note**: To obtain your Security Token, go to Salesforce → Settings → Reset My Security Token. Salesforce will email the token to you.
 
@@ -106,7 +124,7 @@ Sandbox: [true/false]
 
 ### Step 7: Save and Test Configuration
 
-![Complete Input Attributes Configuration](../_media/ExtensionConfiguration_InputAttributes3.png)
+![Complete Input Attributes Configuration](../_media/SaveAndTestConfiguration.png)
 
 1. Click **Save** to store your configuration
 2. The extension will validate your credentials
@@ -137,6 +155,7 @@ The extension automatically determines which authentication flow to use based on
 | Parameters Provided | Authentication Flow Used | Use Case |
 |---------------------|-------------------------|----------|
 | Client ID + Client Secret only | Authorization Code (User Auth) | Interactive user authentication |
+| Client ID + Client Secret + Instance URL | Client Credentials Flow | Server-to-server automation |
 | Client ID + Client Secret + Username + Password + Security Token | Username-Password (Service Account) | Automated service account |
 
 ### Configuring Authentication in Krista Conversations
@@ -152,14 +171,14 @@ Check the **"Have people authenticate with their account"** checkbox:
 - Each user authenticates with their own account
 - Actions are performed as the authenticated user
 
-#### For Service Account Authentication (Username-Password Flow):
+#### For Client Credentials Flow or Service Account Authentication:
 Leave the **"Have people authenticate with their account"** checkbox **unchecked**:
 
 ![Ask a System Unchecked](../_media/ExtensionConfiguration_AskASystemUnchecked.png)
 
-- Extension uses the configured service account credentials
+- Extension uses the configured credentials (Client Credentials or service account)
 - No user interaction required for authentication
-- All actions are performed as the service account
+- All actions are performed as the configured account
 
 ## Security Considerations
 
