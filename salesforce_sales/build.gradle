@@ -181,8 +181,8 @@ tasks.register('generateReleaseProperties') {
 
         // Set default extension name if not found
         if (!properties.getProperty('extension.name')) {
-            properties.setProperty("extension.name", "salesforce_sales")
-            logger.lifecycle("Set default extension name: Salesforce Sales")
+            properties.setProperty("extension.name", "Salesforce sales")
+            logger.lifecycle("Set default extension name: Salesforce sales")
         }
 
         // Try to extract Domain annotation information from all area files
@@ -214,8 +214,8 @@ tasks.register('generateReleaseProperties') {
 
         // Set default values if not found in annotations
         if (!properties.getProperty('domain.name')) {
-            properties.setProperty("domain.name", "sales")
-            logger.lifecycle("Set default domain name: sales")
+            properties.setProperty("domain.name", "Sales")
+            logger.lifecycle("Set default domain name: Sales")
         }
 
         if (!properties.getProperty('ecosystem.name')) {
