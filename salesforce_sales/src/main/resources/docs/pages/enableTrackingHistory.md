@@ -26,4 +26,4 @@
 9. **Click on Related Lists.**
 
 10. **Drag and drop the Account History icon** for account change alert and **Lead History icon** for lead change alert in the Related Lists section below, then save the changes.  
-    ![salesforce_add_related_list.png](../_media/add_Tab.png)
+  ![add_tab.png](../_media/add_tab.png)
