@@ -78,37 +78,22 @@ public final class SalesforceManager {
     }
 
     public String getRecordById(String id, String sobject) {
-        try {
-            SalesforceToken salesforceToken = tokenProvider.getSalesforceTokenForUser();
-            String url = salesforceToken.getInstanceUrl() + SERVICES_DATA_V_48_0_SOBJECTS + sobject + "/" + id;
-            final OAuthRequest request = getoAuthRequest(Verb.GET, null, salesforceToken, url);
-            return getRequestResponse(salesforceToken, request);
-        } catch (IOException cause) {
-            LOGGER.error("Failed to get record by id " + cause.getMessage(), cause);
-        }
-        return "";
+        SalesforceToken salesforceToken = tokenProvider.getSalesforceTokenForUser();
+        String url = salesforceToken.getInstanceUrl() + SERVICES_DATA_V_48_0_SOBJECTS + sobject + "/" + id;
+        final OAuthRequest request = getoAuthRequest(Verb.GET, null, salesforceToken, url);
+        return getRequestResponse(salesforceToken, request);
     }
 
     public String updateRecord(String id, String body, String sobject) {
-        try {
-            SalesforceToken salesforceToken = tokenProvider.getSalesforceTokenForUser();
-            String url = salesforceToken.getInstanceUrl() + SERVICES_DATA_V_48_0_SOBJECTS + sobject + "/" + id + "?_HttpMethod=PATCH";
-            final OAuthRequest request = getoAuthRequest(Verb.POST, body, salesforceToken, url);
-            return getRequestResponse(salesforceToken, request);
-        } catch (IOException cause) {
-            LOGGER.error("Failed to update record " + cause.getCause(), cause);
-        }
-        return "";
+        SalesforceToken salesforceToken = tokenProvider.getSalesforceTokenForUser();
+        String url = salesforceToken.getInstanceUrl() + SERVICES_DATA_V_48_0_SOBJECTS + sobject + "/" + id + "?_HttpMethod=PATCH";
+        final OAuthRequest request = getoAuthRequest(Verb.POST, body, salesforceToken, url);
+        return getRequestResponse(salesforceToken, request);
     }
 
     public String getRecordByQuery(String query) {
-        try {
-            SalesforceToken salesforceToken = tokenProvider.getSalesforceTokenForUser();
-            return getRecords(query, salesforceToken);
-        } catch (IOException cause) {
-            LOGGER.error("Failed to get record by id " + cause.getMessage(), cause);
-        }
-        return "";
+        SalesforceToken salesforceToken = tokenProvider.getSalesforceTokenForUser();
+        return getRecords(query, salesforceToken);
     }
 
     private String getRecords(String query, SalesforceToken salesforceToken) {
@@ -122,70 +107,47 @@ public final class SalesforceManager {
         try {
             SalesforceToken salesforceToken = tokenProvider.getSalesforceTokenForUser(invokeAsUser, accountId);
             return getRecords(query, salesforceToken);
-        } catch (IOException | RuntimeException cause) {
+        } catch (RuntimeException cause) {
             LOGGER.error("Failed to get record by query " + cause.getMessage(), cause);
         }
         return "";
     }
 
     public String getUserDetails() {
-        try {
-            SalesforceToken salesforceToken = tokenProvider.getSalesforceTokenForUser();
-            String url = salesforceToken.getInstanceUrl() + "/services/data/v48.0/chatter/users/me";
-            final OAuthRequest request = getoAuthRequest(Verb.GET, null, salesforceToken, url);
-            return getRequestResponse(salesforceToken, request);
-        } catch (IOException cause) {
-            LOGGER.error("Failed to get user details " + cause.getMessage(), cause);
-        }
-        return "";
+        SalesforceToken salesforceToken = tokenProvider.getSalesforceTokenForUser();
+        String url = salesforceToken.getInstanceUrl() + "/services/data/v48.0/chatter/users/me";
+        final OAuthRequest request = getoAuthRequest(Verb.GET, null, salesforceToken, url);
+        return getRequestResponse(salesforceToken, request);
     }
 
     public void sendEmail(String recepients, String subj, String body) {
-        try {
-            SalesforceToken salesforceToken = tokenProvider.getSalesforceTokenForUser();
-            String url = salesforceToken.getInstanceUrl() + "/services/data/v48.0/actions/standard/emailSimple";
-            SFEmail.Body emailBody = new SFEmail.Body();
-            emailBody.inputs.add(new SFEmail(recepients.trim(), subj.trim(), body.trim()));
-            final OAuthRequest request = getoAuthRequest(Verb.POST, Constants.GSON.toJson(emailBody), salesforceToken, url);
-            getRequestResponse(salesforceToken, request);
-        } catch (IOException cause) {
-            LOGGER.error("Failed to get user details " + cause.getMessage(), cause);
-        }
+        SalesforceToken salesforceToken = tokenProvider.getSalesforceTokenForUser();
+        String url = salesforceToken.getInstanceUrl() + "/services/data/v48.0/actions/standard/emailSimple";
+        SFEmail.Body emailBody = new SFEmail.Body();
+        emailBody.inputs.add(new SFEmail(recepients.trim(), subj.trim(), body.trim()));
+        final OAuthRequest request = getoAuthRequest(Verb.POST, Constants.GSON.toJson(emailBody), salesforceToken, url);
+        getRequestResponse(salesforceToken, request);
     }
 
     public String createRecord(String body, String sobject) {
-        try {
-            SalesforceToken salesforceToken = tokenProvider.getSalesforceTokenForUser();
-            String url = salesforceToken.getInstanceUrl() + SERVICES_DATA_V_48_0_SOBJECTS + sobject + "/";
-            final OAuthRequest request = getoAuthRequest(Verb.POST, body, salesforceToken, url);
-            return getRequestResponse(salesforceToken, request);
-        } catch (IOException cause) {
-            LOGGER.error("Failed to create record " + cause.getMessage(), cause);
-        }
-        return "";
+        SalesforceToken salesforceToken = tokenProvider.getSalesforceTokenForUser();
+        String url = salesforceToken.getInstanceUrl() + SERVICES_DATA_V_48_0_SOBJECTS + sobject + "/";
+        final OAuthRequest request = getoAuthRequest(Verb.POST, body, salesforceToken, url);
+        return getRequestResponse(salesforceToken, request);
     }
 
     public String getObjects(String sObject) {
-        try {
-            SalesforceToken salesforceToken = tokenProvider.getSalesforceTokenForUser();
-            String url = salesforceToken.getInstanceUrl() + SERVICES_DATA_V_48_0_SOBJECTS + sObject;
-            final OAuthRequest request = getoAuthRequest(Verb.GET, null, salesforceToken, url);
-            return getRequestResponse(salesforceToken, request);
-        } catch (IOException cause) {
-            LOGGER.error("Failed to get objects " + cause.getMessage(), cause);
-        }
-        return "";
+        SalesforceToken salesforceToken = tokenProvider.getSalesforceTokenForUser();
+        String url = salesforceToken.getInstanceUrl() + SERVICES_DATA_V_48_0_SOBJECTS + sObject;
+        final OAuthRequest request = getoAuthRequest(Verb.GET, null, salesforceToken, url);
+        return getRequestResponse(salesforceToken, request);
     }
 
     public void deleteRecordById(String id, String sobject) {
-        try {
-            SalesforceToken salesforceToken = tokenProvider.getSalesforceTokenForUser();
-            String url = salesforceToken.getInstanceUrl() + SERVICES_DATA_V_48_0_SOBJECTS + sobject + "/" + id;
-            final OAuthRequest request = getoAuthRequest(Verb.DELETE, null, salesforceToken, url);
-            getRequestResponse(salesforceToken, request);
-        } catch (IOException cause) {
-            LOGGER.error("Failed to delete asset " + cause.getMessage(), cause);
-        }
+        SalesforceToken salesforceToken = tokenProvider.getSalesforceTokenForUser();
+        String url = salesforceToken.getInstanceUrl() + SERVICES_DATA_V_48_0_SOBJECTS + sobject + "/" + id;
+        final OAuthRequest request = getoAuthRequest(Verb.DELETE, null, salesforceToken, url);
+        getRequestResponse(salesforceToken, request);
     }
 
     private OAuthRequest getoAuthRequest(Verb verb, String body, SalesforceToken salesforceToken, String url) {
@@ -212,16 +174,11 @@ public final class SalesforceManager {
     }
 
     public String getLatestNPostsByOpportunityId(String opportunityId, int numberOfPosts) {
-        try {
-            SalesforceToken salesforceToken = tokenProvider.getSalesforceTokenForUser();
-            String url = salesforceToken.getInstanceUrl() + "/services/data/v48.0/chatter/feeds/record/" + opportunityId +
-                    "/feed-elements?sortOrder=ASC&sortField=CreatedDate&pageSize=" + numberOfPosts;
-            final OAuthRequest request = getoAuthRequest(Verb.GET, null, salesforceToken, url);
-            return getRequestResponse(salesforceToken, request);
-        } catch (IOException cause) {
-            LOGGER.error("Failed to get opportunity feed posts. " + cause.getMessage(), cause);
-        }
-        return "";
+        SalesforceToken salesforceToken = tokenProvider.getSalesforceTokenForUser();
+        String url = salesforceToken.getInstanceUrl() + "/services/data/v48.0/chatter/feeds/record/" + opportunityId +
+                "/feed-elements?sortOrder=ASC&sortField=CreatedDate&pageSize=" + numberOfPosts;
+        final OAuthRequest request = getoAuthRequest(Verb.GET, null, salesforceToken, url);
+        return getRequestResponse(salesforceToken, request);
     }
 
     public Response getFileResponse(String downloadUrl) {

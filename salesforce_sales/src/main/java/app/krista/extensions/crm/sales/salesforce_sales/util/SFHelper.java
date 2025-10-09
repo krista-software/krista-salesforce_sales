@@ -7,12 +7,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.NAME;
 import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.getDoubleOrZero;
 import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.getStringOrEmpty;
 
 
 public class SFHelper {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SFHelper.class);
 
     public static final String CREATED_DATE = "CreatedDate";
 
@@ -124,9 +129,20 @@ public class SFHelper {
     }
 
     public static boolean validateUsingOAuth(boolean isAdmin, SalesforceSalesAttributes salesforceSalesAttributes) {
-        return isAdmin || (salesforceSalesAttributes.getUserName() == null || salesforceSalesAttributes.getUserName().isBlank() ||
+        boolean useOAuth = isAdmin || (salesforceSalesAttributes.getUserName() == null || salesforceSalesAttributes.getUserName().isBlank() ||
                 salesforceSalesAttributes.getPassword() == null || salesforceSalesAttributes.getPassword().isBlank() ||
                 salesforceSalesAttributes.getSecurityToken() == null || salesforceSalesAttributes.getSecurityToken().isBlank());
+
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Authentication flow selection - Admin context: {}, Use OAuth: {}, Has username: {}, Has password: {}, Has security token: {}, Instance URL: {}",
+                    isAdmin, useOAuth,
+                    salesforceSalesAttributes.getUserName() != null && !salesforceSalesAttributes.getUserName().isBlank(),
+                    salesforceSalesAttributes.getPassword() != null && !salesforceSalesAttributes.getPassword().isBlank(),
+                    salesforceSalesAttributes.getSecurityToken() != null && !salesforceSalesAttributes.getSecurityToken().isBlank(),
+                    (salesforceSalesAttributes.getInstanceUrl() != null && !salesforceSalesAttributes.getInstanceUrl().isEmpty()) ? "provided" : "not provided");
+        }
+
+        return useOAuth;
     }
 
 }

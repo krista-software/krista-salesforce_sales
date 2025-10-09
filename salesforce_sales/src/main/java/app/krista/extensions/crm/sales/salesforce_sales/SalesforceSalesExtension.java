@@ -2,10 +2,7 @@ package app.krista.extensions.crm.sales.salesforce_sales;
 
 import app.krista.extension.authorization.RequestAuthenticator;
 import app.krista.extension.executor.Invoker;
-import app.krista.extension.impl.anno.Extension;
-import app.krista.extension.impl.anno.Field;
-import app.krista.extension.impl.anno.InvokerRequest;
-import app.krista.extension.impl.anno.StaticResource;
+import app.krista.extension.impl.anno.*;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.connectores.SalesforceTokenProviderFactory;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.stores.SalesforceSaleAttributeStore;
 import app.krista.extensions.crm.sales.salesforce_sales.util.Validators;
@@ -16,12 +13,14 @@ import java.util.Map;
 
 @Field.Text(value = SalesforceSalesAttributes.CLIENT_ID)
 @Field.Text(value = SalesforceSalesAttributes.CLIENT_SECRET, isSecured = true)
+@Field.Text(value = SalesforceSalesAttributes.INSTANCE_URL, required = false)
 @Field.Text(value = SalesforceSalesAttributes.USER_NAME, required = false)
 @Field.Text(value = SalesforceSalesAttributes.PASS_WORD, isSecured = true, required = false)
 @Field.Text(value = SalesforceSalesAttributes.SECURITY_TOKEN, isSecured = true, required = false)
 @Field.Boolean(value = SalesforceSalesAttributes.SANDBOX, required = false)
 @Field.Text(value = SalesforceSalesAttributes.TIME_ZONE, required = false)
-@Extension(version = "2.0.13")
+@Extension(version = "2.0.14")
+@Java(version = Java.Version.JAVA_21)
 @StaticResource(path = "docs", file = "docs")
 public final class SalesforceSalesExtension {
 
@@ -43,9 +42,6 @@ public final class SalesforceSalesExtension {
     }
 
     @InvokerRequest(InvokerRequest.Type.AUTHENTICATOR)
-    /**
-     * This method is used for redirecting the MustAuthenticateException to RequestAuthenticator Interface.
-     */
     public RequestAuthenticator getRequestAuthenticator() {
         return requestAuthenticator;
     }

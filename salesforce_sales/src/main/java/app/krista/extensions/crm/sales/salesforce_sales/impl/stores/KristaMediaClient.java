@@ -6,6 +6,8 @@ import org.jvnet.hk2.annotations.Service;
 
 import javax.inject.Inject;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -14,7 +16,7 @@ import java.util.zip.ZipOutputStream;
 @Service
 public class KristaMediaClient {
 
-    private static final String zipDir = "/tmp/";
+    private static final String zipDir = System.getProperty("java.io.tmpdir");
     @Inject
     private FileRepository fileRepository;
 
@@ -28,14 +30,33 @@ public class KristaMediaClient {
      * @throws IOException If an I/O error occurs.
      */
     public app.krista.model.base.File toKristaFile(File file) throws IOException {
-        if (isUnsupportedFileFormat(file.getName())) {
-            String zipFilePath = zipDir + file.getName().substring(0, file.getName().lastIndexOf(".")) + ".zip";
-            compressFile(zipFilePath, file.getAbsolutePath());
-            file = new File(zipFilePath);
+        // If supported, upload as-is preserving the original name
+        if (!isUnsupportedFileFormat(file.getName())) {
+            try (final FileHandle fileHandle = fileRepository.createNewFileByName(file.getName());
+                 final FileInputStream fis = new FileInputStream(file)) {
+                fileHandle.setContent(fis);
+                return fileHandle.getFile();
+            }
         }
-        try (final FileHandle fileHandle = fileRepository.createNewFileByName(file.getName())) {
-            fileHandle.setContent(new FileInputStream(file));
-            return fileHandle.getFile();
+
+        // For unsupported formats, compress to a uniquely-named temp zip but preserve the external name
+        String baseName = file.getName();
+        int dot = baseName.lastIndexOf('.')
+;        if (dot > 0) {
+            baseName = baseName.substring(0, dot);
+        }
+        String originalZipName = baseName + ".zip";
+
+        Path tmpZip = Files.createTempFile("krista-upload-", ".zip");
+        try {
+            compressFile(tmpZip.toString(), file.getAbsolutePath());
+            try (final FileHandle fileHandle = fileRepository.createNewFileByName(originalZipName);
+                 final FileInputStream fis = new FileInputStream(tmpZip.toFile())) {
+                fileHandle.setContent(fis);
+                return fileHandle.getFile();
+            }
+        } finally {
+            try { Files.deleteIfExists(tmpZip); } catch (IOException ignore) {}
         }
     }
 
@@ -47,8 +68,8 @@ public class KristaMediaClient {
      * @throws IOException If an I/O error occurs.
      */
     public File toJavaFile(app.krista.model.base.File file) throws IOException {
-        try (FileHandle fileHandle = fileRepository.getFile(file)) {
-            InputStream content = fileHandle.getContent();
+        try (FileHandle fileHandle = fileRepository.getFile(file);
+             InputStream content = fileHandle.getContent()) {
             final File input = new File(file.getFileName());
             return convertInputStreamToFile(content, input);
         }
@@ -74,11 +95,11 @@ public class KristaMediaClient {
      * @throws IOException If an I/O error occurs.
      */
     private File convertInputStreamToFile(InputStream inputStream, File input) throws IOException {
-        try (OutputStream outputStream = new FileOutputStream(input)) {
-            byte[] buffer = new byte[1024];
+        try (InputStream in = inputStream; OutputStream out = new FileOutputStream(input)) {
+            byte[] buffer = new byte[8192];
             int bytesRead;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, bytesRead);
+            while ((bytesRead = in.read(buffer)) != -1) {
+                out.write(buffer, 0, bytesRead);
             }
         }
         return input;
@@ -105,19 +126,12 @@ public class KristaMediaClient {
      * @param dirPathToZip The path of the directory to be zipped.
      * @throws IOException If an I/O error occurs.
      */
-    public static void compressFile(String zipFilePath, String dirPathToZip) throws IOException {
-        try (ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(zipFilePath))) {
-            File fileToZip = new File(dirPathToZip);
-            FileInputStream fis = new FileInputStream(fileToZip);
-            ZipEntry zipEntry = new ZipEntry(fileToZip.getName());
-            zipOut.putNextEntry(zipEntry);
-
-            byte[] bytes = new byte[1024];
-            int length;
-            while ((length = fis.read(bytes)) >= 0) {
-                zipOut.write(bytes, 0, length);
-            }
-            fis.close();
+    public static void compressFile(String zipFilePath, String sourceFilePath) throws IOException {
+        File source = new File(sourceFilePath);
+        try (ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(zipFilePath));
+             FileInputStream fis = new FileInputStream(source)) {
+            zipOut.putNextEntry(new ZipEntry(source.getName()));
+            fis.transferTo(zipOut);
             zipOut.closeEntry();
         }
     }

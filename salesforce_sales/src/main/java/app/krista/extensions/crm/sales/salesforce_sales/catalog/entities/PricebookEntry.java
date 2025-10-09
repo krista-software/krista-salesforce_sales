@@ -10,7 +10,7 @@ import java.util.Map;
         ecosystemId = "catEntryEcosystem_8a0e8ce7-6289-492f-9202-52284024280c",
         ecosystemName = "CRM",
         ecosystemVersion = "db320c64-6f6f-4c9e-8daa-41d3f796d6a6")
-@Entity(name = "Pricebook Entry", id = "localDomainEntity_cad67c19-86fd-4220-9768-c190a70f9fa5", primaryKey = "Id")
+@Entity(name = "Pricebook Entry", id = "localDomainEntity_cad67c19-86fd-4220-9768-c190a70f9fa5", primaryKey = "Id", supportStore = false)
 public class PricebookEntry {
 
     @Field(name = "Id", type = "Text", required = false)

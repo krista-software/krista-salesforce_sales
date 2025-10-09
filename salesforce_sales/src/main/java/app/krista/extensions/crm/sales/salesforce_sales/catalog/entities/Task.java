@@ -7,7 +7,7 @@ import app.krista.extension.impl.anno.*;
         ecosystemId = "catEntryEcosystem_8a0e8ce7-6289-492f-9202-52284024280c",
         ecosystemName = "CRM",
         ecosystemVersion = "b0024c31-acfe-4171-8fb0-f04514155787")
-@Entity(name = "Task", id = "localDomainEntity_2dcaec4e-e63f-413d-8c5b-dced4bac7097", primaryKey = "Id", options = {})
+@Entity(name = "Task", id = "localDomainEntity_2dcaec4e-e63f-413d-8c5b-dced4bac7097", primaryKey = "Id", supportStore = false, options = {})
 public class Task {
 
     @Field.Text(name = "Id", required = false, attributes = {@Attribute(name = "visualWidth", value = "S")}, options = {})

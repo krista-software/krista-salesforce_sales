@@ -1,4 +1,4 @@
-[<span style = "color : blue ; text-decoration: none">< Back<span>](/pages/connectionWithSalesforceSale?id=configuration-steps)
+[<span style = "color : blue ; text-decoration: none">< Back<span>](connectionWithSalesforceSale.md)
 
 | **Time Zone**                     | 
 |-----------------------------------|
