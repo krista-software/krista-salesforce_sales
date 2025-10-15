@@ -174,7 +174,7 @@ public class QuoteDaoImpl implements QuoteDao {
     @Override
     public void updateQuote(Quote quote) {
         if (quote.getId() == null || quote.getId().isEmpty())
-            throw new IllegalArgumentException("Quote Id cant be empty");
+            throw new IllegalArgumentException("Quote ID is required. Please provide the Salesforce ID of the quote you want to update.");
         SFQuote updatedQuote = SFQuote.from(QuoteCatalogType.fromSFQuote(quote));
         SFQuote oldQuote = SFQuote.from(QuoteCatalogType.fromSFQuote(getQuoteById(updatedQuote.id)));
         Map<String, Object> diff = salesforceManager.getDifference(oldQuote, updatedQuote);

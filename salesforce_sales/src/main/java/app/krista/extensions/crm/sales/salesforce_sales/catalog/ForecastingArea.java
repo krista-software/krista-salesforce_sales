@@ -37,7 +37,7 @@ public final class ForecastingArea {
             @Field(name = "Quarters", type = "Checkboxes") List<String> quarters,
             @Field(name = "Query", type = "Text", required = false) String query) {
         if (query == null || query.trim().isEmpty()) {
-            throw new IllegalArgumentException("ID must not be empty.");
+            throw new IllegalArgumentException("Query is required. Please provide a SOQL query to retrieve the sales forecast data.");
         }
         try {
             return opportunityDao.getExpectedRevenueOfQuarters(quarters, query);

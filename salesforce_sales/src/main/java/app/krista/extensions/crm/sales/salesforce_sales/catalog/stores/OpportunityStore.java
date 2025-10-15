@@ -80,7 +80,7 @@ public class OpportunityStore implements EntityStore<Opportunity> {
     @Override
     public void delete(String key) {
         if (key == null || key.isEmpty()) {
-            throw new IllegalArgumentException("Delete identifier cannot be null or empty");
+            throw new IllegalArgumentException("Opportunity ID is required for deletion. Please provide the Salesforce ID of the opportunity you want to delete.");
         }
         opportunityDao.deleteOpportunity(key);
     }

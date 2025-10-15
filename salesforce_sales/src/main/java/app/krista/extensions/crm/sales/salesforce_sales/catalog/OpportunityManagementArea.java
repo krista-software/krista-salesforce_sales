@@ -57,7 +57,7 @@ public final class OpportunityManagementArea {
             } else if (lastDays != null && lastDays >= 0) {
                 return opportunityDao.getNewOpportunitiesByLastDays(lastDays).stream().map(OpportunityCatalogType::fromSFOpportunity).collect(Collectors.toList());
             } else {
-                throw new IllegalArgumentException("Input is missing / wrong. Please provide correct input");
+                throw new IllegalArgumentException("Missing required input. Please provide either a SOQL Query to filter opportunities or specify the number of Last Days to retrieve recent opportunities.");
             }
         } catch (IllegalArgumentException cause) {
             LOGGER.error(cause.getMessage(), cause);
@@ -76,10 +76,10 @@ public final class OpportunityManagementArea {
             @Field(name = "Opportunity Name", type = "Text") String opportunityName,
             @Field(name = "Status", type = "Text") String status) {
         if (opportunityName == null || opportunityName.isBlank()) {
-            throw new IllegalArgumentException("Opportunity Name cannot be empty");
+            throw new IllegalArgumentException("Opportunity Name is required. Please provide the name of the opportunity you want to update.");
         }
         if (status == null || status.isBlank()) {
-            throw new IllegalArgumentException("Status cannot be empty");
+            throw new IllegalArgumentException("Status is required. Please provide the new status value for the opportunity.");
         }
         try {
             opportunityDao.updateOpportunityStatus(opportunityName, status);
@@ -229,7 +229,7 @@ public final class OpportunityManagementArea {
             if (numberOfPosts != null && Double.isFinite(numberOfPosts)) {
                 maxNumberOfPosts = Math.min(numberOfPosts.intValue(), maxNumberOfPosts);
                 if (maxNumberOfPosts <= 0) {
-                    throw new IllegalArgumentException("Bad Request. Number of posts must be greater than 0.");
+                    throw new IllegalArgumentException("Number of posts must be greater than 0. Please provide a positive number to retrieve opportunity posts.");
                 }
             }
             return opportunityDao.getLatestPosts(opportunityId, maxNumberOfPosts);

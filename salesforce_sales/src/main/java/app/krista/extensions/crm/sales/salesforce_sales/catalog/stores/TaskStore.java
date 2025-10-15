@@ -92,7 +92,7 @@ public class TaskStore implements EntityStore<Task> {
     @Override
     public void delete(String key) throws IOException {
         if (key == null || key.isEmpty()) {
-            throw new IllegalArgumentException("Delete identifier cannot be null or empty");
+            throw new IllegalArgumentException("Task ID is required for deletion. Please provide the Salesforce ID of the task you want to delete.");
         }
         taskDao.deleteTask(key);
 

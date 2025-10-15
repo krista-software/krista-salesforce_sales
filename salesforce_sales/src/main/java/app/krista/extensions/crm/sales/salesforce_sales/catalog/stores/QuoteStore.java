@@ -76,7 +76,7 @@ public class QuoteStore implements EntityStore<Quote> {
     @Override
     public void delete(String key) {
         if (key == null || key.isEmpty()) {
-            throw new IllegalArgumentException("Delete identifier cannot be null or empty");
+            throw new IllegalArgumentException("Quote ID is required for deletion. Please provide the Salesforce ID of the quote you want to delete.");
         }
         quoteDao.deleteQuote(key);
     }

@@ -2,62 +2,89 @@
 
 ## Overview
 
-The Update An Asset catalog request modifies existing asset records in Salesforce Sales. This request allows you to update asset information such as ownership, status, and other relevant details.
+The Update An Asset catalog request modifies existing asset records in Salesforce Sales. This request allows you to update asset information including name, account, contact, and competitor product status.
 
 ## Request Details
 
-- **Catalog Request Name**: Update An Asset
-- **Description**: Update existing asset records in Salesforce
-- **Type**: Update Operation
-- **Returns**: Update confirmation and results
+- **Area**: Assets Management
+- **Type**: CHANGE_SYSTEM
+- **Retry Support**: ❌ No
+- **Authentication**: Supports both User Authentication and Service Account modes
 
-## Parameters
+## Input Parameters
 
-### Required Parameters
+| Parameter Name | Type | Required | Description | Example |
+|----------------|------|----------|-------------|---------|
+| Id | Text | Yes | Salesforce ID of the asset to update | "02i5w00000ABC123" |
+| Name | Text | Yes | Name of the asset | "Enterprise Software License" |
+| Contact Id | Text | No | Salesforce ID of the primary contact for this asset | "0035w00000DEF456" |
+| Account Id | Text | No | Salesforce ID of the account that owns this asset | "0015w00000GHI789" |
+| Is Competitor Product | Switch (Boolean) | No | Indicates whether this is a competitor's product | true or false |
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| assetId | Text | Yes | Unique identifier of the asset to update |
+## Output Parameters
 
-### Optional Update Fields
+| Parameter Name | Type | Description |
+|----------------|------|-------------|
+| Asset | Entity(Asset) | The updated asset record with all current field values |
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| name | Text | No | Asset name |
-| accountId | Text | No | Associated account ID |
-| contactId | Text | No | Primary contact ID |
-| ownerId | Text | No | Asset owner ID |
-| rootAssetId | Text | No | Parent asset ID (for hierarchical assets) |
-| isCompetitorProduct | Switch | No | Whether this is a competitor product |
+See [Asset Entity](pages/entities/Asset.md) for complete field definitions.
 
-### Additional Parameters
+## Validation Rules
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| validateOnly | Switch | No | If true, validates updates without committing changes |
-| updateReason | Text | No | Reason for asset update (for audit trail) |
-| notifyOwner | Switch | No | Send notification to asset owner about changes |
+| Validation | Error Message | Resolution |
+|------------|---------------|------------|
+| ID Required | "Asset ID is required. Please provide the Salesforce ID of the asset you want to update." | Provide a valid Salesforce asset ID in the Id field |
+| Name Required | "Asset Name is required. Please provide a name for the asset." | Provide a name for the asset in the Name field |
+| ID Format | Asset ID must be a valid Salesforce ID format | Ensure the ID is a valid 15 or 18-character Salesforce ID |
 
-## Request Examples
+## Error Handling
 
-### Basic Asset Update
-```json
-{
-  "assetId": "02i5w00000ABC123",
-  "name": "Enterprise Software License - Updated",
-  "ownerId": "0055w00000DEF456",
-  "updateReason": "Ownership transfer to new account manager"
-}
+### Input Errors (INPUT_ERROR)
+**Cause**: Missing or invalid required parameters
+**Error Messages**:
+- "Asset ID is required. Please provide the Salesforce ID of the asset you want to update."
+- "Asset Name is required. Please provide a name for the asset."
+
+**Resolution**:
+1. Ensure the Id parameter is provided and not empty
+2. Ensure the Name parameter is provided and not empty
+3. Verify the ID is a valid Salesforce asset ID format (15 or 18 characters)
+4. Check that all required fields have valid values
+
+### Logic Errors (LOGIC_ERROR)
+**Cause**: Asset ID does not exist or invalid field values
+**Resolution**:
+1. Verify the asset ID exists in Salesforce
+2. Check that the authenticated user has access to the asset
+3. Ensure Contact Id and Account Id (if provided) are valid Salesforce IDs
+4. Verify the asset hasn't been deleted
+
+### System Errors (SYSTEM_ERROR)
+**Cause**: Salesforce API errors or connection issues
+**Resolution**:
+1. Check network connectivity to Salesforce
+2. Verify authentication credentials are valid
+3. Ensure Salesforce API limits haven't been exceeded
+4. Check Salesforce service status
+
+### Authorization Errors
+**Cause**: Insufficient permissions to update assets
+**Resolution**:
+1. Verify the authenticated user has edit permission on Asset objects
+2. Check sharing rules allow modification of the specific asset
+3. Ensure field-level security permits editing of the specified fields
+4. Contact your Salesforce administrator if permissions are needed
+
+## Usage Examples
+
+### Example 1: Update Asset Name and Account
+**Input**:
 ```
-
-### Account Transfer
-```json
-{
-  "assetId": "02i5w00000ABC123",
-  "accountId": "0015w00000NEW123",
-  "contactId": "0035w00000NEW123",
-  "ownerId": "0055w00000NEW123",
-  "updateReason": "Asset transferred to new account after acquisition",
+Id: "02i5w00000ABC123"
+Name: "Updated Enterprise License"
+Account Id: "0015w00000NEW789"
+Contact Id: (empty)
+Is Competitor Product: (empty)
   "notifyOwner": true
 }
 ```

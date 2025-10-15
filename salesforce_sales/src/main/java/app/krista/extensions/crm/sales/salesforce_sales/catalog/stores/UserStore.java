@@ -66,7 +66,7 @@ public class UserStore implements EntityStore<User> {
     @Override
     public void delete(String key) {
         if (key == null || key.isEmpty()) {
-            throw new IllegalArgumentException("Delete identifier cannot be null or empty");
+            throw new IllegalArgumentException("User ID is required for deletion. Please provide the Salesforce ID of the user you want to delete.");
         }
         userDaoImpl.deleteUser(key);
     }

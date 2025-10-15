@@ -65,7 +65,7 @@ public class EventDaoImpl implements EventDao {
     @Override
     public void updateEvent(Event event) {
         if (event.getId() == null || event.getId().isEmpty())
-            throw new IllegalArgumentException("Event Id cant be empty");
+            throw new IllegalArgumentException("Event ID is required. Please provide the Salesforce ID of the event you want to update.");
         SFEvent updatedEvent = SFEvent.from(EventCatalogType.fromSFEvent(event));
         SFEvent oldEvent = SFEvent.from(EventCatalogType.fromSFEvent(getEventById(updatedEvent.id)));
         Map<String, Object> diff = salesforceManager.getDifference(oldEvent, updatedEvent);

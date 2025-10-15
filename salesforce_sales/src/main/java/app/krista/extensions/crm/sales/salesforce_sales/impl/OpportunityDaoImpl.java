@@ -91,7 +91,7 @@ public class OpportunityDaoImpl implements OpportunityDao {
         if (oppList.records.size() > 0) {
             return oppList.records.stream().map(OpportunityImpl::new).collect(Collectors.toList());
         } else {
-            throw new IllegalArgumentException("No records found");
+            throw new IllegalArgumentException("No opportunities found matching your criteria. Please verify your search parameters and try again.");
         }
     }
 
@@ -124,7 +124,7 @@ public class OpportunityDaoImpl implements OpportunityDao {
     @Override
     public void updateOpportunity(Opportunity opportunity) {
         if (opportunity.getId() == null || opportunity.getId().isEmpty())
-            throw new IllegalArgumentException("Opportunity Id cant be empty");
+            throw new IllegalArgumentException("Opportunity ID is required. Please provide the Salesforce ID of the opportunity you want to update.");
         SFOpportunity updatedOpportunity = SFOpportunity.from(OpportunityCatalogType.fromSFOpportunity(opportunity));
         SFOpportunity oldOpportunity = SFOpportunity.from(OpportunityCatalogType.fromSFOpportunity(getOpportunityById(updatedOpportunity.id)));
         Map<String, Object> diff = salesforceManager.getDifference(oldOpportunity, updatedOpportunity);

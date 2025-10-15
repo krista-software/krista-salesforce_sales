@@ -2,30 +2,33 @@
 
 ## Overview
 
-The Process Query Request catalog request executes custom SOQL queries against Salesforce Sales data. This request provides flexible data retrieval capabilities for complex reporting and analytics needs.
+The Process Query Request catalog request executes custom SOQL (Salesforce Object Query Language) queries against Salesforce Sales data. This request provides flexible data retrieval capabilities for complex reporting and analytics needs.
 
 ## Request Details
 
-- **Catalog Request Name**: Process Query Request
-- **Description**: Execute custom SOQL queries for data retrieval
-- **Type**: Query Operation
-- **Returns**: Query results based on SOQL statement
+- **Area**: Reporting
+- **Type**: CHANGE_SYSTEM
+- **Retry Support**: ❌ No
+- **Authentication**: Supports both User Authentication and Service Account modes
 
-## Parameters
+## Input Parameters
 
-### Required Parameters
+| Parameter Name | Type | Required | Description | Example |
+|----------------|------|----------|-------------|---------|
+| Query | Paragraph | Yes | SOQL query statement to execute | "SELECT Id, Name, Amount FROM Opportunity WHERE Amount > 50000" |
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| query | Text | Yes | SOQL query statement to execute |
+## Output Parameters
 
-### Optional Parameters
+| Parameter Name | Type | Description |
+|----------------|------|-------------|
+| Response | Composite (Object) | Query results as a JSON object containing the records and metadata |
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| maxResults | Number | No | Maximum number of records to return (default: 200) |
-| includeDeleted | Switch | No | Include deleted records in results (default: false) |
-| batchSize | Number | No | Batch size for large result sets (default: 200) |
+## Validation Rules
+
+| Validation | Error Message | Resolution |
+|------------|---------------|------------|
+| Query Required | Query parameter must be provided | Provide a valid SOQL query string |
+| Valid SOQL Syntax | Query must use valid SOQL syntax | Verify your SOQL query syntax is correct |
 
 ## SOQL Query Structure
 
@@ -191,19 +194,50 @@ LIMIT number
 
 ## Error Handling
 
-### Common Errors
-- **INVALID_QUERY**: SOQL syntax error
-- **INVALID_FIELD**: Field doesn't exist or not accessible
-- **INVALID_TYPE**: Invalid data type in comparison
-- **QUERY_TIMEOUT**: Query execution timeout
-- **INSUFFICIENT_ACCESS**: Insufficient permissions
+### Input Errors (INPUT_ERROR)
+**Cause**: Missing or invalid query parameter
+**Resolution**:
+1. Ensure Query parameter is provided and not empty
+2. Verify the query is a valid SOQL statement
+3. Check that the query syntax follows Salesforce SOQL rules
 
-### Error Prevention
-- Validate SOQL syntax before execution
-- Check field accessibility and existence
-- Use appropriate data types in comparisons
-- Optimize queries to prevent timeouts
-- Verify user permissions for objects and fields
+### Logic Errors (LOGIC_ERROR)
+**Cause**: Invalid SOQL syntax or query execution errors
+**Error Messages**:
+- "INVALID_QUERY": SOQL syntax error
+- "INVALID_FIELD": Field doesn't exist or not accessible
+- "INVALID_TYPE": Invalid data type in comparison
+- "MALFORMED_QUERY": Query structure is incorrect
+
+**Resolution**:
+1. Validate SOQL syntax before execution
+2. Check that all field names are spelled correctly
+3. Verify all referenced objects exist
+4. Ensure data types in comparisons are compatible
+5. Test the query in Salesforce Developer Console first
+
+### System Errors (SYSTEM_ERROR)
+**Cause**: Salesforce API errors, connection issues, or query timeouts
+**Error Messages**:
+- "QUERY_TIMEOUT": Query execution exceeded time limit
+- "Request failed. Please verify that all required fields are provided and valid."
+
+**Resolution**:
+1. Check network connectivity to Salesforce
+2. Verify authentication credentials are valid
+3. Optimize complex queries to reduce execution time
+4. Add appropriate filters to limit result sets
+5. Ensure Salesforce API limits haven't been exceeded
+
+### Authorization Errors
+**Cause**: Insufficient permissions to access objects or fields
+**Error Message**: "INSUFFICIENT_ACCESS": User lacks permission to query objects or fields
+
+**Resolution**:
+1. Verify the authenticated user has read access to queried objects
+2. Check field-level security for all fields in the SELECT clause
+3. Ensure sharing rules allow access to the records
+4. Contact your Salesforce administrator if permissions are needed
 
 ## See Also
 

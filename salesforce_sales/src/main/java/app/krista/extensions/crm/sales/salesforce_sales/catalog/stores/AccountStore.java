@@ -75,7 +75,7 @@ public class AccountStore implements EntityStore<Account> {
     @Override
     public void delete(String key) {
         if (key == null || key.isEmpty()) {
-            throw new IllegalArgumentException("Delete identifier cannot be null or empty");
+            throw new IllegalArgumentException("Account ID is required for deletion. Please provide the Salesforce ID of the account you want to delete.");
         }
         accountDao.deleteAccount(key);
     }

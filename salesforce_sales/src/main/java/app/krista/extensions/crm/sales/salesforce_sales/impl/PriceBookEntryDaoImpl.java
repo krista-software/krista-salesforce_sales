@@ -60,7 +60,7 @@ public class PriceBookEntryDaoImpl implements PriceBookEntryDao {
     @Override
     public void updatePriceBookEntry(PriceBookEntry priceBookEntry) {
         if (priceBookEntry.getId() == null || priceBookEntry.getId().isEmpty())
-            throw new IllegalArgumentException("PricebookEntry Id cant be empty");
+            throw new IllegalArgumentException("Pricebook Entry ID is required. Please provide the Salesforce ID of the pricebook entry you want to update.");
         SFPricebookEntry updatedPricebookEntry = SFPricebookEntry.from(PricebookEntryCatalogType.fromSFPriceBookEntry(priceBookEntry));
         SFPricebookEntry oldPricebookEntry = SFPricebookEntry.from(PricebookEntryCatalogType.fromSFPriceBookEntry(getPriceBookEntryById(updatedPricebookEntry.id)));
         Map<String, Object> diff = salesforceManager.getDifference(oldPricebookEntry, updatedPricebookEntry);

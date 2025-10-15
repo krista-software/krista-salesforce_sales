@@ -48,18 +48,18 @@ public final class LeadsManagementArea {
             @Field(name = "Owner Id", type = "Text", required = false) String ownerId,
             @Field(name = "Start Date Time", type = "Date", required = false) Long startDateTime) {
         if (field == null || field.isBlank()) {
-            throw new IllegalArgumentException("Field cannot be empty");
+            throw new IllegalArgumentException("Field selection is required. Please choose either 'By User' or 'New Leads' to filter the leads.");
         }
         try {
             if (field.equalsIgnoreCase("By User")) {
                 if (ownerId == null || ownerId.isBlank()) {
-                    throw new IllegalArgumentException("Please provide ownerId");
+                    throw new IllegalArgumentException("Owner ID is required when filtering by user. Please provide the Salesforce user ID who owns the leads.");
                 }
                 return leadDao.getLeadsByOwnerId(ownerId).stream().map(LeadCatalogType::fromSFLead).collect(Collectors.toList());
             }
             if (field.equalsIgnoreCase("New Leads")) {
                 if (startDateTime == null || startDateTime.toString().isBlank()) {
-                    throw new IllegalArgumentException("Please provide startDateTime");
+                    throw new IllegalArgumentException("Start Date Time is required when filtering new leads. Please provide the date from which to retrieve new leads.");
                 }
                 return leadDao.getLeadByDate(startDateTime).stream().map(LeadCatalogType::fromSFLead).collect(Collectors.toList());
             }

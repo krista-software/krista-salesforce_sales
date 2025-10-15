@@ -164,7 +164,7 @@ public final class SalesforceManager {
         salesAttributes.getOauthService().signRequest(salesforceToken, request);
         try (com.github.scribejava.core.model.Response response = salesAttributes.getOauthService().execute(request)) {
             if (response.getCode() >= 400) {
-                throw new IllegalArgumentException("Bad Request, Please enter correct required data. The error is " + getErrorMessage(response.getBody()));
+                throw new IllegalArgumentException("Request failed. Please verify that all required fields are provided and valid. Error details: " + getErrorMessage(response.getBody()));
             }
             return response.getBody();
         } catch (IOException | InterruptedException | ExecutionException cause) {
@@ -197,7 +197,7 @@ public final class SalesforceManager {
         salesAttributes.getOauthService().signRequest(salesforceToken, request);
         try (com.github.scribejava.core.model.Response response = salesAttributes.getOauthService().execute(request)) {
             if (response.getCode() >= 400) {
-                throw new IllegalArgumentException("Bad Request, Please enter correct required data. The error is " + response.getBody());
+                throw new IllegalArgumentException("Request failed. Please verify that all required fields are provided and valid. Error details: " + response.getBody());
             }
             return response;
         } catch (IOException | InterruptedException | ExecutionException cause) {

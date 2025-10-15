@@ -75,7 +75,7 @@ public class EventStore implements EntityStore<Event> {
     @Override
     public void delete(String key) {
         if (key == null || key.isEmpty()) {
-            throw new IllegalArgumentException("Delete identifier cannot be null or empty");
+            throw new IllegalArgumentException("Event ID is required for deletion. Please provide the Salesforce ID of the event you want to delete.");
         }
         eventDao.deleteEvent(key);
         // not supported from API side

@@ -57,7 +57,7 @@ public class TaskDaoImpl implements TaskDao {
     @Override
     public void updateTask(Task task) {
         if (task.getId() == null || task.getId().isEmpty())
-            throw new IllegalArgumentException("Task Id cant be empty");
+            throw new IllegalArgumentException("Task ID is required. Please provide the Salesforce ID of the task you want to update.");
         SFTask updatedTask = SFTask.from(TaskCatalogType.fromSFTask(task));
         SFTask oldTask = SFTask.from(TaskCatalogType.fromSFTask(getTaskById(updatedTask.id)));
         Map<String, Object> diff = salesforceManager.getDifference(oldTask, updatedTask);

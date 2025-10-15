@@ -98,7 +98,7 @@ public final class DatePlus {
         try {
             selected_quarter = Integer.parseInt(quarter.substring(quarter.length() - 1)) - 1;
         } catch (NumberFormatException cause) {
-            throw new IllegalArgumentException("Invalid quarter");
+            throw new IllegalArgumentException("Invalid quarter format. Please provide a valid quarter (e.g., 'Q1', 'Q2', 'Q3', or 'Q4').");
         }
 
         Date startFullQuarter;

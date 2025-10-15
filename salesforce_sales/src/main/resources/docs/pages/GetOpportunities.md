@@ -27,28 +27,52 @@ This catalog request retrieves a list of opportunities from Salesforce based on 
 
 | Rule | Description | Error Message |
 |------|-------------|---------------|
-| Parameter Validation | At least one parameter (SOQL Query or Last Days) should be provided | "Either SOQL Query or Last Days parameter must be provided" |
+| Parameter Validation | At least one parameter (SOQL Query or Last Days) should be provided | "Missing required input. Please provide either a SOQL Query to filter opportunities or specify the number of Last Days to retrieve recent opportunities." |
 | SOQL Syntax | If SOQL Query is provided, it must be valid SOQL syntax | "Invalid SOQL query syntax" |
 | Days Range | If Last Days is provided, it must be a positive number | "Last Days must be a positive number" |
 
 ## Error Handling
 
-### System Errors
-- **Connection Error**: Returns empty list if unable to connect to Salesforce
-- **Authentication Error**: Throws authentication exception if credentials are invalid
-- **API Limit Error**: Returns partial results if API limits are exceeded
+### Input Errors (INPUT_ERROR)
+**Cause**: Missing or invalid input parameters
+**Error Message**: "Missing required input. Please provide either a SOQL Query to filter opportunities or specify the number of Last Days to retrieve recent opportunities."
+**Resolution**:
+1. Provide a valid SOQL Query string, OR
+2. Specify the number of Last Days as a positive number
+3. Ensure at least one parameter is provided
 
-### Business Rule Errors
-- **Invalid Query**: Returns empty list if SOQL query is malformed
-- **Permission Error**: Returns empty list if user lacks permission to access opportunities
+### Logic Errors (LOGIC_ERROR)
+**Cause**: Invalid query syntax or business logic violations
+**Error Messages**:
+- "No opportunities found matching your criteria. Please verify your search parameters and try again."
+- "Invalid SOQL query syntax"
 
-### Validation Errors
-- **Missing Parameters**: Throws IllegalArgumentException if both parameters are null/empty
-- **Invalid Days**: Throws IllegalArgumentException if Last Days is negative or zero
+**Resolution**:
+1. Verify your SOQL query syntax is correct
+2. Check that the query references valid fields and objects
+3. Ensure your search criteria match existing opportunities
+4. Verify field names are spelled correctly
 
-### User Errors
-- **No Results**: Returns empty list if no opportunities match the criteria
-- **Query Timeout**: Returns empty list if query execution times out
+### System Errors (SYSTEM_ERROR)
+**Cause**: Connection issues, authentication failures, or API limits
+**Error Messages**:
+- "Request failed. Please verify that all required fields are provided and valid."
+- "Authentication failed due to invalid credentials."
+- "Unable to establish OAuth connection with Salesforce."
+
+**Resolution**:
+1. Check your network connection to Salesforce
+2. Verify your authentication credentials are valid
+3. Ensure you haven't exceeded Salesforce API limits
+4. Check Salesforce service status
+
+### Authorization Errors
+**Cause**: Insufficient permissions to access opportunities or specific fields
+**Resolution**:
+1. Verify the authenticated user has read access to Opportunity objects
+2. Check field-level security settings for queried fields
+3. Ensure proper sharing rules are in place
+4. Contact your Salesforce administrator if permissions are needed
 
 ## Usage Examples
 

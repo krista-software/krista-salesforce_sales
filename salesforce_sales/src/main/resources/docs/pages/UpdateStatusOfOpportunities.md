@@ -2,82 +2,106 @@
 
 ## Overview
 
-The Update Status Of Opportunities catalog request allows you to modify the stage/status of one or more opportunity records in Salesforce Sales. This request enables bulk updates to opportunity progression through the sales pipeline.
+The Update Status Of Opportunities catalog request updates the stage/status of multiple opportunity records in Salesforce Sales. This request enables bulk updates to move opportunities through the sales pipeline to a specific stage.
 
 ## Request Details
 
-- **Catalog Request Name**: Update Status Of Opportunities
-- **Description**: Update the stage/status of multiple opportunities
-- **Type**: Update Operation
-- **Returns**: Update confirmation and results
+- **Area**: Opportunity Management
+- **Type**: CHANGE_SYSTEM
+- **Retry Support**: ❌ No
+- **Authentication**: Supports both User Authentication and Service Account modes
 
-## Parameters
+## Input Parameters
 
-### Required Parameters
+| Parameter Name | Type | Required | Description | Example |
+|----------------|------|----------|-------------|---------|
+| Opportunities | List&lt;Entity(Opportunity)> | Yes | List of opportunities to update (only ID is required from each opportunity) | See example below |
+| Status Or Stage Name | Text | Yes | The new stage/status to apply to all opportunities | "Proposal/Price Quote" |
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| opportunities | Array | Yes | Array of opportunities to update |
+**Note**: For each opportunity in the list, only the `id` field is used. Other fields in the opportunity entities are ignored.
 
-### Opportunity Update Object
+## Output Parameters
 
-Each opportunity in the array should contain:
+| Parameter Name | Type | Description |
+|----------------|------|-------------|
+| Updated Opportunities | List&lt;Entity(Opportunity)> | List of updated opportunity records with all current field values |
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| id | Text | Yes | Unique identifier of the opportunity to update |
-| stageName | PickOne | Yes | New stage/status for the opportunity |
-| closeDate | Date | No | Updated close date (if stage requires it) |
-| probability | Number | No | Updated probability percentage (0-100) |
-| amount | Currency | No | Updated opportunity amount |
-| description | Text | No | Updated description or notes |
+See [Opportunity Entity](pages/entities/Opportunity.md) for complete field definitions.
 
-### Optional Parameters
+## Validation Rules
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| validateOnly | Switch | No | If true, validates updates without committing changes |
-| notifyOwners | Switch | No | Send notification to opportunity owners about changes |
-| updateReason | Text | No | Reason for the status update (for audit trail) |
+| Validation | Error Message | Resolution |
+|------------|---------------|------------|
+| Opportunities Required | List must contain at least one opportunity | Provide at least one opportunity with a valid ID |
+| Status Required | Status Or Stage Name must be provided | Provide a valid Salesforce opportunity stage name |
+| Opportunity ID Required | Each opportunity must have a valid ID | Ensure all opportunities in the list have valid Salesforce IDs |
 
-## Opportunity Stages
+## Error Handling
 
-### Standard Sales Stages
+### Input Errors (INPUT_ERROR)
+**Cause**: Missing or invalid input parameters
+**Resolution**:
+1. Ensure Opportunities list is provided and not empty
+2. Ensure Status Or Stage Name is provided and not empty
+3. Verify each opportunity in the list has a valid ID
+4. Check that the stage name is a valid Salesforce opportunity stage
 
-| Stage Name | Description | Probability | Typical Actions |
-|------------|-------------|-------------|-----------------|
-| Prospecting | Initial opportunity identification | 10% | Qualify opportunity |
-| Qualification | Qualifying the opportunity | 25% | Needs analysis |
-| Needs Analysis | Understanding requirements | 50% | Develop solution |
-| Value Proposition | Presenting solution | 60% | Create proposal |
-| Id. Decision Makers | Identifying key stakeholders | 70% | Engage decision makers |
-| Perception Analysis | Understanding customer perception | 75% | Address concerns |
-| Proposal/Price Quote | Formal proposal submitted | 80% | Negotiate terms |
-| Negotiation/Review | Contract negotiation | 90% | Finalize agreement |
-| Closed Won | Successfully closed deal | 100% | Implementation planning |
-| Closed Lost | Lost opportunity | 0% | Post-mortem analysis |
+### Logic Errors (LOGIC_ERROR)
+**Cause**: Invalid opportunity IDs or stage names
+**Resolution**:
+1. Verify all opportunity IDs exist in Salesforce
+2. Check that the stage name matches a valid Salesforce opportunity stage
+3. Ensure the authenticated user has access to all opportunities
+4. Verify opportunities haven't been deleted
 
-## Request Examples
+### System Errors (SYSTEM_ERROR)
+**Cause**: Salesforce API errors or connection issues
+**Resolution**:
+1. Check network connectivity to Salesforce
+2. Verify authentication credentials are valid
+3. Ensure Salesforce API limits haven't been exceeded
+4. Check Salesforce service status
 
-### Single Opportunity Update
-```json
-{
-  "opportunities": [
-    {
-      "id": "0065w00000ABC123",
-      "stageName": "Proposal/Price Quote",
-      "probability": 80,
-      "closeDate": "2024-03-31"
-    }
-  ],
-  "notifyOwners": true,
-  "updateReason": "Customer requested formal proposal"
-}
+### Authorization Errors
+**Cause**: Insufficient permissions to update opportunities
+**Resolution**:
+1. Verify the authenticated user has edit permission on Opportunity objects
+2. Check sharing rules allow modification of the specific opportunities
+3. Ensure field-level security permits editing the StageName field
+4. Contact your Salesforce administrator if permissions are needed
+
+## Usage Examples
+
+### Example 1: Update Single Opportunity Stage
+**Input**:
+```
+Opportunities: [
+  {
+    "id": "0065w00000ABC123"
+  }
+]
+Status Or Stage Name: "Proposal/Price Quote"
 ```
 
-### Bulk Status Update
-```json
-{
+**Output**: List containing the updated opportunity with StageName = "Proposal/Price Quote"
+
+**Result**: Opportunity successfully moved to Proposal/Price Quote stage
+
+### Example 2: Bulk Update Multiple Opportunities
+**Input**:
+```
+Opportunities: [
+  {
+    "id": "0065w00000ABC123"
+  },
+  {
+    "id": "0065w00000DEF456"
+  },
+  {
+    "id": "0065w00000GHI789"
+  }
+]
+Status Or Stage Name: "Closed Won"
   "opportunities": [
     {
       "id": "0065w00000ABC123",

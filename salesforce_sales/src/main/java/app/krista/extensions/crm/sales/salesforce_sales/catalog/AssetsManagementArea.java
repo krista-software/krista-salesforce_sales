@@ -39,7 +39,7 @@ public final class AssetsManagementArea {
     public Boolean deleteAnAsset(
             @Field(name = "Id", type = "Text") String id) {
         if (id == null || id.trim().isEmpty()) {
-            throw new IllegalArgumentException("ID must not be empty.");
+            throw new IllegalArgumentException("Asset ID is required. Please provide the Salesforce ID of the asset you want to delete.");
         }
         try {
             assetDao.deleteAssetById(id);
@@ -65,10 +65,10 @@ public final class AssetsManagementArea {
             @Field(name = "Is Competitor Product", type = "Switch") Boolean isCompetitorProduct,
             @Field(name = "Name", type = "Text") String name) {
         if (id == null || id.trim().isEmpty()) {
-            throw new IllegalArgumentException("ID must not be empty.");
+            throw new IllegalArgumentException("Asset ID is required. Please provide the Salesforce ID of the asset you want to update.");
         }
         if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("Name must not be empty.");
+            throw new IllegalArgumentException("Asset Name is required. Please provide a name for the asset.");
         }
         try {
             Asset updateAsset = new Asset();

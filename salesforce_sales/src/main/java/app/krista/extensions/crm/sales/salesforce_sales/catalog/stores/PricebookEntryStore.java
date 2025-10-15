@@ -75,7 +75,7 @@ public class PricebookEntryStore implements EntityStore<PricebookEntry> {
     @Override
     public void delete(String key) {
         if (key == null || key.isEmpty()) {
-            throw new IllegalArgumentException("Delete identifier cannot be null or empty");
+            throw new IllegalArgumentException("Pricebook Entry ID is required for deletion. Please provide the Salesforce ID of the pricebook entry you want to delete.");
         }
         priceBookEntryDao.deletePriceBook(key);
     }

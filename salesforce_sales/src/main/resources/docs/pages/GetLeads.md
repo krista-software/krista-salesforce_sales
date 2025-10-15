@@ -2,82 +2,104 @@
 
 ## Overview
 
-The Get Leads catalog request retrieves lead records from Salesforce Sales based on specified criteria. This request allows you to search for and filter leads to find potential customers and prospects that match your requirements.
+The Get Leads catalog request retrieves lead records from Salesforce Sales filtered by either user ownership or creation date. This request allows you to find leads owned by a specific user or retrieve newly created leads from a specified date.
 
 ## Request Details
 
-- **Catalog Request Name**: Get Leads
-- **Description**: Retrieve leads with filtering and search capabilities
-- **Returns**: List of Lead entities
+- **Area**: Leads Management
+- **Type**: QUERY_SYSTEM
+- **Retry Support**: ❌ No
+- **Authentication**: Supports both User Authentication and Service Account modes
 
-## Parameters
+## Input Parameters
 
-### Search and Filter Parameters
+| Parameter Name | Type | Required | Description | Example |
+|----------------|------|----------|-------------|---------|
+| Field | PickOne(By User\|New Leads) | Yes | Selection to filter leads by user or by creation date | "By User" or "New Leads" |
+| Owner Id | Text | Conditional* | Salesforce user ID who owns the leads (required when Field = "By User") | "0055w00000ABC123" |
+| Start Date Time | Date | Conditional* | Date from which to retrieve new leads (required when Field = "New Leads") | 1704067200000 (Unix timestamp) |
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| searchText | Text | No | Search text to find leads by name, company, or email |
-| status | PickOne | No | Filter by lead status (Open, Working, Closed, etc.) |
-| leadSource | PickOne | No | Filter by lead source (Web, Phone, Referral, etc.) |
-| ownerId | Text | No | Filter by lead owner ID |
-| industry | PickOne | No | Filter by industry classification |
-| rating | PickOne | No | Filter by lead rating (Hot, Warm, Cold) |
+**Conditional Requirements***:
+- When Field = "By User", Owner Id is required
+- When Field = "New Leads", Start Date Time is required
 
-### Date Range Parameters
+## Output Parameters
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| createdDateFrom | Date | No | Filter leads created on or after this date |
-| createdDateTo | Date | No | Filter leads created on or before this date |
-| lastModifiedFrom | Date | No | Filter leads modified on or after this date |
-| lastModifiedTo | Date | No | Filter leads modified on or before this date |
+| Parameter Name | Type | Description |
+|----------------|------|-------------|
+| Leads | List&lt;Entity(Lead)> | List of lead records matching the filter criteria |
 
-### Pagination Parameters
+See [Lead Entity](pages/entities/Lead.md) for complete field definitions.
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| limit | Number | No | Maximum number of records to return (default: 100) |
-| offset | Number | No | Number of records to skip for pagination |
+## Validation Rules
 
-## Response
+| Validation | Error Message | Resolution |
+|------------|---------------|------------|
+| Field Selection Required | "Field selection is required. Please choose either 'By User' or 'New Leads' to filter the leads." | Select either "By User" or "New Leads" from the Field dropdown |
+| Owner ID Required (By User) | "Owner ID is required when filtering by user. Please provide the Salesforce user ID who owns the leads." | Provide a valid Salesforce user ID in the Owner Id field |
+| Start Date Required (New Leads) | "Start Date Time is required when filtering new leads. Please provide the date from which to retrieve new leads." | Provide a valid date/timestamp in the Start Date Time field |
 
-Returns an array of [Lead entities](pages/entities/Lead.md) with the following key fields:
+## Error Handling
 
-- **Id**: Unique lead identifier
-- **Name**: Full name of the lead
-- **Company**: Company name
-- **Email**: Primary email address
-- **Phone**: Primary phone number
-- **Status**: Current lead status
-- **Owner**: Lead owner information
-- **Lead Source**: Source that generated the lead
-- **Created Date**: When the lead was created
+### Input Errors (INPUT_ERROR)
+**Cause**: Missing or invalid input parameters
+**Error Messages**:
+- "Field selection is required. Please choose either 'By User' or 'New Leads' to filter the leads."
+- "Owner ID is required when filtering by user. Please provide the Salesforce user ID who owns the leads."
+- "Start Date Time is required when filtering new leads. Please provide the date from which to retrieve new leads."
 
-## Example Usage
+**Resolution**:
+1. Ensure Field parameter is provided and set to either "By User" or "New Leads"
+2. If Field = "By User", provide a valid Owner Id
+3. If Field = "New Leads", provide a valid Start Date Time
+4. Verify all required parameters are not null or empty
 
-### Basic Lead Search
-```json
-{
-  "searchText": "John Smith",
-  "limit": 50
-}
+### Logic Errors (LOGIC_ERROR)
+**Cause**: Invalid user ID or date values
+**Resolution**:
+1. Verify the Owner Id exists in Salesforce
+2. Ensure the Start Date Time is a valid Unix timestamp
+3. Check that the date range is reasonable
+
+### System Errors (SYSTEM_ERROR)
+**Cause**: Connection issues or Salesforce API errors
+**Resolution**:
+1. Check network connectivity to Salesforce
+2. Verify authentication credentials are valid
+3. Ensure Salesforce API limits haven't been exceeded
+
+### Authorization Errors
+**Cause**: Insufficient permissions to access leads
+**Resolution**:
+1. Verify the authenticated user has read access to Lead objects
+2. Check sharing rules allow access to the requested leads
+3. Ensure field-level security permits access to lead fields
+
+## Usage Examples
+
+### Example 1: Get Leads by Owner
+**Input**:
+```
+Field: "By User"
+Owner Id: "0055w00000ABC123"
+Start Date Time: (empty)
 ```
 
-### Filter by Status and Owner
-```json
-{
-  "status": "Working - Contacted",
-  "ownerId": "0055w00000ABC123",
-  "limit": 25
-}
+**Output**: List of all leads owned by user 0055w00000ABC123
+
+**Result**: Returns leads assigned to the specified user
+
+### Example 2: Get New Leads Since Date
+**Input**:
+```
+Field: "New Leads"
+Owner Id: (empty)
+Start Date Time: 1704067200000
 ```
 
-### Date Range and Industry Filter
-```json
-{
-  "industry": "Technology",
-  "createdDateFrom": "2024-01-01",
-  "createdDateTo": "2024-03-31",
+**Output**: List of leads created on or after January 1, 2024
+
+**Result**: Returns recently created leads for follow-up
   "limit": 100
 }
 ```

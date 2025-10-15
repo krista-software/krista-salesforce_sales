@@ -180,6 +180,55 @@ This guide provides solutions to common issues encountered when using the Salesf
 | 429 | Too Many Requests | Rate limiting exceeded |
 | 500 | Internal Server Error | Salesforce system issue |
 
+### Extension-Specific Error Messages
+
+#### Configuration Errors
+
+| Error Message | Cause | Resolution |
+|---------------|-------|------------|
+| "Client ID is required for OAuth authentication. Please provide your Salesforce Connected App Client ID in the extension configuration." | Missing Client ID | Add your Salesforce Connected App Client ID to the extension configuration |
+| "Client Secret is required for OAuth authentication. Please provide your Salesforce Connected App Client Secret in the extension configuration." | Missing Client Secret | Add your Salesforce Connected App Client Secret to the extension configuration |
+| "The Instance URL must use HTTP or HTTPS protocol." | Invalid protocol in Instance URL | Ensure Instance URL starts with http:// or https:// |
+| "The Instance URL is missing a valid host name." | Malformed Instance URL | Provide a complete Salesforce instance URL (e.g., https://yourinstance.salesforce.com) |
+| "Routing URL is required for OAuth authentication." | Missing routing URL | Configure the routing URL in your Krista settings |
+| "The time zone you provided is not supported." | Invalid time zone | Select a valid time zone from the supported list |
+
+#### Authentication Errors
+
+| Error Message | Cause | Resolution |
+|---------------|-------|------------|
+| "Authentication failed due to invalid client credentials." | Incorrect Client ID or Client Secret | Verify that your Client ID and Client Secret match those in your Salesforce Connected App |
+| "Authentication failed due to invalid credentials." | Incorrect username, password, or security token | Verify your Salesforce username, password, and security token. If you recently changed your password, reset your security token |
+| "Unable to establish OAuth connection with Salesforce." | OAuth service creation failed | Verify that your Client ID, Client Secret, and callback URL are correctly configured in your Salesforce Connected App settings |
+
+#### Data Operation Errors
+
+| Error Message | Cause | Resolution |
+|---------------|-------|------------|
+| "Account ID is required." | Missing Account ID | Provide the Salesforce ID of the account |
+| "Opportunity ID is required." | Missing Opportunity ID | Provide the Salesforce ID of the opportunity |
+| "Lead ID is required." | Missing Lead ID | Provide the Salesforce ID of the lead |
+| "Task ID is required." | Missing Task ID | Provide the Salesforce ID of the task |
+| "Event ID is required." | Missing Event ID | Provide the Salesforce ID of the event |
+| "Quote ID is required." | Missing Quote ID | Provide the Salesforce ID of the quote |
+| "Asset ID is required." | Missing Asset ID | Provide the Salesforce ID of the asset |
+| "No opportunities found matching your criteria." | Query returned no results | Verify your search parameters and try again |
+| "Request failed. Please verify that all required fields are provided and valid." | Invalid or missing required fields | Check that all required fields are provided with valid values |
+
+#### Input Validation Errors
+
+| Error Message | Cause | Resolution |
+|---------------|-------|------------|
+| "Email address is required." | Missing email address | Provide at least one recipient email address |
+| "Email subject is required." | Missing email subject | Provide a subject for the email |
+| "Email body is required." | Missing email body | Provide content for the email message |
+| "Missing required input. Please provide either a SOQL Query or specify the number of Last Days." | Missing query parameters | Provide either a SOQL Query or Last Days parameter |
+| "Field selection is required." | Missing field selection | Choose either 'By User' or 'New Leads' to filter the leads |
+| "Owner ID is required when filtering by user." | Missing Owner ID | Provide the Salesforce user ID who owns the leads |
+| "Start Date Time is required when filtering new leads." | Missing Start Date Time | Provide the date from which to retrieve new leads |
+| "Number of posts must be greater than 0." | Invalid number of posts | Provide a positive number to retrieve posts |
+| "Invalid quarter format." | Malformed quarter value | Provide a valid quarter (e.g., 'Q1', 'Q2', 'Q3', or 'Q4') |
+
 ## Getting Help
 
 ### Before Contacting Support

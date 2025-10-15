@@ -403,6 +403,28 @@ grant_type=password
 
 ## Troubleshooting Authentication
 
+### Issue: "Client ID is required for OAuth authentication"
+
+**Error Message**: "Client ID is required for OAuth authentication. Please provide your Salesforce Connected App Client ID in the extension configuration."
+
+**Cause**: Client ID is missing from extension configuration
+
+**Resolution**:
+1. Navigate to extension configuration in Krista
+2. Enter the Consumer Key from your Salesforce Connected App as the Client ID
+3. Save the configuration
+
+### Issue: "Client Secret is required for OAuth authentication"
+
+**Error Message**: "Client Secret is required for OAuth authentication. Please provide your Salesforce Connected App Client Secret in the extension configuration."
+
+**Cause**: Client Secret is missing from extension configuration
+
+**Resolution**:
+1. Navigate to extension configuration in Krista
+2. Enter the Consumer Secret from your Salesforce Connected App as the Client Secret
+3. Save the configuration
+
 ### Issue: "Invalid Client ID"
 
 **Cause**: Client ID is incorrect or Connected App is not active
@@ -421,7 +443,9 @@ grant_type=password
 2. Add to Callback URL in Salesforce Connected App
 3. Ensure exact match including protocol (https://) and path
 
-### Issue: "Invalid Username, Password, or Security Token"
+### Issue: "Authentication failed due to invalid credentials"
+
+**Error Message**: "Authentication failed due to invalid credentials. Please verify your Salesforce username, password, and security token. If you recently changed your password, you may need to reset your security token."
 
 **Cause**: Service account credentials are incorrect
 
@@ -430,6 +454,33 @@ grant_type=password
 2. Confirm password is current
 3. Reset security token in Salesforce (Settings → Reset My Security Token)
 4. Ensure password and token are entered correctly (password+token concatenated)
+5. If password was recently changed, generate a new security token
+
+### Issue: "Authentication failed due to invalid client credentials"
+
+**Error Message**: "Authentication failed due to invalid client credentials. Please verify that your Client ID and Client Secret match those in your Salesforce Connected App settings."
+
+**Cause**: Client ID or Client Secret is incorrect
+
+**Resolution**:
+1. Log in to Salesforce and navigate to Setup → App Manager
+2. Find your Connected App and click "View"
+3. Click "Manage Consumer Details" to view Client ID and Secret
+4. Verify these match exactly with your extension configuration
+5. If they don't match, update the extension configuration
+
+### Issue: "Unable to establish OAuth connection with Salesforce"
+
+**Error Message**: "Unable to establish OAuth connection with Salesforce. Please verify that your Client ID, Client Secret, and callback URL are correctly configured in your Salesforce Connected App settings."
+
+**Cause**: OAuth service creation failed due to configuration issues
+
+**Resolution**:
+1. Verify all OAuth configuration parameters are correct
+2. Check that the callback URL is properly configured in Salesforce
+3. Ensure the Connected App is active and saved
+4. Verify network connectivity to Salesforce
+5. Check Salesforce service status
 
 ### Issue: "User Not Authorized"
 

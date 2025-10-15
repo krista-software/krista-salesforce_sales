@@ -82,7 +82,7 @@ public class LeadDaoImpl implements LeadDao {
     @Override
     public void updateLead(Lead lead) {
         if (lead.getId() == null || lead.getId().isEmpty())
-            throw new IllegalArgumentException("Lead Id cant be empty");
+            throw new IllegalArgumentException("Lead ID is required. Please provide the Salesforce ID of the lead you want to update.");
         SFLead updatedLead = SFLead.from(LeadCatalogType.fromSFLead(lead));
         SFLead oldLead = SFLead.from(LeadCatalogType.fromSFLead(getLeadById(updatedLead.id)));
         Map<String, Object> diff = salesforceManager.getDifference(oldLead, updatedLead);

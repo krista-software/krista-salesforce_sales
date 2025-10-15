@@ -18,13 +18,13 @@ public class Validators {
 
     public static void validation(@Field(name = "Email Addresses", type = "Text") String emailAddresses, @Field(name = "Subject", type = "Text") String subject, @Field(name = "Body", type = "Paragraph") String body) {
         if (emailAddresses == null || emailAddresses.trim().isEmpty()) {
-            throw new IllegalArgumentException("Email Addresses must not be empty.");
+            throw new IllegalArgumentException("Email address is required. Please provide at least one recipient email address.");
         }
         if (subject == null || subject.trim().isEmpty()) {
-            throw new IllegalArgumentException("Subject must not be empty.");
+            throw new IllegalArgumentException("Email subject is required. Please provide a subject for the email.");
         }
         if (body == null || body.trim().isEmpty()) {
-            throw new IllegalArgumentException("Body must not be empty.");
+            throw new IllegalArgumentException("Email body is required. Please provide content for the email message.");
         }
     }
 

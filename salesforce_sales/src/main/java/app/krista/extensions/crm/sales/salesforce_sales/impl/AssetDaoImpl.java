@@ -60,7 +60,7 @@ public class AssetDaoImpl implements AssetDao {
     @Override
     public void updateAsset(Asset asset) {
         if (asset.getId() == null || asset.getId().isEmpty())
-            throw new RuntimeException("Asset Id cant be empty");
+            throw new RuntimeException("Asset ID is required. Please provide the Salesforce ID of the asset you want to update.");
         SFAsset updatedSFAsset = SFAsset.from(AssetCatalogType.fromSFAsset(asset));
         SFAsset oldAsset = SFAsset.from(AssetCatalogType.fromSFAsset(getAssetById(asset.getId())));
         Map<String, Object> diff = salesforceManager.getDifference(oldAsset, updatedSFAsset);

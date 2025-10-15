@@ -53,7 +53,7 @@ public class AccountDaoImpl implements AccountDao {
     @Override
     public void updateAccount(Account account) {
         if (account.getId() == null || account.getId().isEmpty())
-            throw new IllegalArgumentException("Account Id can't be empty");
+            throw new IllegalArgumentException("Account ID is required. Please provide the Salesforce ID of the account you want to update.");
         SFAccount updatedopportunity = SFAccount.from(AccountCatalogType.fromSFAccount(account));
         SFAccount oldOpportunity = SFAccount.from(AccountCatalogType.fromSFAccount(getAccountById(updatedopportunity.id)));
         Map<String, Object> diff = salesforceManager.getDifference(oldOpportunity, updatedopportunity);

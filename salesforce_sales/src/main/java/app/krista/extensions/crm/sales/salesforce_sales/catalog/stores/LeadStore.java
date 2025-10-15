@@ -77,7 +77,7 @@ public class LeadStore implements EntityStore<Lead> {
     @Override
     public void delete(String key) {
         if (key == null || key.isEmpty()) {
-            throw new IllegalArgumentException("Delete identifier cannot be null or empty");
+            throw new IllegalArgumentException("Lead ID is required for deletion. Please provide the Salesforce ID of the lead you want to delete.");
         }
         leadDao.deleteLead(key);
     }
