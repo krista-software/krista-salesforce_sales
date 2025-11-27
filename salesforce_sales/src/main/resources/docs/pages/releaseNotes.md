@@ -22,7 +22,7 @@
 
 ### ⚙️ Technical Improvements
 * **Java 21 Support**: Upgraded to Java 21 with modern language features
-* **Gradle 8.5**: Updated Gradle wrapper to version 8.5 for better Java 21 compatibility
+* **Gradle 8.10**: Updated Gradle wrapper to version 8.10 for better Java 21 compatibility
 * **Build System Modernization**: Enhanced build configuration for improved performance
 
 ### 📚 Documentation Updates
@@ -30,6 +30,25 @@
 * **Enhanced Catalog Request Documentation**: Updated error messages in GetOpportunities, GetLeads, DeleteAnAsset, UpdateAnAsset, SendAMail, UpdateStatusOfOpportunities, and ProcessQueryRequest pages
 * **Authentication Documentation**: Improved error handling documentation
 * **Test Results Documentation**: Added comprehensive test execution summary and guidelines
+
+### 📖 New Comprehensive Documentation
+* **Architecture Documentation (Architecture.md)**: Added comprehensive 1,471-line architecture document with:
+  - Complete 5-layer architecture breakdown with detailed descriptions
+  - 24 Mermaid diagrams covering component architecture, data flows, authentication, error handling, performance, security, and deployment
+  - Performance characteristics and Salesforce API limitations
+  - Error handling patterns and common error scenarios
+  - Security architecture and best practices
+  - Deployment topology and high-availability configurations
+  - Production-ready documentation for developers, architects, and operations teams
+* **Complete Documentation (Salesforce_Sales_Complete_Documentation.docx)**: Added LLM-optimized comprehensive documentation with:
+  - 11 major sections with 95 hierarchical headings
+  - 61 detailed reference tables for quick lookup
+  - 528 paragraphs of comprehensive content
+  - Complete documentation of all 28+ catalog requests with parameters, validation rules, and error scenarios
+  - All 11 entity definitions with field specifications
+  - Troubleshooting guide with actionable solutions
+  - Configuration and setup instructions
+  - Optimized for AI/LLM consumption to answer user queries
 
 ## Improvements
 
@@ -97,11 +116,15 @@
 * **ProcessQueryRequest.md**: Better query validation messages
 * **Authentication.md**: Enhanced authentication error documentation
 
+#### New Documentation Files (2 files)
+* **Architecture.md**: Comprehensive architecture documentation with 24 Mermaid diagrams
+* **Salesforce_Sales_Complete_Documentation.docx**: LLM-optimized complete reference documentation
+
 ## Technical Details
 
 ### Build Configuration
 * **Java Version**: 21 (upgraded from 13)
-* **Gradle Version**: 8.5 (upgraded from 7.4)
+* **Gradle Version**: 8.10 (upgraded from 7.4)
 * **Source Compatibility**: Java 21
 * **Target Compatibility**: Java 21
 
@@ -115,16 +138,20 @@
 ## Migration Notes
 
 ### For Developers
-* Tests now require Java 21 and Gradle 8.5
+* Tests now require Java 21 and Gradle 8.10
 * All error messages follow a consistent three-part format:
   1. Clearly identify the problem
   2. Explain what is required
   3. Provide actionable guidance
+* New comprehensive documentation available:
+  - Architecture.md for technical architecture details
+  - Salesforce_Sales_Complete_Documentation.docx for complete reference
 
 ### For Users
 * Error messages are now more descriptive and helpful
 * Validation errors include specific resolution steps
 * Authentication errors provide clear next actions
+* Comprehensive documentation available for troubleshooting and configuration
 
 ## Files Modified
 
@@ -140,13 +167,15 @@
 * DatePlusTest.java (30+ tests)
 * SFHelperTest.java (30+ tests)
 
-### Documentation (9 files)
+### Documentation (11 files)
 * Troubleshooting guide
 * 8 Catalog request pages
+* **NEW**: Architecture.md (comprehensive architecture documentation)
+* **NEW**: Salesforce_Sales_Complete_Documentation.docx (LLM-optimized reference)
 
 ### Build Configuration (2 files)
 * build.gradle
-* gradle-wrapper.properties
+* gradle-wrapper.properties (Gradle 7.4 → 8.10)
 
 ## Known Issues
 
