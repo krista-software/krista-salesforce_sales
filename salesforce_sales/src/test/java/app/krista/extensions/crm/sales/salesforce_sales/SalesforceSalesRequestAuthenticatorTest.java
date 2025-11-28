@@ -93,5 +93,111 @@ public class SalesforceSalesRequestAuthenticatorTest {
         // Verify that OAuth service was invoked with the expected state
         verify(mockOAuthService, times(1)).getAuthorizationUrl("user1#ctx123");
     }
-}
 
+    @Test
+    public void testGetAuthenticatedAccountId_WithNullState() throws Exception {
+        when(mockHttpRequest.getUri()).thenReturn(new URI("/salesforcesales/callback"));
+        MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
+        params.add("state", null);
+        when(mockHttpRequest.getQueryParameters()).thenReturn(params);
+
+        String accountId = authenticator.getAuthenticatedAccountId(mockHttpRequest);
+        assertNull("Account ID should be null when state is null", accountId);
+    }
+
+    @Test
+    public void testGetAuthenticatedAccountId_WithNullQueryParameters() throws Exception {
+        when(mockHttpRequest.getUri()).thenReturn(new URI("/salesforcesales/callback"));
+        when(mockHttpRequest.getQueryParameters()).thenReturn(null);
+
+        String accountId = authenticator.getAuthenticatedAccountId(mockHttpRequest);
+        assertNull("Account ID should be null when query parameters are null", accountId);
+    }
+
+    @Test
+    public void testGetAuthenticatedAccountId_WithEmptyState() throws Exception {
+        when(mockHttpRequest.getUri()).thenReturn(new URI("/salesforcesales/callback"));
+        MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
+        params.add("state", "");
+        when(mockHttpRequest.getQueryParameters()).thenReturn(params);
+
+        String accountId = authenticator.getAuthenticatedAccountId(mockHttpRequest);
+        assertEquals("Account ID should be empty string", "", accountId);
+    }
+
+    @Test
+    public void testGetAuthenticatedAccountId_WithStateNoDelimiter() throws Exception {
+        when(mockHttpRequest.getUri()).thenReturn(new URI("/salesforcesales/callback"));
+        MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
+        params.add("state", "user123");
+        when(mockHttpRequest.getQueryParameters()).thenReturn(params);
+
+        String accountId = authenticator.getAuthenticatedAccountId(mockHttpRequest);
+        assertEquals("Account ID should be the full state", "user123", accountId);
+    }
+
+    @Test
+    public void testGetAuthenticatedAccountId_WithRuntimeException() throws Exception {
+        when(mockHttpRequest.getUri()).thenReturn(new URI("/salesforcesales/callback"));
+        when(mockHttpRequest.getQueryParameters()).thenThrow(new RuntimeException("Test exception"));
+
+        String accountId = authenticator.getAuthenticatedAccountId(mockHttpRequest);
+        assertNull("Account ID should be null when RuntimeException occurs", accountId);
+    }
+
+    @Test
+    public void testGetScheme() {
+        assertNull("Scheme should be null", authenticator.getScheme());
+    }
+
+    @Test
+    public void testGetSupportedProtocols() {
+        java.util.Set<String> protocols = authenticator.getSupportedProtocols();
+        assertNotNull("Supported protocols should not be null", protocols);
+        assertTrue("Supported protocols should be empty", protocols.isEmpty());
+    }
+
+    @Test
+    public void testSetServiceAuthorization() {
+        assertFalse("setServiceAuthorization should return false", authenticator.setServiceAuthorization("test"));
+    }
+
+    @Test
+    public void testGetAttributeFields() {
+        java.util.Map<String, app.krista.model.field.NamedField> fields = authenticator.getAttributeFields();
+        assertNotNull("Attribute fields should not be null", fields);
+        assertTrue("Attribute fields should be empty", fields.isEmpty());
+    }
+
+    @Test
+    public void testGetMustAuthenticateResponse_WithProtoRequest() {
+        app.krista.extension.authorization.MustAuthenticateException ex =
+                new app.krista.extension.authorization.MustAuthenticateException("Test");
+        ProtoRequest request = mock(ProtoRequest.class);
+
+        app.krista.extension.request.ProtoResponse response = authenticator.getMustAuthenticateResponse(ex, request);
+        assertNull("Response should be null", response);
+    }
+
+    @Test
+    public void testGetMustAuthenticateResponse_WithoutProtoRequest() {
+        app.krista.extension.authorization.MustAuthenticateException ex =
+                new app.krista.extension.authorization.MustAuthenticateException("Test");
+
+        RequestAuthenticator.AuthorizationResponse response = authenticator.getMustAuthenticateResponse(ex);
+        assertNull("Response should be null", response);
+    }
+
+    @Test
+    public void testGetMustAuthorizeResponse_WithProtoRequest() {
+        java.util.Map<String, Object> meta = new HashMap<>();
+        app.krista.extension.authorization.MustAuthorizeException ex =
+                new app.krista.extension.authorization.MustAuthorizeException("Test", List.of(
+                        new app.krista.model.field.NamedValuedField("userId", "userId", "user1", meta, java.util.Map.of())
+                ));
+        ProtoRequest request = mock(ProtoRequest.class);
+
+        app.krista.extension.request.ProtoResponse response = authenticator.getMustAuthorizeResponse(ex, request);
+        assertNull("Response should be null", response);
+    }
+}
