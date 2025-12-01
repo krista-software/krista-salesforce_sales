@@ -1,4 +1,5 @@
 apply plugin: 'java-library'
+apply plugin: 'jacoco'
 jar.archiveBaseName = "salesforce_sales"
 group = 'app.krista.extensions.crm.sales'
 
@@ -85,8 +86,8 @@ configurations {
 }
 
 dependencies {
-    annotationProcessor 'app.krista:extension-impl-anno-processors:1.0.117'
-    implementation 'app.krista:krista-apis:1.0.117'
+    annotationProcessor 'app.krista:extension-impl-anno-processors:1.0.118'
+    implementation 'app.krista:krista-apis:1.0.118'
     implementation 'org.glassfish.hk2:hk2-api:3.0.3'
     implementation 'com.github.scribejava:scribejava-apis:8.3.3'
     implementation 'com.googlecode.libphonenumber:libphonenumber:5.5'
@@ -277,3 +278,27 @@ jar {
     exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
     duplicatesStrategy = "exclude"
 }
+
+// JaCoCo configuration for test coverage
+jacoco {
+    toolVersion = "0.8.11"
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+        html.required = true
+        csv.required = false
+    }
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    '**/api/**',
+                    '**/util/Constants.class'
+            ])
+        }))
+    }
+}
+
+test.finalizedBy jacocoTestReport
