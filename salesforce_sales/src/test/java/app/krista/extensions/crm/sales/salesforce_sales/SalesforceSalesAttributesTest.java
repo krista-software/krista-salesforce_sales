@@ -4,6 +4,7 @@ import app.krista.extension.executor.Invoker;
 import app.krista.extension.request.RoutingInfo;
 import app.krista.extension.request.protos.http.HttpProtocol;
 import com.github.scribejava.core.oauth.OAuth20Service;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -28,6 +29,8 @@ public class SalesforceSalesAttributesTest {
     private RoutingInfo mockRoutingInfo;
 
     private Map<String, Object> testAttributes;
+    private AutoCloseable closeable;
+
     private static final String TEST_ROUTING_URL = "https://test.krista.app";
     private static final String TEST_CLIENT_ID = "test_client_id";
     private static final String TEST_CLIENT_SECRET = "test_client_secret";
@@ -39,8 +42,8 @@ public class SalesforceSalesAttributesTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.openMocks(this);
-        
+        closeable = MockitoAnnotations.openMocks(this);
+
         testAttributes = new HashMap<>();
         testAttributes.put(SalesforceSalesAttributes.CLIENT_ID, TEST_CLIENT_ID);
         testAttributes.put(SalesforceSalesAttributes.CLIENT_SECRET, TEST_CLIENT_SECRET);
@@ -55,6 +58,13 @@ public class SalesforceSalesAttributesTest {
         when(mockRoutingInfo.getRoutingURL(HttpProtocol.PROTOCOL_NAME, RoutingInfo.Type.APPLIANCE))
                 .thenReturn(TEST_ROUTING_URL);
         when(mockInvoker.getAttributes()).thenReturn(testAttributes);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        if (closeable != null) {
+            closeable.close();
+        }
     }
 
     // ========== Constructor Tests ==========
