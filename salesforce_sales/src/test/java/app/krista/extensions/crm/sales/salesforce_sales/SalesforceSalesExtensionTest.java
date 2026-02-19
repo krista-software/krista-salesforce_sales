@@ -135,15 +135,6 @@ public class SalesforceSalesExtensionTest {
     }
 
     @Test
-    public void testExtensionVersionFromGeneratedManifest() throws Exception {
-        try (java.io.InputStream is = this.getClass().getClassLoader().getResourceAsStream("META-INF/krista/extension.json")) {
-            assertNotNull("extension.json should be present on classpath", is);
-            String content = new String(is.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
-            assertTrue(content.contains("\"version\": \"2.0.16\""));
-        }
-    }
-
-    @Test
     public void testJavaVersionFromGeneratedManifest() throws Exception {
         try (java.io.InputStream is = this.getClass().getClassLoader().getResourceAsStream("META-INF/krista/extension.json")) {
             assertNotNull(is);

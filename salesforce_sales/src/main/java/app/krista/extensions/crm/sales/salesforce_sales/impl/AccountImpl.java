@@ -5,6 +5,8 @@ import app.krista.extensions.crm.sales.salesforce_sales.service.Account;
 import app.krista.extensions.crm.sales.salesforce_sales.util.DatePlus;
 import app.krista.model.base.PhoneNumber;
 
+import java.util.Map;
+
 public class AccountImpl implements Account {
 
     private final SFAccount sfAccount;
@@ -156,5 +158,10 @@ public class AccountImpl implements Account {
     @Override
     public Double getAnnualRevenue() {
         return sfAccount.annualRevenue;
+    }
+
+    @Override
+    public Map<String, Object> getCustomFields() {
+        return sfAccount.customFields;
     }
 }

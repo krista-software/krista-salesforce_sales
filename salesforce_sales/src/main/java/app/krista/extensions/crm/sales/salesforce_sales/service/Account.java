@@ -2,6 +2,8 @@ package app.krista.extensions.crm.sales.salesforce_sales.service;
 
 import app.krista.model.base.PhoneNumber;
 
+import java.util.Map;
+
 public interface Account {
     String getId();
 
@@ -60,4 +62,6 @@ public interface Account {
     Long getSLAExpirationDate();
 
     Double getAnnualRevenue();
+
+    Map<String, Object> getCustomFields();
 }

@@ -93,7 +93,15 @@ public class AccountStore implements EntityStore<Account> {
     @Override
     public List<Account> search(SearchQuery searchQuery, long pageIndex, int pageSize) throws IOException {
         if (searchQuery == null || searchQuery.getSearchConditions() == null || searchQuery.getSearchConditions().isEmpty()) {
-            LOGGER.info("Search conditions cannot be null or empty");
+            LOGGER.info("Search conditions are null or empty, returning all accounts");
+            try {
+                return accountDao.getAccounts(pageSize, pageIndex).stream()
+                        .map(AccountCatalogType::fromSFAccount)
+                        .collect(Collectors.toList());
+            } catch (IllegalArgumentException cause) {
+                LOGGER.error(cause.getMessage(), cause);
+                return List.of();
+            }
         }
         List<SearchCondition> conditions = searchQuery.getSearchConditions();
         try {
