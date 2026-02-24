@@ -34,10 +34,10 @@ public class OrderItem {
     @Searchable
     public String product2Id;
 
-    @Field(name = "Quantity", type = "Number", required = false)
+    @Field(name = "Quantity", type = "Number", required = true)
     public Double quantity;
 
-    @Field(name = "Unit Price", type = "Number", required = false)
+    @Field(name = "Unit Price", type = "Number", required = true)
     public Double unitPrice;
 
     @Field(name = "Total Price", type = "Number", required = false)

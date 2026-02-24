@@ -1,8 +1,9 @@
 package app.krista.extensions.crm.sales.salesforce_sales.catalog;
 
-import app.krista.extensions.crm.sales.salesforce_sales.catalog.stores.OrderStore;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.ContentDocumentLinkDaoImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.ContentVersionDaoImpl;
+import app.krista.extensions.crm.sales.salesforce_sales.impl.PriceBookEntryDaoImpl;
+import app.krista.extensions.crm.sales.salesforce_sales.impl.ProductDaoImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.service.ContentVersion;
 import app.krista.ksdk.files.FileHandle;
 import app.krista.ksdk.files.FileRepository;
@@ -26,7 +27,8 @@ public class OrderManagementAreaTest {
     private ContentVersionDaoImpl contentVersionDao;
     private ContentDocumentLinkDaoImpl contentDocumentLinkDao;
     private FileRepository fileRepository;
-    private OrderStore orderStore;
+    private ProductDaoImpl productDao;
+    private PriceBookEntryDaoImpl priceBookEntryDao;
     private OrderManagementArea orderManagementArea;
 
     @Before
@@ -35,21 +37,24 @@ public class OrderManagementAreaTest {
         contentVersionDao = mock(ContentVersionDaoImpl.class);
         contentDocumentLinkDao = mock(ContentDocumentLinkDaoImpl.class);
         fileRepository = mock(FileRepository.class);
-        orderStore = mock(OrderStore.class);
+        productDao = mock(ProductDaoImpl.class);
+        priceBookEntryDao = mock(PriceBookEntryDaoImpl.class);
 
         // Use reflection to access private constructor
         var ctor = OrderManagementArea.class.getDeclaredConstructor(
                 ContentVersionDaoImpl.class,
                 ContentDocumentLinkDaoImpl.class,
                 FileRepository.class,
-                OrderStore.class
+                ProductDaoImpl.class,
+                PriceBookEntryDaoImpl.class
         );
         ctor.setAccessible(true);
         orderManagementArea = ctor.newInstance(
                 contentVersionDao,
                 contentDocumentLinkDao,
                 fileRepository,
-                orderStore
+                productDao,
+                priceBookEntryDao
         );
     }
 

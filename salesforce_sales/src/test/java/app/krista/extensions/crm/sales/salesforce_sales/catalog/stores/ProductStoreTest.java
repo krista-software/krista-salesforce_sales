@@ -150,13 +150,14 @@ public class ProductStoreTest {
         product.name = "Updated Product";
 
         doNothing().when(productDao).updateProduct(any(ProductImpl.class));
+        when(productDao.getProductById("01txx000000001AAAQ")).thenReturn(mockProductImpl);
 
         // Act
         Product result = productStore.update(product);
 
         // Assert
         assertNotNull("Product should not be null", result);
-        assertEquals("Product should be returned", product, result);
+        assertEquals("Product ID should match", product.id, result.id);
         verify(productDao, times(1)).updateProduct(any(ProductImpl.class));
     }
 

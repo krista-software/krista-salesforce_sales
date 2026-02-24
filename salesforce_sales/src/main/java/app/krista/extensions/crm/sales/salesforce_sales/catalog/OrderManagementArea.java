@@ -3,11 +3,15 @@ package app.krista.extensions.crm.sales.salesforce_sales.catalog;
 import app.krista.extension.impl.anno.CatalogRequest;
 import app.krista.extension.impl.anno.Domain;
 import app.krista.extension.impl.anno.Field;
-import app.krista.extensions.crm.sales.salesforce_sales.catalog.catalogtypes.CatalogTypes;
-import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.Order;
-import app.krista.extensions.crm.sales.salesforce_sales.catalog.stores.OrderStore;
+import app.krista.extensions.crm.sales.salesforce_sales.catalog.catalogtypes.PricebookEntryCatalogType;
+import app.krista.extensions.crm.sales.salesforce_sales.catalog.catalogtypes.ProductCatalogType;
+import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.PricebookEntry;
+import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.Product;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.ContentDocumentLinkDaoImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.ContentVersionDaoImpl;
+import app.krista.extensions.crm.sales.salesforce_sales.impl.PriceBookEntryDaoImpl;
+import app.krista.extensions.crm.sales.salesforce_sales.impl.ProductDaoImpl;
+import app.krista.extensions.crm.sales.salesforce_sales.service.PriceBookEntry;
 import app.krista.ksdk.files.FileHandle;
 import app.krista.ksdk.files.FileRepository;
 import app.krista.model.base.File;
@@ -38,17 +42,20 @@ public final class OrderManagementArea {
     private final ContentVersionDaoImpl contentVersionDao;
     private final ContentDocumentLinkDaoImpl contentDocumentLinkDao;
     private final FileRepository fileRepository;
-    private final OrderStore orderStore;
+    private final ProductDaoImpl productDao;
+    private final PriceBookEntryDaoImpl priceBookEntryDao;
 
     @Inject
     private OrderManagementArea(ContentVersionDaoImpl contentVersionDao,
                                 ContentDocumentLinkDaoImpl contentDocumentLinkDao,
                                 FileRepository fileRepository,
-                                OrderStore orderStore) {
+                                ProductDaoImpl productDao,
+                                PriceBookEntryDaoImpl priceBookEntryDao) {
         this.contentVersionDao = contentVersionDao;
         this.contentDocumentLinkDao = contentDocumentLinkDao;
         this.fileRepository = fileRepository;
-        this.orderStore = orderStore;
+        this.productDao = productDao;
+        this.priceBookEntryDao = priceBookEntryDao;
     }
 
     @CatalogRequest(
@@ -154,72 +161,79 @@ public final class OrderManagementArea {
         }
     }
 
-    /**
-     * Create an Order with custom fields.
-     * This catalog request allows you to create an Order with standard fields and any custom fields.
-     * Custom fields should be provided as key-value pairs in the "Custom Fields" composite list.
-     *
-     * Example custom fields:
-     * - custom_field__c: 2024-02-15
-     * - PO_Number__c: PO-12345
-     * - Extraction_Status__c: Completed
-     */
     @CatalogRequest(
-            id = "localDomainRequest_create_order_with_custom_fields",
-            name = "Create Order With Custom Fields",
-            description = "Create an Order with standard and custom fields. Custom fields ending with __c are supported dynamically.",
+            id = "localDomainRequest_b2c3d4e5-6f7a-8901-bcde-f12345678901",
+            name = "Find Or Create Product",
+            description = "Searches for a product by product code. If found, returns it. If not found, creates a new product with the given name and code and returns it.",
             area = "Order Management",
-            type = CatalogRequest.Type.CHANGE_SYSTEM)
-    @Field.Desc(name = "Order", type = "Entity(Order)", required = false)
-    public Order createOrderWithCustomFields(
-            @Field(name = "Account Id", type = "Text", required = true) String accountId,
-            @Field(name = "Effective Date", type = "Date", required = true) Long effectiveDate,
-            @Field(name = "Status", type = "PickOne", required = true) String status,
-            @Field(name = "Description", type = "Text", required = false) String description,
-            @Field.Desc(name = "Custom Fields", type = "[ Composite ]", required = false) List<Object> customFields) {
+            type = CatalogRequest.Type.QUERY_SYSTEM)
+    @Field.Desc(name = "Product", type = "Entity(Product)", required = false)
+    public Product findOrCreateProduct(
+            @Field(name = "Product Name", type = "Text") String productName,
+            @Field(name = "Product Code", type = "Text") String productCode) {
         try {
-            System.out.println("========================================");
-            System.out.println("createOrderWithCustomFields() CALLED");
-            System.out.println("Account Id: " + accountId);
-            System.out.println("Effective Date: " + effectiveDate);
-            System.out.println("Status: " + status);
-            System.out.println("Description: " + description);
-            System.out.println("Custom Fields: " + customFields);
-            System.out.println("========================================");
-
-            // Build the order fields map with standard fields
-            Map<String, Object> orderFields = new HashMap<>();
-            orderFields.put("Account Id", accountId);
-            orderFields.put("Effective Date", effectiveDate);
-            orderFields.put("Status", status);
-            if (description != null && !description.isEmpty()) {
-                orderFields.put("Description", description);
+            app.krista.extensions.crm.sales.salesforce_sales.service.Product existing = productDao.getProductByProductCode(productCode);
+            if (existing != null) {
+                return ProductCatalogType.fromSFProduct(existing);
             }
-
-            // Add custom fields from the composite list
-            if (customFields != null && !customFields.isEmpty()) {
-                Map<String, Object> customFieldsMap = CatalogTypes.getFieldMapFromList(customFields);
-                System.out.println("Parsed custom fields map: " + customFieldsMap);
-                orderFields.putAll(customFieldsMap);
-            }
-
-            System.out.println("Final order fields map: " + orderFields);
-            LOGGER.info("Creating order with fields: {}", orderFields);
-
-            // Create the order using OrderStore
-            Order createdOrder = orderStore.create(orderFields);
-
-            System.out.println("Order created successfully: " + createdOrder);
-            LOGGER.info("Successfully created order with ID: {}", createdOrder != null ? createdOrder.id : "null");
-
-            return createdOrder;
-
+            Map<String, Object> fields = new HashMap<>();
+            fields.put("Name", productName);
+            fields.put("Product Code", productCode);
+            String id = productDao.addProduct(fields);
+            return ProductCatalogType.fromSFProduct(productDao.getProductById(id));
         } catch (IllegalArgumentException cause) {
-            System.out.println("ERROR creating order with custom fields: " + cause.getMessage());
-            cause.printStackTrace();
-            LOGGER.error("Error creating order with custom fields: {}", cause.getMessage(), cause);
-            throw cause;
+            LOGGER.error(cause.getMessage(), cause);
+            return null;
         }
     }
+
+    @CatalogRequest(
+            id = "localDomainRequest_c3d4e5f6-7a8b-9012-cdef-123456789012",
+            name = "Find Or Create Pricebook Entry",
+            description = "Searches for a pricebook entry by product and pricebook. If found, returns it. If not found, creates a new pricebook entry and returns it.",
+            area = "Order Management",
+            type = CatalogRequest.Type.QUERY_SYSTEM)
+    @Field.Desc(name = "Pricebook Entry", type = "Entity(Pricebook Entry)", required = false)
+    public PricebookEntry findOrCreatePricebookEntry(
+            @Field(name = "Pricebook2 Id", type = "Text") String pricebook2Id,
+            @Field(name = "Product2 Id", type = "Text") String product2Id,
+            @Field(name = "Unit Price", type = "Number") Double unitPrice) {
+        try {
+            System.out.println("========================================");
+            System.out.println("findOrCreatePricebookEntry() CALLED");
+            System.out.println("Pricebook2 Id: " + pricebook2Id);
+            System.out.println("Product2 Id:   " + product2Id);
+            System.out.println("Unit Price:    " + unitPrice);
+            System.out.println("========================================");
+
+            List<PriceBookEntry> existing = priceBookEntryDao.getPriceBookEntryByProductAndPricebook(product2Id, pricebook2Id);
+            System.out.println("Search result count: " + existing.size());
+
+            if (!existing.isEmpty()) {
+                PriceBookEntry found = existing.get(0);
+                System.out.println("Found existing pricebook entry: id=" + found.getId() + ", name=" + found.getName() + ", unitPrice=" + found.getUnitPrice());
+                return PricebookEntryCatalogType.fromSFPriceBookEntry(found);
+            }
+
+            System.out.println("No existing entry found, creating new one...");
+            Map<String, Object> fields = new HashMap<>();
+            fields.put("Pricebook Id", pricebook2Id);
+            fields.put("Product Id", product2Id);
+            fields.put("Unit Price", unitPrice);
+            System.out.println("Creating with fields: " + fields);
+
+            String id = priceBookEntryDao.addPriceBookEntry(fields);
+            System.out.println("Created pricebook entry with id: " + id);
+
+            PricebookEntry created = PricebookEntryCatalogType.fromSFPriceBookEntry(priceBookEntryDao.getPriceBookEntryById(id));
+            System.out.println("Returning created entry: id=" + created.id + ", name=" + created.name + ", unitPrice=" + created.unitPrice);
+            System.out.println("========================================");
+            return created;
+        } catch (IllegalArgumentException cause) {
+            LOGGER.error(cause.getMessage(), cause);
+            return null;
+        }
+    }
+
 }
 

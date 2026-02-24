@@ -24,14 +24,14 @@ public class Product {
     @ToString
     public String name;
     
-    @Field(name = "Product Code", type = "Text", required = false)
+    @Field(name = "Product Code", type = "Text", required = true)
     @Searchable
     public String productCode;
     
     @Field(name = "Description", type = "Text", required = false)
     public String description;
     
-    @Field(name = "Is Active", type = "Text", required = false)
+    @Field.Boolean(name = "Is Active", required = false)
     public Boolean isActive;
     
     @Field(name = "Family", type = "Text", required = false)

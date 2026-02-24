@@ -149,6 +149,7 @@ public class OrderStoreTest {
         order.status = "Activated";
 
         doNothing().when(orderDao).updateOrder(any(OrderImpl.class));
+        when(orderDao.getOrderById("801xx000000001AAAQ")).thenReturn(mockOrderImpl);
 
         // Act
         Order result = orderStore.update(order);

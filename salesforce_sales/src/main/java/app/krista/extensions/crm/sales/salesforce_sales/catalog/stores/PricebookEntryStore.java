@@ -65,7 +65,7 @@ public class PricebookEntryStore implements EntityStore<PricebookEntry> {
         }
         try {
             priceBookEntryDao.updatePriceBookEntry(new PriceBookEntryImpl(SFPricebookEntry.from(pricebookEntry)));
-            return pricebookEntry;
+            return get(pricebookEntry.id);
         } catch (IllegalArgumentException cause) {
             LOGGER.error(cause.getMessage(), cause);
             return null;

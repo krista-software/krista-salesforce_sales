@@ -16,15 +16,14 @@ public class PricebookEntry {
     @Field(name = "Id", type = "Text", required = false)
     public String id;
 
-    @Searchable
     @ToString
     @Field(name = "Name", type = "Text", required = false)
     public String name;
 
-    @Field(name = "Pricebook Id", type = "Text")
+    @Field(name = "Pricebook Id", type = "Text", required = true)
     public String pricebookId;
 
-    @Field(name = "Product Id", type = "Text")
+    @Field(name = "Product Id", type = "Text", required = true)
     public String productId;
 
     @Field(name = "Product Code", type = "Text", required = false)
@@ -36,7 +35,7 @@ public class PricebookEntry {
     @Field(name = "Last Modified Date", type = "Date", required = false, attributes = @Attribute(name = "includeTimeOfDay", value = "true"))
     public Long lastModifiedDate;
 
-    @Field(name = "Unit Price", type = "Currency")
+    @Field(name = "Unit Price", type = "Currency", required = true)
     public Double unitPrice;
 
     public static PricebookEntry fromFields(Map<String, Object> fields) {

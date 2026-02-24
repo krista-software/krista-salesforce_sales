@@ -65,7 +65,7 @@ public class AccountStore implements EntityStore<Account> {
         }
         try {
             accountDao.updateAccount(new AccountImpl(SFAccount.from(account)));
-            return account;
+            return get(account.id);
         } catch (IllegalArgumentException cause) {
             LOGGER.error(cause.getMessage(), cause);
             return null;
@@ -110,7 +110,11 @@ public class AccountStore implements EntityStore<Account> {
                 String matchPattern = condition.getOperand() != null ? String.valueOf(condition.getOperand()).trim() : "";
                 String selector = condition.getFieldName();
                 if ("Name".equalsIgnoreCase(selector)) {
-                    accounts = accountDao.getAccountByName(matchPattern, pageSize, pageIndex).stream().map(AccountCatalogType::fromSFAccount).collect(Collectors.toList());
+                    if (matchPattern.isEmpty()) {
+                        accounts = accountDao.getAccounts(pageSize, pageIndex).stream().map(AccountCatalogType::fromSFAccount).collect(Collectors.toList());
+                    } else {
+                        accounts = accountDao.getAccountByName(matchPattern, pageSize, pageIndex).stream().map(AccountCatalogType::fromSFAccount).collect(Collectors.toList());
+                    }
                 }
             }
             if (conditions.size() == 1 && accounts.isEmpty()) {

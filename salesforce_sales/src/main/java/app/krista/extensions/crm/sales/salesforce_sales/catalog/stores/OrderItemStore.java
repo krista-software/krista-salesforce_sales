@@ -132,9 +132,17 @@ public class OrderItemStore implements EntityStore<OrderItem> {
         List<SearchCondition> conditions = searchQuery.getSearchConditions();
         try {
             List<OrderItem> orderItems = new ArrayList<>();
+            boolean hasNonEmptyCondition = false;
             for (SearchCondition condition : conditions) {
                 String matchPattern = condition.getOperand() != null ? String.valueOf(condition.getOperand()).trim() : "";
                 String selector = condition.getFieldName();
+
+                if (matchPattern.isEmpty()) {
+                    continue;
+                }
+
+                hasNonEmptyCondition = true;
+
                 if ("Order Id".equalsIgnoreCase(selector)) {
                     orderItems = orderItemDao.getOrderItemsByOrderId(matchPattern, pageSize, pageIndex).stream()
                             .map(OrderItemCatalogType::fromSFOrderItem)
@@ -150,8 +158,9 @@ public class OrderItemStore implements EntityStore<OrderItem> {
                     }
                 }
             }
-            if (conditions.size() == 1 && orderItems.isEmpty()) {
-                orderItems = orderItemDao.getOrderItems(pageSize, pageIndex).stream()
+            if (!hasNonEmptyCondition) {
+                LOGGER.info("All search conditions are empty, returning all order items");
+                return orderItemDao.getOrderItems(pageSize, pageIndex).stream()
                         .map(OrderItemCatalogType::fromSFOrderItem)
                         .collect(Collectors.toList());
             }

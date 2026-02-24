@@ -100,7 +100,7 @@ public class OrderStore implements EntityStore<Order> {
         }
         try {
             orderDao.updateOrder(new OrderImpl(SFOrder.from(order)));
-            return order;
+            return get(order.id);
         } catch (IllegalArgumentException cause) {
             LOGGER.error(cause.getMessage(), cause);
             return null;
@@ -150,26 +150,37 @@ public class OrderStore implements EntityStore<Order> {
         System.out.println("Search conditions: " + conditions);
         try {
             List<Order> orders = new ArrayList<>();
+            boolean hasNonEmptyCondition = false;
             for (SearchCondition condition : conditions) {
                 String matchPattern = condition.getOperand() != null ? String.valueOf(condition.getOperand()).trim() : "";
                 String selector = condition.getFieldName();
+
+                if (matchPattern.isEmpty()) {
+                    continue;
+                }
+
                 if ("Order Number".equalsIgnoreCase(selector)) {
+                    hasNonEmptyCondition = true;
                     app.krista.extensions.crm.sales.salesforce_sales.service.Order order = orderDao.getOrderByOrderNumber(matchPattern);
                     if (order != null) {
                         orders.add(OrderCatalogType.fromSFOrder(order));
                     }
                 } else if ("Account Id".equalsIgnoreCase(selector)) {
+                    hasNonEmptyCondition = true;
                     orders = orderDao.getOrdersByAccountId(matchPattern, pageSize, pageIndex).stream()
                             .map(OrderCatalogType::fromSFOrder)
                             .collect(Collectors.toList());
                 } else if ("Status".equalsIgnoreCase(selector)) {
+                    hasNonEmptyCondition = true;
                     orders = orderDao.getOrdersByStatus(matchPattern, pageSize, pageIndex).stream()
                             .map(OrderCatalogType::fromSFOrder)
                             .collect(Collectors.toList());
                 }
+                // Unknown conditions (e.g. logicalName injected by framework) are intentionally ignored
             }
-            if (conditions.size() == 1 && orders.isEmpty()) {
-                orders = orderDao.getOrders(pageSize, pageIndex).stream()
+            if (!hasNonEmptyCondition) {
+                LOGGER.info("All search conditions are empty, returning all orders");
+                return orderDao.getOrders(pageSize, pageIndex).stream()
                         .map(OrderCatalogType::fromSFOrder)
                         .collect(Collectors.toList());
             }

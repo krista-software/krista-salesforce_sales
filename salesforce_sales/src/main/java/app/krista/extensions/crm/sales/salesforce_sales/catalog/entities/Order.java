@@ -32,7 +32,7 @@ public class Order {
     public Long effectiveDate;
     
     @Searchable
-    @Field(name = "Status", type = "PickOne", required = true)
+    @Field.PickOne(name = "Status", values = {"Draft", "Activated"}, required = true, attributes = {}, options = {})
     public String status;
     
     @Field(name = "Description", type = "Text", required = false)

@@ -72,7 +72,7 @@ public class ProductStore implements EntityStore<Product> {
         }
         try {
             productDao.updateProduct(new ProductImpl(SFProduct.from(product)));
-            return product;
+            return get(product.id);
         } catch (IllegalArgumentException cause) {
             LOGGER.error(cause.getMessage(), cause);
             return null;
@@ -113,27 +113,38 @@ public class ProductStore implements EntityStore<Product> {
         List<SearchCondition> conditions = searchQuery.getSearchConditions();
         try {
             List<Product> products = new ArrayList<>();
+            boolean hasNonEmptyCondition = false;
             for (SearchCondition condition : conditions) {
                 String matchPattern = condition.getOperand() != null ? String.valueOf(condition.getOperand()).trim() : "";
                 String selector = condition.getFieldName();
+
+                if (matchPattern.isEmpty()) {
+                    continue;
+                }
+
                 if ("Product Code".equalsIgnoreCase(selector)) {
+                    hasNonEmptyCondition = true;
                     app.krista.extensions.crm.sales.salesforce_sales.service.Product product = productDao.getProductByProductCode(matchPattern);
                     if (product != null) {
                         products.add(ProductCatalogType.fromSFProduct(product));
                     }
                 } else if ("Family".equalsIgnoreCase(selector)) {
+                    hasNonEmptyCondition = true;
                     products = productDao.getProductsByFamily(matchPattern, pageSize, pageIndex).stream()
                             .map(ProductCatalogType::fromSFProduct)
                             .collect(Collectors.toList());
                 } else if ("Id".equalsIgnoreCase(selector)) {
+                    hasNonEmptyCondition = true;
                     app.krista.extensions.crm.sales.salesforce_sales.service.Product product = productDao.getProductById(matchPattern);
                     if (product != null) {
                         products.add(ProductCatalogType.fromSFProduct(product));
                     }
                 }
+                // Unknown conditions (e.g. logicalName injected by framework) are intentionally ignored
             }
-            if (conditions.size() == 1 && products.isEmpty()) {
-                products = productDao.getProducts(pageSize, pageIndex).stream()
+            if (!hasNonEmptyCondition) {
+                LOGGER.info("All search conditions are empty, returning all products");
+                return productDao.getProducts(pageSize, pageIndex).stream()
                         .map(ProductCatalogType::fromSFProduct)
                         .collect(Collectors.toList());
             }
