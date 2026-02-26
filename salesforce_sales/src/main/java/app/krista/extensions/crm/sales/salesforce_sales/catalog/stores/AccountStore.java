@@ -34,7 +34,8 @@ public class AccountStore implements EntityStore<Account> {
     @Override
     public Account create(Map<String, Object> entityAttributeField) {
         if (entityAttributeField == null || entityAttributeField.isEmpty()) {
-            LOGGER.info("Entity attribute field map cannot be null or empty");
+            LOGGER.warn("Entity attribute field map cannot be null or empty");
+            return new Account();
         }
         try {
             String id = accountDao.addAccount(entityAttributeField);
@@ -48,7 +49,8 @@ public class AccountStore implements EntityStore<Account> {
     @Override
     public Account get(String primaryKey) {
         if (primaryKey == null || primaryKey.isEmpty()) {
-            LOGGER.info("Primary key cannot be null or empty");
+            LOGGER.warn("Primary key cannot be null or empty");
+            return null;
         }
         try {
             return AccountCatalogType.fromSFAccount(accountDao.getAccountById(primaryKey));
@@ -61,7 +63,8 @@ public class AccountStore implements EntityStore<Account> {
     @Override
     public Account update(Account account) {
         if (account == null) {
-            LOGGER.info("Account cannot be null");
+            LOGGER.warn("Account cannot be null");
+            return null;
         }
         try {
             accountDao.updateAccount(new AccountImpl(SFAccount.from(account)));
@@ -147,6 +150,6 @@ public class AccountStore implements EntityStore<Account> {
 
     @Override
     public List<String> lookup(Map<String, Object> map, List<String> list) {
-        return null;
+        return List.of();
     }
 }

@@ -7,6 +7,7 @@ import app.krista.extensions.crm.sales.salesforce_sales.service.Account;
 import app.krista.extensions.crm.sales.salesforce_sales.service.AccountDao;
 import app.krista.extensions.crm.sales.salesforce_sales.util.CustomFieldsSerializer;
 import app.krista.extensions.crm.sales.salesforce_sales.util.SalesforceListResponse;
+import app.krista.extensions.crm.sales.salesforce_sales.util.SFHelper;
 import com.google.gson.reflect.TypeToken;
 import org.jvnet.hk2.annotations.Service;
 
@@ -46,7 +47,7 @@ public class AccountDaoImpl implements AccountDao {
     public List<Account> getAccountByName(String name, long size, long page) {
         // Use exact match (=) instead of LIKE to avoid matching partial names
         // Example: searching "test" won't match "test123"
-        String query = "Select " + QUERY_FIELDS + " from Account where name = '" + name + "' ORDER BY Name LIMIT " + size + " OFFSET " + Math.max((page - 1) * size, 0);
+        String query = "Select " + QUERY_FIELDS + " from Account where name = '" + SFHelper.soqlEscape(name) + "' ORDER BY Name LIMIT " + size + " OFFSET " + Math.max((page - 1) * size, 0);
         return getAccountByQuery(query);
     }
 
@@ -83,19 +84,19 @@ public class AccountDaoImpl implements AccountDao {
     public void updateAccount(Account account) {
         if (account.getId() == null || account.getId().isEmpty())
             throw new IllegalArgumentException("Account ID is required. Please provide the Salesforce ID of the account you want to update.");
-        SFAccount updatedopportunity = SFAccount.from(AccountCatalogType.fromSFAccount(account));
-        SFAccount oldOpportunity = SFAccount.from(AccountCatalogType.fromSFAccount(getAccountById(updatedopportunity.id)));
-        Map<String, Object> diff = salesforceManager.getDifference(oldOpportunity, updatedopportunity);
-        salesforceManager.updateRecord(updatedopportunity.id, GSON.toJson(diff), ACCOUNT);
+        SFAccount updatedAccount = SFAccount.from(AccountCatalogType.fromSFAccount(account));
+        SFAccount existingAccount = SFAccount.from(AccountCatalogType.fromSFAccount(getAccountById(updatedAccount.id)));
+        Map<String, Object> diff = salesforceManager.getDifference(existingAccount, updatedAccount);
+        salesforceManager.updateRecord(updatedAccount.id, GSON.toJson(diff), ACCOUNT);
     }
 
     private List<Account> getAccountByQuery(String query) {
         String response = salesforceManager.getRecordByQuery(query);
-        SalesforceListResponse<SFAccount> oppList =
+        SalesforceListResponse<SFAccount> accountList =
                 ACCOUNT_GSON.fromJson(response, new TypeToken<SalesforceListResponse<SFAccount>>() {
                 }.getType());
-        if (oppList.records.size() > 0) {
-            return oppList.records.stream().map(AccountImpl::new).collect(Collectors.toList());
+        if (accountList.records != null && !accountList.records.isEmpty()) {
+            return accountList.records.stream().map(AccountImpl::new).collect(Collectors.toList());
         } else {
             return List.of();
         }

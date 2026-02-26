@@ -32,7 +32,6 @@ public class OrderStore implements EntityStore<Order> {
     @Inject
     public OrderStore(OrderDaoImpl orderDao) {
         this.orderDao = orderDao;
-        LOGGER.info("OrderStore initialized successfully with OrderDao: {}", orderDao);
     }
     
     @Override
@@ -166,7 +165,7 @@ public class OrderStore implements EntityStore<Order> {
     
     @Override
     public List<String> lookup(Map<String, Object> map, List<String> list) {
-        return null;
+        return List.of();
     }
 }
 

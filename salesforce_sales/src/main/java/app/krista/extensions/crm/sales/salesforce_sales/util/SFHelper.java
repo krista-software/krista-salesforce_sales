@@ -145,4 +145,18 @@ public class SFHelper {
         return useOAuth;
     }
 
+    /**
+     * Escapes a string value for safe use in SOQL queries.
+     * Salesforce SOQL uses backslash escaping for single quotes and backslashes.
+     *
+     * @param value the string value to escape
+     * @return the escaped string safe for SOQL injection
+     */
+    public static String soqlEscape(String value) {
+        if (value == null) {
+            return "";
+        }
+        return value.replace("\\", "\\\\").replace("'", "\\'");
+    }
+
 }

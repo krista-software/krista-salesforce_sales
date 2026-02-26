@@ -5,6 +5,7 @@ import app.krista.extensions.crm.sales.salesforce_sales.model.SFProduct;
 import app.krista.extensions.crm.sales.salesforce_sales.service.Product;
 import app.krista.extensions.crm.sales.salesforce_sales.service.ProductDao;
 import app.krista.extensions.crm.sales.salesforce_sales.util.SalesforceListResponse;
+import app.krista.extensions.crm.sales.salesforce_sales.util.SFHelper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.jvnet.hk2.annotations.Service;
@@ -52,7 +53,7 @@ public class ProductDaoImpl implements ProductDao {
     @Override
     public Product getProductByProductCode(String productCode) {
         String query = String.format("SELECT %s FROM Product2 WHERE ProductCode = '%s' LIMIT 1",
-                QUERY_FIELDS, productCode);
+                QUERY_FIELDS, SFHelper.soqlEscape(productCode));
         List<Product> products = getProductsByQuery(query);
         return products.isEmpty() ? null : products.get(0);
     }
@@ -60,7 +61,7 @@ public class ProductDaoImpl implements ProductDao {
     @Override
     public List<Product> getProductsByFamily(String family, long size, long page) {
         String query = String.format("SELECT %s FROM Product2 WHERE Family = '%s' ORDER BY Name ASC LIMIT %d OFFSET %d",
-                QUERY_FIELDS, family, size, Math.max((page - 1) * size, 0));
+                QUERY_FIELDS, SFHelper.soqlEscape(family), size, Math.max((page - 1) * size, 0));
         return getProductsByQuery(query);
     }
 
@@ -165,6 +166,9 @@ public class ProductDaoImpl implements ProductDao {
         SalesforceListResponse<SFProduct> listResponse = GSON.fromJson(response,
                 new TypeToken<SalesforceListResponse<SFProduct>>() {}.getType());
 
+        if (listResponse == null || listResponse.records == null) {
+            return List.of();
+        }
         return listResponse.records.stream()
                 .map(ProductImpl::new)
                 .collect(Collectors.toList());

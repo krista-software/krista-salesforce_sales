@@ -162,7 +162,7 @@ public class ProductStore implements EntityStore<Product> {
 
     @Override
     public List<String> lookup(Map<String, Object> map, List<String> list) {
-        return null;
+        return List.of();
     }
 }
 

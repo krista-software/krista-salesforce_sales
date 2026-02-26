@@ -2,12 +2,22 @@
 
 ## Version 2.0.16
 
-- **Developer Name** : Deepak Shingan
-- **Krista Service APIs Java** : 1.0.118
-- **Global Catalog Version** : GC-2026.02.02
+- **Developer Name** : Vrushali Gaikwad
+- **Krista Service APIs Java** : 1.0.120
+- **Global Catalog Version** : GC-2026.02.04
 - **Release Date** :Feb 2026
 
 ## What's New
+
+### 🆕 PO to Order Creation Support
+* **Enhanced Salesforce Extension**: Full support for Purchase Order to Order creation workflow
+* **Account Management**: Create and manage Salesforce Accounts with dynamic custom fields
+* **Order Processing**: Create and update Orders with comprehensive field support
+* **Order Items**: Manage Order Items (Order Products) with quantity, pricing, and custom fields
+* **Product Catalog**: Full Product2 entity support with product codes, families, and activation status
+* **Pricebook Entries**: Automated PricebookEntry creation for product pricing
+* **File Attachments**: Upload and link files to Orders via ContentVersion and ContentDocumentLink
+* **Dynamic Custom Fields**: Support for all Salesforce custom fields (`__c` suffix) without hardcoding
 
 ### 🎯 Enhanced User Experience
 * **Improved Error Messages**: All error messages across the extension have been rewritten to be more user-friendly, actionable, and provide clear resolution steps
@@ -129,11 +139,11 @@
 * **Target Compatibility**: Java 21
 
 ### Test Execution
-* **Total Tests**: 99
+* **Total Tests**: 586
 * **Pass Rate**: 100%
-* **Execution Time**: ~2-3 seconds
+* **Execution Time**: ~10-15 seconds
 * **Framework**: JUnit 4
-* **Mocking**: None (100% real implementations)
+* **Mocking**: Minimal (mostly real implementations)
 
 ## Migration Notes
 

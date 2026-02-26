@@ -70,6 +70,12 @@ public final class OrderItemCatalogType {
         if (orderItem.createdById != null) orderItemMap.put("Created By Id", orderItem.createdById);
         if (orderItem.lastModifiedDate != null) orderItemMap.put("Last Modified Date", orderItem.lastModifiedDate);
         if (orderItem.lastModifiedById != null) orderItemMap.put("Last Modified By Id", orderItem.lastModifiedById);
+
+        // Add custom fields to the map
+        if (orderItem.customFields != null && !orderItem.customFields.isEmpty()) {
+            orderItemMap.putAll(orderItem.customFields);
+        }
+
         return orderItemMap;
     }
 }

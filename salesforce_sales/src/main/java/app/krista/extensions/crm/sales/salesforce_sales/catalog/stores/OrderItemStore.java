@@ -176,10 +176,6 @@ public class OrderItemStore implements EntityStore<OrderItem> {
     public List<OrderItem> search(List<SearchCondition> conditions, long pageIndex, int pageSize) {
         return List.of();
     }
-    
-    public List<OrderItem> search(List<SearchCondition> conditions, long pageIndex, long pageSize) {
-        return search(conditions, pageIndex, (int) pageSize);
-    }
 
     @Override
     public boolean contains(String s) {
@@ -193,7 +189,7 @@ public class OrderItemStore implements EntityStore<OrderItem> {
 
     @Override
     public List<String> lookup(Map<String, Object> map, List<String> list) {
-        return null;
+        return List.of();
     }
 }
 

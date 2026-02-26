@@ -7,6 +7,7 @@ import app.krista.extensions.crm.sales.salesforce_sales.service.OrderDao;
 import app.krista.extensions.crm.sales.salesforce_sales.util.CustomFieldsSerializer;
 import app.krista.extensions.crm.sales.salesforce_sales.util.SFOrderDeserializer;
 import app.krista.extensions.crm.sales.salesforce_sales.util.SalesforceListResponse;
+import app.krista.extensions.crm.sales.salesforce_sales.util.SFHelper;
 import com.google.gson.reflect.TypeToken;
 import org.jvnet.hk2.annotations.Service;
 import org.slf4j.Logger;
@@ -75,30 +76,32 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     public Order getOrderByOrderNumber(String orderNumber) {
         try {
-            String query = String.format("SELECT %s FROM Order WHERE OrderNumber = '%s' LIMIT 1", 
-                    QUERY_FIELDS, orderNumber);
+            String query = String.format("SELECT %s FROM Order WHERE OrderNumber = '%s' LIMIT 1",
+                    QUERY_FIELDS, SFHelper.soqlEscape(orderNumber));
             List<Order> orders = getOrdersByQuery(query);
             if (orders.isEmpty()) {
                 throw new IllegalArgumentException("Order not found with Order Number: " + orderNumber);
             }
             return orders.get(0);
+        } catch (IllegalArgumentException e) {
+            throw e;
         } catch (Exception e) {
             LOGGER.error("Error retrieving order by order number {}: {}", orderNumber, e.getMessage(), e);
-            throw new IllegalArgumentException("Failed to retrieve order with Order Number: " + orderNumber + ". " + e.getMessage(), e);
+            throw new IllegalArgumentException("Failed to retrieve order with Order Number: " + orderNumber, e);
         }
     }
     
     @Override
     public List<Order> getOrdersByAccountId(String accountId, long size, long page) {
         String query = String.format("SELECT %s FROM Order WHERE AccountId = '%s' ORDER BY CreatedDate DESC LIMIT %d OFFSET %d",
-                QUERY_FIELDS, accountId, size, Math.max((page - 1) * size, 0));
+                QUERY_FIELDS, SFHelper.soqlEscape(accountId), size, Math.max((page - 1) * size, 0));
         return getOrdersByQuery(query);
     }
     
     @Override
     public List<Order> getOrdersByStatus(String status, long size, long page) {
         String query = String.format("SELECT %s FROM Order WHERE Status = '%s' ORDER BY CreatedDate DESC LIMIT %d OFFSET %d",
-                QUERY_FIELDS, status, size, Math.max((page - 1) * size, 0));
+                QUERY_FIELDS, SFHelper.soqlEscape(status), size, Math.max((page - 1) * size, 0));
         return getOrdersByQuery(query);
     }
     
@@ -201,9 +204,11 @@ public class OrderDaoImpl implements OrderDao {
             }
             salesforceManager.deleteRecordById(id, ORDER);
             LOGGER.info("Successfully deleted order with ID: {}", id);
+        } catch (IllegalArgumentException e) {
+            throw e;
         } catch (Exception e) {
             LOGGER.error("Error deleting order {}: {}", id, e.getMessage(), e);
-            throw new IllegalArgumentException("Failed to delete order with ID: " + id + ". " + e.getMessage(), e);
+            throw new IllegalArgumentException("Failed to delete order with ID: " + id, e);
         }
     }
 

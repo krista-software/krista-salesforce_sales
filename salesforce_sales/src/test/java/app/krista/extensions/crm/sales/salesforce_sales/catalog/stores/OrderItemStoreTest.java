@@ -237,6 +237,7 @@ public class OrderItemStoreTest {
         List<String> result = orderItemStore.lookup(new HashMap<>(), List.of());
 
         // Assert
-        assertNull("Lookup should return null", result);
+        assertNotNull("Lookup should return empty list, not null", result);
+        assertTrue("Lookup should return empty list", result.isEmpty());
     }
 }

@@ -7,7 +7,7 @@ import app.krista.extensions.crm.sales.salesforce_sales.service.OrderItemDao;
 import app.krista.extensions.crm.sales.salesforce_sales.util.CustomFieldsSerializer;
 import app.krista.extensions.crm.sales.salesforce_sales.util.SFOrderItemDeserializer;
 import app.krista.extensions.crm.sales.salesforce_sales.util.SalesforceListResponse;
-import com.google.gson.JsonObject;
+import app.krista.extensions.crm.sales.salesforce_sales.util.SFHelper;
 import com.google.gson.reflect.TypeToken;
 import org.jvnet.hk2.annotations.Service;
 import org.slf4j.Logger;
@@ -63,14 +63,14 @@ public class OrderItemDaoImpl implements OrderItemDao {
     @Override
     public List<OrderItem> getOrderItemsByOrderId(String orderId, long size, long page) {
         String query = String.format("SELECT %s FROM OrderItem WHERE OrderId = '%s' ORDER BY CreatedDate DESC LIMIT %d OFFSET %d",
-                QUERY_FIELDS, orderId, size, Math.max((page - 1) * size, 0));
+                QUERY_FIELDS, SFHelper.soqlEscape(orderId), size, Math.max((page - 1) * size, 0));
         return getOrderItemsByQuery(query);
     }
     
     @Override
     public List<OrderItem> getOrderItemsByProductId(String productId, long size, long page) {
         String query = String.format("SELECT %s FROM OrderItem WHERE Product2Id = '%s' ORDER BY CreatedDate DESC LIMIT %d OFFSET %d",
-                QUERY_FIELDS, productId, size, Math.max((page - 1) * size, 0));
+                QUERY_FIELDS, SFHelper.soqlEscape(productId), size, Math.max((page - 1) * size, 0));
         return getOrderItemsByQuery(query);
     }
     
