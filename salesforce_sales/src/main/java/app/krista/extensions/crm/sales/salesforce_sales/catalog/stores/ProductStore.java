@@ -102,7 +102,7 @@ public class ProductStore implements EntityStore<Product> {
         if (searchQuery == null || searchQuery.getSearchConditions() == null || searchQuery.getSearchConditions().isEmpty()) {
             LOGGER.info("Search conditions are null or empty, returning all products");
             try {
-                return productDao.getProducts(pageSize, pageIndex).stream()
+                return productDao.getProducts(Math.max(pageSize, 200), pageIndex).stream()
                         .map(ProductCatalogType::fromSFProduct)
                         .collect(Collectors.toList());
             } catch (IllegalArgumentException cause) {
@@ -130,7 +130,7 @@ public class ProductStore implements EntityStore<Product> {
                     }
                 } else if ("Family".equalsIgnoreCase(selector)) {
                     hasNonEmptyCondition = true;
-                    products = productDao.getProductsByFamily(matchPattern, pageSize, pageIndex).stream()
+                    products = productDao.getProductsByFamily(matchPattern, Math.max(pageSize, 200), pageIndex).stream()
                             .map(ProductCatalogType::fromSFProduct)
                             .collect(Collectors.toList());
                 } else if ("Id".equalsIgnoreCase(selector)) {
@@ -144,7 +144,7 @@ public class ProductStore implements EntityStore<Product> {
             }
             if (!hasNonEmptyCondition) {
                 LOGGER.info("All search conditions are empty, returning all products");
-                return productDao.getProducts(pageSize, pageIndex).stream()
+                return productDao.getProducts(Math.max(pageSize, 200), pageIndex).stream()
                         .map(ProductCatalogType::fromSFProduct)
                         .collect(Collectors.toList());
             }

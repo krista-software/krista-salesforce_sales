@@ -31,7 +31,6 @@ public class Order {
     @Field(name = "Effective Date", type = "Date", required = true)
     public Long effectiveDate;
     
-    @Searchable
     @Field.PickOne(name = "Status", values = {"Draft", "Activated"}, required = true, attributes = {}, options = {})
     public String status;
     

@@ -39,14 +39,9 @@ public class CustomFieldsSerializer {
 
         // Add each custom field directly to the root JSON object
         if (customFields != null && !customFields.isEmpty()) {
-            System.out.println("========================================");
-            System.out.println(entityName + " - Adding " + customFields.size() + " custom fields to root JSON");
-            
             for (Map.Entry<String, Object> entry : customFields.entrySet()) {
                 String fieldName = entry.getKey();
                 Object fieldValue = entry.getValue();
-                
-                System.out.println("  -> Adding custom field to JSON: " + fieldName + " = " + fieldValue);
 
                 // Add the custom field to the root JSON object based on type
                 if (fieldValue instanceof String) {
@@ -59,8 +54,6 @@ public class CustomFieldsSerializer {
                     entityJson.addProperty(fieldName, fieldValue.toString());
                 }
             }
-            
-            System.out.println("========================================");
         }
 
         return GSON.toJson(entityJson);

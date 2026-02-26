@@ -95,7 +95,7 @@ public class AccountStore implements EntityStore<Account> {
         if (searchQuery == null || searchQuery.getSearchConditions() == null || searchQuery.getSearchConditions().isEmpty()) {
             LOGGER.info("Search conditions are null or empty, returning all accounts");
             try {
-                return accountDao.getAccounts(pageSize, pageIndex).stream()
+                return accountDao.getAccounts(Math.max(pageSize, 200), pageIndex).stream()
                         .map(AccountCatalogType::fromSFAccount)
                         .collect(Collectors.toList());
             } catch (IllegalArgumentException cause) {
@@ -105,20 +105,33 @@ public class AccountStore implements EntityStore<Account> {
         }
         List<SearchCondition> conditions = searchQuery.getSearchConditions();
         try {
+            // If an explicit Account Id is provided, use it as the primary identifier.
+            // This is the correct path for update-by-Id (e.g. rename "vtt" → "vtt123").
+            for (SearchCondition condition : conditions) {
+                String matchPattern = condition.getOperand() != null ? String.valueOf(condition.getOperand()).trim() : "";
+                if ("Id".equalsIgnoreCase(condition.getFieldName()) && !matchPattern.isEmpty()) {
+                    Account account = get(matchPattern);
+                    return account != null ? List.of(account) : List.of();
+                }
+            }
+            // Otherwise search by Name
             List<Account> accounts = new ArrayList<>();
+            boolean nameConditionFound = false;
             for (SearchCondition condition : conditions) {
                 String matchPattern = condition.getOperand() != null ? String.valueOf(condition.getOperand()).trim() : "";
                 String selector = condition.getFieldName();
                 if ("Name".equalsIgnoreCase(selector)) {
+                    nameConditionFound = true;
                     if (matchPattern.isEmpty()) {
-                        accounts = accountDao.getAccounts(pageSize, pageIndex).stream().map(AccountCatalogType::fromSFAccount).collect(Collectors.toList());
+                        accounts = accountDao.getAccounts(Math.max(pageSize, 200), pageIndex).stream().map(AccountCatalogType::fromSFAccount).collect(Collectors.toList());
                     } else {
                         accounts = accountDao.getAccountByName(matchPattern, pageSize, pageIndex).stream().map(AccountCatalogType::fromSFAccount).collect(Collectors.toList());
                     }
                 }
+                // Unknown conditions (e.g. logicalName injected by framework) are intentionally ignored
             }
-            if (conditions.size() == 1 && accounts.isEmpty()) {
-                accounts = accountDao.getAccounts(pageSize, pageIndex).stream().map(AccountCatalogType::fromSFAccount).collect(Collectors.toList());
+            if (!nameConditionFound) {
+                return accountDao.getAccounts(Math.max(pageSize, 200), pageIndex).stream().map(AccountCatalogType::fromSFAccount).collect(Collectors.toList());
             }
             return accounts;
         } catch (IllegalArgumentException cause) {

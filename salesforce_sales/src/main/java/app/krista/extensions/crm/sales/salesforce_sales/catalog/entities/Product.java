@@ -17,7 +17,6 @@ import java.util.Map;
 public class Product {
     
     @Field(name = "Id", type = "Text", required = false)
-    @Searchable
     public String id;
     
     @Field(name = "Name", type = "Text", required = true)

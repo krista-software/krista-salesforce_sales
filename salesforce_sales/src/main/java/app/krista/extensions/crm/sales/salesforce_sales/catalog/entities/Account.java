@@ -14,6 +14,7 @@ import java.util.Map;
 @Entity(name = "Account", id = "localDomainEntity_f48532cb-46ca-44ed-9eab-462339f9a807", primaryKey = "Id", supportStore = true)
 public class Account {
 
+    @Searchable
     @Field(name = "Id", type = "Text", required = false)
     public String id;
 

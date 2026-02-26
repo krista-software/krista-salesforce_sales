@@ -32,47 +32,22 @@ public class OrderStore implements EntityStore<Order> {
     @Inject
     public OrderStore(OrderDaoImpl orderDao) {
         this.orderDao = orderDao;
-        System.out.println("========================================");
-        System.out.println("OrderStore INITIALIZED");
-        System.out.println("OrderStore instance: " + this);
-        System.out.println("OrderDao instance: " + orderDao);
-        System.out.println("========================================");
         LOGGER.info("OrderStore initialized successfully with OrderDao: {}", orderDao);
     }
     
     @Override
     public Order create(Map<String, Object> entityAttributeField) {
-        System.out.println("========================================");
-        System.out.println("OrderStore.create() CALLED");
-        System.out.println("Input fields: " + entityAttributeField);
-        System.out.println("========================================");
         LOGGER.info("OrderStore.create() called with fields: {}", entityAttributeField);
 
         if (entityAttributeField == null || entityAttributeField.isEmpty()) {
-            System.out.println("ERROR: Entity attribute field map is null or empty");
             LOGGER.info("Entity attribute field map cannot be null or empty");
             return new Order();
         }
 
-        // Debug: Check what "Custom Fields" contains
-        Object customFieldsObj = entityAttributeField.get("Custom Fields");
-        System.out.println("========================================");
-        System.out.println("DEBUG: Custom Fields value");
-        System.out.println("Custom Fields object: " + customFieldsObj);
-        System.out.println("Custom Fields type: " + (customFieldsObj != null ? customFieldsObj.getClass().getName() : "null"));
-        if (customFieldsObj != null) {
-            System.out.println("Custom Fields toString: " + customFieldsObj.toString());
-        }
-        System.out.println("========================================");
-
         try {
-            System.out.println("Calling orderDao.addOrder()...");
             String id = orderDao.addOrder(entityAttributeField);
-            System.out.println("Order created with ID: " + id);
             return get(id);
         } catch (IllegalArgumentException cause) {
-            System.out.println("ERROR creating order: " + cause.getMessage());
-            cause.printStackTrace();
             LOGGER.error(cause.getMessage(), cause);
             return new Order();
         }
@@ -127,18 +102,12 @@ public class OrderStore implements EntityStore<Order> {
     
     @Override
     public List<Order> search(SearchQuery searchQuery, long pageIndex, int pageSize) throws IOException {
-        System.out.println("========================================");
-        System.out.println("OrderStore.search() CALLED");
-        System.out.println("SearchQuery: " + searchQuery);
-        System.out.println("PageIndex: " + pageIndex + ", PageSize: " + pageSize);
-        System.out.println("========================================");
         LOGGER.info("OrderStore.search() called with query: {}, pageIndex: {}, pageSize: {}", searchQuery, pageIndex, pageSize);
 
         if (searchQuery == null || searchQuery.getSearchConditions() == null || searchQuery.getSearchConditions().isEmpty()) {
-            System.out.println("WARNING: Search conditions are null or empty, returning all orders");
             LOGGER.info("Search conditions are null or empty, returning all orders");
             try {
-                return orderDao.getOrders(pageSize, pageIndex).stream()
+                return orderDao.getOrders(Math.max(pageSize, 200), pageIndex).stream()
                         .map(OrderCatalogType::fromSFOrder)
                         .collect(Collectors.toList());
             } catch (IllegalArgumentException cause) {
@@ -147,7 +116,6 @@ public class OrderStore implements EntityStore<Order> {
             }
         }
         List<SearchCondition> conditions = searchQuery.getSearchConditions();
-        System.out.println("Search conditions: " + conditions);
         try {
             List<Order> orders = new ArrayList<>();
             boolean hasNonEmptyCondition = false;
@@ -167,12 +135,12 @@ public class OrderStore implements EntityStore<Order> {
                     }
                 } else if ("Account Id".equalsIgnoreCase(selector)) {
                     hasNonEmptyCondition = true;
-                    orders = orderDao.getOrdersByAccountId(matchPattern, pageSize, pageIndex).stream()
+                    orders = orderDao.getOrdersByAccountId(matchPattern, Math.max(pageSize, 200), pageIndex).stream()
                             .map(OrderCatalogType::fromSFOrder)
                             .collect(Collectors.toList());
                 } else if ("Status".equalsIgnoreCase(selector)) {
                     hasNonEmptyCondition = true;
-                    orders = orderDao.getOrdersByStatus(matchPattern, pageSize, pageIndex).stream()
+                    orders = orderDao.getOrdersByStatus(matchPattern, Math.max(pageSize, 200), pageIndex).stream()
                             .map(OrderCatalogType::fromSFOrder)
                             .collect(Collectors.toList());
                 }
@@ -180,7 +148,7 @@ public class OrderStore implements EntityStore<Order> {
             }
             if (!hasNonEmptyCondition) {
                 LOGGER.info("All search conditions are empty, returning all orders");
-                return orderDao.getOrders(pageSize, pageIndex).stream()
+                return orderDao.getOrders(Math.max(pageSize, 200), pageIndex).stream()
                         .map(OrderCatalogType::fromSFOrder)
                         .collect(Collectors.toList());
             }

@@ -104,11 +104,6 @@ public class OrderItemDaoImpl implements OrderItemDao {
             // Serialize order item with custom fields flattened into root JSON
             String body = serializeOrderItemWithCustomFields(orderItem);
 
-            System.out.println("========================================");
-            System.out.println("OrderItemDaoImpl.addOrderItem() - Final JSON to Salesforce:");
-            System.out.println(body);
-            System.out.println("========================================");
-
             String response = salesforceManager.createRecord(body, ORDER_ITEM);
 
             Map<String, Object> responseMap = GSON.fromJson(response, Map.class);

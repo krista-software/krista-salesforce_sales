@@ -57,16 +57,11 @@ public class SFAccountDeserializer implements JsonDeserializer<SFAccount> {
                     customFields.put(fieldName, value.toString());
                 }
                 
-                System.out.println("  -> Extracted custom field from Salesforce response: " + fieldName + " = " + customFields.get(fieldName));
             }
         }
-        
+
         account.customFields = customFields;
-        
-        if (!customFields.isEmpty()) {
-            System.out.println("Total custom fields extracted: " + customFields.size());
-        }
-        
+
         return account;
     }
 }

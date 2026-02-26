@@ -199,35 +199,21 @@ public final class OrderManagementArea {
             @Field(name = "Product2 Id", type = "Text") String product2Id,
             @Field(name = "Unit Price", type = "Number") Double unitPrice) {
         try {
-            System.out.println("========================================");
-            System.out.println("findOrCreatePricebookEntry() CALLED");
-            System.out.println("Pricebook2 Id: " + pricebook2Id);
-            System.out.println("Product2 Id:   " + product2Id);
-            System.out.println("Unit Price:    " + unitPrice);
-            System.out.println("========================================");
-
             List<PriceBookEntry> existing = priceBookEntryDao.getPriceBookEntryByProductAndPricebook(product2Id, pricebook2Id);
-            System.out.println("Search result count: " + existing.size());
 
             if (!existing.isEmpty()) {
                 PriceBookEntry found = existing.get(0);
-                System.out.println("Found existing pricebook entry: id=" + found.getId() + ", name=" + found.getName() + ", unitPrice=" + found.getUnitPrice());
                 return PricebookEntryCatalogType.fromSFPriceBookEntry(found);
             }
 
-            System.out.println("No existing entry found, creating new one...");
             Map<String, Object> fields = new HashMap<>();
             fields.put("Pricebook Id", pricebook2Id);
             fields.put("Product Id", product2Id);
             fields.put("Unit Price", unitPrice);
-            System.out.println("Creating with fields: " + fields);
 
             String id = priceBookEntryDao.addPriceBookEntry(fields);
-            System.out.println("Created pricebook entry with id: " + id);
 
             PricebookEntry created = PricebookEntryCatalogType.fromSFPriceBookEntry(priceBookEntryDao.getPriceBookEntryById(id));
-            System.out.println("Returning created entry: id=" + created.id + ", name=" + created.name + ", unitPrice=" + created.unitPrice);
-            System.out.println("========================================");
             return created;
         } catch (IllegalArgumentException cause) {
             LOGGER.error(cause.getMessage(), cause);

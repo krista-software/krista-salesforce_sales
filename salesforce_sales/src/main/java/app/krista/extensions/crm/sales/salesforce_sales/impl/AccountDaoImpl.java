@@ -63,11 +63,6 @@ public class AccountDaoImpl implements AccountDao {
         // Serialize account with custom fields flattened into root JSON
         String accountJson = serializeAccountWithCustomFields(sfAccount);
 
-        System.out.println("========================================");
-        System.out.println("AccountDaoImpl.addAccount() - Final JSON to Salesforce:");
-        System.out.println(accountJson);
-        System.out.println("========================================");
-
         String responseJson = salesforceManager.createRecord(accountJson, ACCOUNT);
         Map<String, Object> response = GSON.fromJson(responseJson, Map.class);
         return String.valueOf(response.get("id"));

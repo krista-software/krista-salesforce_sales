@@ -45,23 +45,16 @@ public class SFOrderItemDeserializer implements JsonDeserializer<SFOrderItem> {
             orderItem.customFields = new HashMap<>();
         }
         
-        System.out.println("========================================");
-        System.out.println("SFOrderItemDeserializer - Extracting custom fields from Salesforce response");
-        
         // Iterate through all fields in the JSON response
         for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
             String fieldName = entry.getKey();
-            
+
             // Check if it's a custom field (ends with __c) and NOT hardcoded
             if (fieldName.endsWith("__c") && !HARDCODED_CUSTOM_FIELDS.contains(fieldName)) {
                 Object value = convertJsonElementToValue(entry.getValue());
                 orderItem.customFields.put(fieldName, value);
-                System.out.println("  -> Extracted custom field from Salesforce response: " + fieldName + " = " + value);
             }
         }
-        
-        System.out.println("Total custom fields extracted: " + orderItem.customFields.size());
-        System.out.println("========================================");
         
         return orderItem;
     }

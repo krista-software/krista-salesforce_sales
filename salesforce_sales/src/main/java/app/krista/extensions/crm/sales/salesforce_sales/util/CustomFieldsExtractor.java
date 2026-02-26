@@ -30,19 +30,11 @@ public class CustomFieldsExtractor {
         
         Map<String, Object> customFields = new HashMap<>();
 
-        System.out.println("========================================");
-        System.out.println(entityName + ".extractCustomFields() CALLED");
-        System.out.println("Input map keys: " + entityAttributeField.keySet());
-        System.out.println("========================================");
-
         // First, check for "Custom Fields" FreeForm object
         Object customFieldsObj = entityAttributeField.get("Custom Fields");
         if (customFieldsObj != null) {
-            System.out.println("Found 'Custom Fields' object: " + customFieldsObj.getClass().getName());
-
             if (customFieldsObj instanceof Map) {
                 Map<String, Object> customFieldsMap = (Map<String, Object>) customFieldsObj;
-                System.out.println("Custom Fields Map contents: " + customFieldsMap);
 
                 // Process all fields from the Custom Fields FreeForm
                 for (Map.Entry<String, Object> entry : customFieldsMap.entrySet()) {
@@ -56,7 +48,6 @@ public class CustomFieldsExtractor {
                         // Convert field name to Salesforce API format
                         String salesforceFieldName = convertFieldName(key);
                         
-                        System.out.println("  -> Adding custom field from FreeForm: " + key + " -> " + salesforceFieldName + " = " + convertedValue);
                         customFields.put(salesforceFieldName, convertedValue);
                     }
                 }
@@ -64,7 +55,6 @@ public class CustomFieldsExtractor {
         }
 
         // Also check for any custom fields passed directly in the root map (backward compatibility)
-        System.out.println("Checking for custom fields in root map...");
         for (Map.Entry<String, Object> entry : entityAttributeField.entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
@@ -77,13 +67,9 @@ public class CustomFieldsExtractor {
             // If the field ends with __c, it's a custom field
             if (key.endsWith("__c") && value != null) {
                 Object convertedValue = convertDateValue(value);
-                System.out.println("  -> Adding custom field from root map: " + key + " = " + convertedValue);
                 customFields.put(key, convertedValue);
             }
         }
-
-        System.out.println("Extracted custom fields: " + customFields);
-        System.out.println("========================================");
 
         return customFields;
     }
@@ -126,16 +112,12 @@ public class CustomFieldsExtractor {
     private static Object convertDateValue(Object value) {
         if (value instanceof Long timestamp) {
             if (timestamp > 0) {
-                String dateString = DatePlus.getYYYYMMDD(timestamp);
-                System.out.println("    -> Converted Long timestamp " + timestamp + " to date: " + dateString);
-                return dateString;
+                return DatePlus.getYYYYMMDD(timestamp);
             }
         } else if (value instanceof Double doubleValue) {
             long timestamp = doubleValue.longValue();
             if (timestamp > 0) {
-                String dateString = DatePlus.getYYYYMMDD(timestamp);
-                System.out.println("    -> Converted Double timestamp " + doubleValue + " to date: " + dateString);
-                return dateString;
+                return DatePlus.getYYYYMMDD(timestamp);
             }
         }
         return value;
