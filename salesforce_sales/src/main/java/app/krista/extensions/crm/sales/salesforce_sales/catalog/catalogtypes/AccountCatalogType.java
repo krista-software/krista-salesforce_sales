@@ -39,6 +39,7 @@ public final class AccountCatalogType {
         newAccount.customerPriority = account.getCustomerPriority();
         newAccount.sLAExpirationDate = account.getSLAExpirationDate();
         newAccount.annualRevenue = account.getAnnualRevenue();
+        newAccount.customFields = account.getCustomFields();
         return newAccount;
     }
 

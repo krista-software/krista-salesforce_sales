@@ -44,6 +44,11 @@ public class PriceBookEntryDaoImpl implements PriceBookEntryDao {
     }
 
     @Override
+    public List<PriceBookEntry> getPriceBookEntryByProductAndPricebook(String product2Id, String pricebook2Id) {
+        return getPriceBookEntryByQuery("SELECT " + QUERY_FIELDS + " FROM PricebookEntry WHERE Product2Id = '" + product2Id + "' AND Pricebook2Id = '" + pricebook2Id + "' LIMIT 1");
+    }
+
+    @Override
     public List<PriceBookEntry> getPriceBookEntries(long size, long page) {
         return getPriceBookEntryByQuery("Select " + QUERY_FIELDS + " from PricebookEntry ORDER BY LastModifiedDate DESC LIMIT " + size + " OFFSET " + Math.max((page - 1) * size, 0));
     }

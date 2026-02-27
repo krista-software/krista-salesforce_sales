@@ -34,7 +34,8 @@ public class AccountStore implements EntityStore<Account> {
     @Override
     public Account create(Map<String, Object> entityAttributeField) {
         if (entityAttributeField == null || entityAttributeField.isEmpty()) {
-            LOGGER.info("Entity attribute field map cannot be null or empty");
+            LOGGER.warn("Entity attribute field map cannot be null or empty");
+            return new Account();
         }
         try {
             String id = accountDao.addAccount(entityAttributeField);
@@ -48,7 +49,8 @@ public class AccountStore implements EntityStore<Account> {
     @Override
     public Account get(String primaryKey) {
         if (primaryKey == null || primaryKey.isEmpty()) {
-            LOGGER.info("Primary key cannot be null or empty");
+            LOGGER.warn("Primary key cannot be null or empty");
+            return null;
         }
         try {
             return AccountCatalogType.fromSFAccount(accountDao.getAccountById(primaryKey));
@@ -61,11 +63,12 @@ public class AccountStore implements EntityStore<Account> {
     @Override
     public Account update(Account account) {
         if (account == null) {
-            LOGGER.info("Account cannot be null");
+            LOGGER.warn("Account cannot be null");
+            return null;
         }
         try {
             accountDao.updateAccount(new AccountImpl(SFAccount.from(account)));
-            return account;
+            return get(account.id);
         } catch (IllegalArgumentException cause) {
             LOGGER.error(cause.getMessage(), cause);
             return null;
@@ -93,20 +96,45 @@ public class AccountStore implements EntityStore<Account> {
     @Override
     public List<Account> search(SearchQuery searchQuery, long pageIndex, int pageSize) throws IOException {
         if (searchQuery == null || searchQuery.getSearchConditions() == null || searchQuery.getSearchConditions().isEmpty()) {
-            LOGGER.info("Search conditions cannot be null or empty");
+            LOGGER.info("Search conditions are null or empty, returning all accounts");
+            try {
+                return accountDao.getAccounts(Math.max(pageSize, 200), pageIndex).stream()
+                        .map(AccountCatalogType::fromSFAccount)
+                        .collect(Collectors.toList());
+            } catch (IllegalArgumentException cause) {
+                LOGGER.error(cause.getMessage(), cause);
+                return List.of();
+            }
         }
         List<SearchCondition> conditions = searchQuery.getSearchConditions();
         try {
+            // If an explicit Account Id is provided, use it as the primary identifier.
+            // This is the correct path for update-by-Id (e.g. rename "vtt" → "vtt123").
+            for (SearchCondition condition : conditions) {
+                String matchPattern = condition.getOperand() != null ? String.valueOf(condition.getOperand()).trim() : "";
+                if ("Id".equalsIgnoreCase(condition.getFieldName()) && !matchPattern.isEmpty()) {
+                    Account account = get(matchPattern);
+                    return account != null ? List.of(account) : List.of();
+                }
+            }
+            // Otherwise search by Name
             List<Account> accounts = new ArrayList<>();
+            boolean nameConditionFound = false;
             for (SearchCondition condition : conditions) {
                 String matchPattern = condition.getOperand() != null ? String.valueOf(condition.getOperand()).trim() : "";
                 String selector = condition.getFieldName();
                 if ("Name".equalsIgnoreCase(selector)) {
-                    accounts = accountDao.getAccountByName(matchPattern, pageSize, pageIndex).stream().map(AccountCatalogType::fromSFAccount).collect(Collectors.toList());
+                    nameConditionFound = true;
+                    if (matchPattern.isEmpty()) {
+                        accounts = accountDao.getAccounts(Math.max(pageSize, 200), pageIndex).stream().map(AccountCatalogType::fromSFAccount).collect(Collectors.toList());
+                    } else {
+                        accounts = accountDao.getAccountByName(matchPattern, pageSize, pageIndex).stream().map(AccountCatalogType::fromSFAccount).collect(Collectors.toList());
+                    }
                 }
+                // Unknown conditions (e.g. logicalName injected by framework) are intentionally ignored
             }
-            if (conditions.size() == 1 && accounts.isEmpty()) {
-                accounts = accountDao.getAccounts(pageSize, pageIndex).stream().map(AccountCatalogType::fromSFAccount).collect(Collectors.toList());
+            if (!nameConditionFound) {
+                return accountDao.getAccounts(Math.max(pageSize, 200), pageIndex).stream().map(AccountCatalogType::fromSFAccount).collect(Collectors.toList());
             }
             return accounts;
         } catch (IllegalArgumentException cause) {
@@ -122,6 +150,6 @@ public class AccountStore implements EntityStore<Account> {
 
     @Override
     public List<String> lookup(Map<String, Object> map, List<String> list) {
-        return null;
+        return List.of();
     }
 }

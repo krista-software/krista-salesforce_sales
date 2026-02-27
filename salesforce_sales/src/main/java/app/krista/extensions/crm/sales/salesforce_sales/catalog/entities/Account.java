@@ -11,9 +11,10 @@ import java.util.Map;
         ecosystemId = "catEntryEcosystem_8a0e8ce7-6289-492f-9202-52284024280c",
         ecosystemName = "CRM",
         ecosystemVersion = "db320c64-6f6f-4c9e-8daa-41d3f796d6a6")
-@Entity(name = "Account", id = "localDomainEntity_f48532cb-46ca-44ed-9eab-462339f9a807", primaryKey = "Id", supportStore = false)
+@Entity(name = "Account", id = "localDomainEntity_f48532cb-46ca-44ed-9eab-462339f9a807", primaryKey = "Id", supportStore = true)
 public class Account {
 
+    @Searchable
     @Field(name = "Id", type = "Text", required = false)
     public String id;
 
@@ -103,6 +104,9 @@ public class Account {
     @Field(name = " Annual Revenue", type = "Number", required = false)
     public Double annualRevenue;
 
+    @Field(name = "Custom Fields", type = "FreeForm", required = false)
+    public Map<String, Object> customFields;
+
     public static Account fromFields(Map<String, Object> account) {
         Account newAccount = new Account();
         newAccount.accountNumber = (String) account.get("Account Number");
@@ -134,6 +138,13 @@ public class Account {
         newAccount.id = (String) account.get("Id");
         newAccount.fax = (String) account.get("Fax");
         newAccount.annualRevenue = (Double) account.get(" Annual Revenue");
+
+        // Extract custom fields from the "Custom Fields" FreeForm
+        Object customFieldsObj = account.get("Custom Fields");
+        if (customFieldsObj instanceof Map) {
+            newAccount.customFields = (Map<String, Object>) customFieldsObj;
+        }
+
         return newAccount;
     }
 

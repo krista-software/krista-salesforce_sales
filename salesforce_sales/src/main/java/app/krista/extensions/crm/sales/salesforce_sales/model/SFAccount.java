@@ -1,11 +1,12 @@
 package app.krista.extensions.crm.sales.salesforce_sales.model;
 
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.Account;
+import app.krista.extensions.crm.sales.salesforce_sales.util.CustomFieldsExtractor;
 import app.krista.extensions.crm.sales.salesforce_sales.util.DatePlus;
+import app.krista.model.base.FreeForm;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 
 import static app.krista.extensions.crm.sales.salesforce_sales.util.Validators.returnNullOrValue;
 
@@ -97,6 +98,9 @@ public final class SFAccount {
     @SerializedName("AnnualRevenue")
     public Double annualRevenue;
 
+    // Dynamic custom fields map (not serialized directly, handled separately)
+    public Map<String, Object> customFields = new HashMap<>();
+
     public static SFAccount from(Map<String, Object> entityAttributeField) {
         SFAccount account = new SFAccount();
         account.accountNumber = returnNullOrValue((String) entityAttributeField.get("Account Number"));
@@ -129,6 +133,10 @@ public final class SFAccount {
         account.cleanStatus = returnNullOrValue((String) entityAttributeField.get("Clean Status"));
         account.fax = returnNullOrValue((String) entityAttributeField.get("Fax"));
         account.annualRevenue = (Double) entityAttributeField.get(" Annual Revenue");
+
+        // Extract custom fields
+        account.customFields = extractCustomFields(entityAttributeField);
+
         return account;
     }
 
@@ -166,5 +174,26 @@ public final class SFAccount {
         account.fax = sfAccount.fax;
         account.annualRevenue = sfAccount.annualRevenue;
         return account;
+    }
+
+    /**
+     * Extracts custom fields from the entity attribute field map.
+     * Delegates to CustomFieldsExtractor utility for reusable logic.
+     *
+     * @param entityAttributeField Map containing all field values
+     * @return Map of custom fields with Salesforce API names and converted values
+     */
+    private static Map<String, Object> extractCustomFields(Map<String, Object> entityAttributeField) {
+        // List of standard Account fields (should NOT be treated as custom fields)
+        Set<String> standardFields = new HashSet<>(Arrays.asList(
+            "Id", "Name", "Account Number", "Ownership", "Created Date", "Website",
+            "SLA Expiration Date", "Industry", "Number Of Employees", "Billing City",
+            "Owner Id", "Shipping Street", "Phone", "SLA Serial Number", "Shipping State",
+            "Created By Id", "Billing State", "Shipping City", "Billing Country", "Sic",
+            "Shipping Country", "Shipping Postal Code", "Type", "Billing Street",
+            "Billing Postal Code", "CustomerPriority", "Clean Status", "Fax", " Annual Revenue"
+        ));
+
+        return CustomFieldsExtractor.extractCustomFields(entityAttributeField, standardFields, "SFAccount");
     }
 }

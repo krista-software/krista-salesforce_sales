@@ -11,6 +11,7 @@
   - [Get Sales Forecast For A Specific Quarter](pages/GetSalesForecastForASpecificQuarter.md)
 
 - **Account Management**
+  - [Find Or Create Account](pages/FindOrCreateAccount.md)
   - [Account Change Alert](pages/AccountChangeAlert.md)
 
 - **Lead Management**
@@ -55,6 +56,12 @@
 - **Content & Custom Fields**
   - [Retrieve Custom Fields For Given Object](pages/RetrieveCustomFieldsForGivenObject.md)
 
+- **Order Management**
+  - [Upload PO File](pages/UploadPOFile.md)
+  - [Link File to Order](pages/LinkFileToOrder.md)
+  - [Find Or Create Product](pages/FindOrCreateProduct.md)
+  - [Find Or Create Pricebook Entry](pages/FindOrCreatePricebookEntry.md)
+
 - **Entities**
   - [Account](pages/entities/Account.md)
   - [Asset](pages/entities/Asset.md)
@@ -62,7 +69,10 @@
   - [Latest Posts](pages/entities/LatestPosts.md)
   - [Lead](pages/entities/Lead.md)
   - [Opportunity](pages/entities/Opportunity.md)
+  - [Order](pages/entities/Order.md)
+  - [Order Item](pages/entities/OrderItem.md)
   - [PricebookEntry](pages/entities/PricebookEntry.md)
+  - [Product](pages/entities/Product.md)
   - [Quote](pages/entities/Quote.md)
   - [Sales Pipeline Summary](pages/entities/SalesPipelineSummary.md)
   - [Task](pages/entities/Task.md)

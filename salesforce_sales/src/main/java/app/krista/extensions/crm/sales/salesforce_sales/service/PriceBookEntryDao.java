@@ -42,6 +42,15 @@ public interface PriceBookEntryDao {
     String addPriceBookEntry(Map<String, Object> entityAttributeField);
 
     /**
+     * Returns matching {@link PriceBookEntry} for a given Product2Id and Pricebook2Id combination.
+     *
+     * @param product2Id   Salesforce ID of the product
+     * @param pricebook2Id Salesforce ID of the pricebook
+     * @return list with the matching entry, or empty list if not found
+     */
+    List<PriceBookEntry> getPriceBookEntryByProductAndPricebook(String product2Id, String pricebook2Id);
+
+    /**
      * Update {@link PriceBookEntry} to salesforce from provided input fields
      *
      * @param priceBookEntry {@link PriceBookEntry} object of salesforce to be updated
