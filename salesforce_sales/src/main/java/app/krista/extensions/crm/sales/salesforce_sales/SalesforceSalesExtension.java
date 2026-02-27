@@ -19,7 +19,7 @@ import java.util.Map;
 @Field.Text(value = SalesforceSalesAttributes.SECURITY_TOKEN, isSecured = true, required = false)
 @Field.Boolean(value = SalesforceSalesAttributes.SANDBOX, required = false)
 @Field.Text(value = SalesforceSalesAttributes.TIME_ZONE, required = false)
-@ChangeLog(version = "2.0.17", description = "Added PO to Order Creation Support with new catalog requests: Find Or Create Account, Upload PO File, Link File to Order, Find Or Create Product, Find Or Create Pricebook Entry. Added new entities: Order, Order Item, Product.")
+@ChangeLog(file = "docs/pages/releaseNotes.md")
 @Extension(version = "2.0.17", name = "Salesforce sales", description = "Integrating Salesforce with Krista")
 @Java(version = Java.Version.JAVA_21)
 @StaticResource(path = "docs", file = "docs")

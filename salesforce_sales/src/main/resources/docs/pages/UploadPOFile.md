@@ -91,7 +91,7 @@ After uploading a file, you typically want to link it to a specific record (like
 ## Related Requests
 
 - [Link File to Order](pages/LinkFileToOrder.md) - Link the uploaded file to an Order
-- [Find Or Create Order](pages/Order.md) - Create the order to link files to
+- [Order](pages/entities/Order.md) - Create the order to link files to
 
 ## Implementation Notes
 

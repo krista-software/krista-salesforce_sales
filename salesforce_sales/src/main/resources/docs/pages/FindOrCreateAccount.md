@@ -120,7 +120,7 @@ Account Name: "New Customer Inc"
 
 - [Account Change Alert](pages/AccountChangeAlert.md) - Receive alerts when accounts are created or updated
 - [Get Opportunities](pages/GetOpportunities.md) - Get opportunities related to an account
-- [Create Order](pages/Order.md) - Create orders for the account
+- [Order](pages/entities/Order.md) - Create orders for the account
 
 ## Implementation Notes
 

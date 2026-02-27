@@ -116,7 +116,7 @@ The file now appears in the Order's Files/Attachments related list.
 ## Related Requests
 
 - [Upload PO File](pages/UploadPOFile.md) - Upload the file before linking
-- [Find Or Create Order](pages/Order.md) - Create or find the order to link files to
+- [Order](pages/entities/Order.md) - Create or find the order to link files to
 
 ## Implementation Notes
 

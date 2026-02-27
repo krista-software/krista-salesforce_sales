@@ -136,8 +136,8 @@ Create Order Item:
 ## Related Requests
 
 - [Find Or Create Pricebook Entry](pages/FindOrCreatePricebookEntry.md) - Create pricing for the product
-- [Find Or Create Order](pages/Order.md) - Create orders using the product
-- [Create Order Item](pages/OrderItem.md) - Add products as line items to orders
+- [Order](pages/entities/Order.md) - Create orders using the product
+- [Order Item](pages/entities/OrderItem.md) - Add products as line items to orders
 
 ## Implementation Notes
 

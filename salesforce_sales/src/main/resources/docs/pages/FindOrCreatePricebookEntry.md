@@ -149,7 +149,7 @@ Create Order Item:
 ## Related Requests
 
 - [Find Or Create Product](pages/FindOrCreateProduct.md) - Create the product before adding pricing
-- [Create Order Item](pages/OrderItem.md) - Use the pricebook entry when creating order line items
+- [Order Item](pages/entities/OrderItem.md) - Use the pricebook entry when creating order line items
 - [Get Quote Details](pages/GetQuoteDetails.md) - View quotes that use pricebook entries
 
 ## Implementation Notes
