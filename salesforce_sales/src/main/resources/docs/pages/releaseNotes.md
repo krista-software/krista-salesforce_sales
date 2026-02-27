@@ -3,9 +3,9 @@
 ## Version 2.0.17
 
 - **Developer Name** : Vrushali Gaikwad
-- **Krista Service APIs Java** : 1.0.120
+- **Krista Service APIs Java** : 1.0.121
 - **Global Catalog Version** : GC-2026.02.04
-- **Release Date** :Feb 2026
+- **Release Date** : Feb 2026
 
 ## What's New
 
@@ -38,27 +38,33 @@
 * **OrderManagementArea** - Order, Product, and Pricebook Entry operations
 * **ContentArea** - File upload and custom field retrieval operations
 
-### 🎯 Enhanced User Experience
-* **Improved Error Messages**: All error messages across the extension have been rewritten to be more user-friendly, actionable, and provide clear resolution steps
-* **Consistent Error Handling**: Standardized error message format across all catalog areas and DAO implementations
-* **Better Validation Messages**: Enhanced validation error messages with specific guidance on what went wrong and how to fix it
+# Version 2.0.16
 
-### 🧪 Comprehensive Test Suite
-* **99 New Test Cases**: Added comprehensive real-world test cases for all public static utility methods
-* **100% Test Coverage**: Complete coverage of Validators, DatePlus, and SFHelper utility classes
-* **No Mockito Dependencies**: All tests use real concrete implementations for better reliability
-* **Production-Ready Quality**: Tests serve as excellent documentation and usage examples
+- **Developer Name:** Amruta Pawar
+- **Krista Service APIs Java:** 1.0.117
+- **Global Catalog Version:** GC-2025.10.2
+- **Release Date:** November 2025
+
+---
+
+## What's New
+
+### 📖 New Comprehensive Documentation
+
+- **Architecture Documentation (Architecture.md):**  
+  Added a comprehensive 1,471-line architecture document including:
+  - Complete 5-layer architecture breakdown with detailed descriptions
+  - Configuration and setup instructions
+  - Content optimized for AI/LLM consumption to answer user queries
 
 ### ⚙️ Technical Improvements
-* **Java 21 Support**: Upgraded to Java 21 with modern language features
-* **Gradle 8.10**: Updated Gradle wrapper to version 8.10 for better Java 21 compatibility
-* **Build System Modernization**: Enhanced build configuration for improved performance
 
-### 📚 Documentation Updates
-* **Updated Troubleshooting Guide**: Comprehensive error scenarios with solutions
-* **Enhanced Catalog Request Documentation**: Updated error messages in GetOpportunities, GetLeads, DeleteAnAsset, UpdateAnAsset, SendAMail, UpdateStatusOfOpportunities, and ProcessQueryRequest pages
-* **Authentication Documentation**: Improved error handling documentation
-* **Test Results Documentation**: Added comprehensive test execution summary and guidelines
+- **Gradle 8.10:**  
+  Updated Gradle wrapper to version 8.10 for improved Java 21 compatibility.
+
+- **Build System Modernization:**  
+  Enhanced build configuration for improved performance and maintainability.
+
 
 ### 📖 New Comprehensive Documentation
 * **Architecture Documentation (Architecture.md)**: Added comprehensive 1,471-line architecture document with:
@@ -78,6 +84,46 @@
   - Troubleshooting guide with actionable solutions
   - Configuration and setup instructions
   - Optimized for AI/LLM consumption to answer user queries
+
+# Version 2.0.15
+
+- **Developer Name:** Deepak Shingan
+- **Krista Service APIs Java:** 1.0.117
+- **Global Catalog Version:** GC-2025.10.2
+- **Release Date:** October 2025
+
+---
+
+## What's New
+
+### 🎯 Enhanced User Experience
+
+- **Improved Error Messages:**  
+  All error messages across the extension have been rewritten to be more user-friendly, actionable, and provide clear resolution steps.
+
+- **Consistent Error Handling:**  
+  Standardized error message format across all catalog areas and DAO implementations.
+
+- **Better Validation Messages:**  
+  Enhanced validation error messages with specific guidance on what went wrong and how to fix it.
+
+---
+
+### 🧪 Comprehensive Test Suite
+
+- **99 New Test Cases:**  
+  Added comprehensive real-world test cases for all public static utility methods.
+
+- **100% Test Coverage:**  
+  Complete coverage of `Validators`, `DatePlus`, and `SFHelper` utility classes.
+
+- **No Mockito Dependencies:**  
+  All tests use real concrete implementations for better reliability.
+
+- **Production-Ready Quality:**  
+  Tests serve as excellent documentation and usage examples.
+
+---
 
 ## Improvements
 
@@ -145,15 +191,11 @@
 * **ProcessQueryRequest.md**: Better query validation messages
 * **Authentication.md**: Enhanced authentication error documentation
 
-#### New Documentation Files (2 files)
-* **Architecture.md**: Comprehensive architecture documentation with 24 Mermaid diagrams
-* **Salesforce_Sales_Complete_Documentation.docx**: LLM-optimized complete reference documentation
-
 ## Technical Details
 
 ### Build Configuration
 * **Java Version**: 21 (upgraded from 13)
-* **Gradle Version**: 8.10 (upgraded from 7.4)
+* **Gradle Version**: 8.5 (upgraded from 7.4)
 * **Source Compatibility**: Java 21
 * **Target Compatibility**: Java 21
 
@@ -167,14 +209,11 @@
 ## Migration Notes
 
 ### For Developers
-* Tests now require Java 21 and Gradle 8.10
+* Tests now require Java 21 and Gradle 8.5
 * All error messages follow a consistent three-part format:
   1. Clearly identify the problem
   2. Explain what is required
   3. Provide actionable guidance
-* New comprehensive documentation available:
-  - Architecture.md for technical architecture details
-  - Salesforce_Sales_Complete_Documentation.docx for complete reference
 
 ### For Users
 * Error messages are now more descriptive and helpful
@@ -184,32 +223,24 @@
 
 ## Files Modified
 
-### Source Code (35+ files)
-* **7 Catalog Area classes** (4 existing + 3 new: AccountsManagementArea, OrderManagementArea, ContentArea)
-* **11 DAO Implementation classes** (8 existing + 3 new: OrderDaoImpl, OrderItemDaoImpl, ProductDaoImpl, ContentVersionDaoImpl, ContentDocumentLinkDaoImpl)
-* **12 Store classes** (9 existing + 3 new: OrderStore, OrderItemStore, ProductStore)
-* **3 Utility classes**
-* **1 Manager class**
-* **6 New Entity classes**: Order, OrderItem, Product, SFOrder, SFOrderItem, SFProduct
-* **3 New Catalog Type classes**: OrderCatalogType, OrderItemCatalogType, ProductCatalogType
+### Source Code (24+ files)
+* **4 Catalog Area classes**: OpportunityManagementArea, LeadsManagementArea, AssetsManagementArea, ForecastingArea
+* **8 DAO Implementation classes**: AccountDaoImpl, AssetDaoImpl, EventDaoImpl, LeadDaoImpl, OpportunityDaoImpl, QuoteDaoImpl, TaskDaoImpl, PriceBookEntryDaoImpl
+* **9 Store classes**: AccountStore, AssetStore, EventStore, LeadStore, OpportunityStore, PricebookEntryStore, QuoteStore, TaskStore, UserStore
+* **3 Utility classes**: Constants.java, Validators.java, SalesforceManager.java
 
 ### Test Files (3 files)
 * ValidatorsTest.java (45+ tests)
 * DatePlusTest.java (30+ tests)
 * SFHelperTest.java (30+ tests)
 
-### Documentation (13+ files)
+### Documentation (9 files)
 * Troubleshooting guide
 * 8 Catalog request pages (updated with new error messages)
-* **NEW**: Architecture.md (comprehensive architecture documentation)
-* **NEW**: Salesforce_Sales_Complete_Documentation.docx (LLM-optimized reference)
-* **UPDATED**: supportedRequests.md - Added 5 new catalog requests and 3 new entities
-* **UPDATED**: _sidebar.md - Added navigation for new features
-* **NEW Entity Documentation**: Order, OrderItem, Product entity pages
 
 ### Build Configuration (2 files)
 * build.gradle
-* gradle-wrapper.properties (Gradle 7.4 → 8.10)
+* gradle-wrapper.properties (Gradle 7.4 → 8.5)
 
 ## Known Issues
 
@@ -230,7 +261,3 @@ None
 ### Known Issues
 
 None
-
-
-
-
