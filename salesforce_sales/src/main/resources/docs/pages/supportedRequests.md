@@ -352,6 +352,21 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 
 ### Accounts Management Area
 
+#### Find Or Create Account
+
+- **Description**: Searches for an account by name. If found, returns it. If not found, creates a new account with the given name and returns it.
+- **Input Parameters**:
+
+| **Parameter Name** | **Parameter Type** | **Mandatory** | **Example**        |
+|--------------------|--------------------|---------------|--------------------|
+| Account Name       | Text               | Yes           | Acme Corporation   |
+
+- **Output Parameters**:
+
+| **Parameter Name** | **Parameter Type** |
+|--------------------|--------------------|
+| Account            | Entity(Account)    |
+
 #### Account Change Alert
 
 - **Description**: This request is for the changes(creation and update) in the accounts.
@@ -818,6 +833,74 @@ Krista Salesforce Sales extension supports the following Catalog Requests:
 |--------------------|--------------------|
 | Field Details      | FreeForm           |
 
+### Order Management Area
+
+#### Upload PO File
+
+- **Description**: Upload a Purchase Order file (PDF, Word, Excel, etc.) to Salesforce. Returns the Content Document ID for linking.
+- **Input Parameters**:
+
+| **Parameter Name** | **Parameter Type** | **Mandatory** | **Example**             |
+|--------------------|--------------------|---------------|-------------------------|
+| Upload File        | File               | Yes           | PurchaseOrder.pdf       |
+| Description        | Text               | No            | PO for Order #12345     |
+
+- **Output Parameters**:
+
+| **Parameter Name** | **Parameter Type** |
+|--------------------|--------------------|
+| Content Document Id| Text               |
+
+#### Link File to Order
+
+- **Description**: Link an uploaded file (ContentDocument) to an Order. Creates a ContentDocumentLink relationship.
+- **Input Parameters**:
+
+| **Parameter Name** | **Parameter Type** | **Mandatory** | **Example**             |
+|--------------------|--------------------|---------------|-------------------------|
+| Content Document Id| Text               | Yes           | 0695w00000AbcDeAAZ      |
+| Order Id           | Text               | Yes           | 8015w00000XyzAbAAZ      |
+| Share Type         | Text               | No            | V                       |
+| Visibility         | Text               | No            | AllUsers                |
+
+- **Output Parameters**:
+
+| **Parameter Name** | **Parameter Type** |
+|--------------------|--------------------|
+| Link Id            | Text               |
+
+#### Find Or Create Product
+
+- **Description**: Searches for a product by product code. If found, returns it. If not found, creates a new product with the given name and code and returns it.
+- **Input Parameters**:
+
+| **Parameter Name** | **Parameter Type** | **Mandatory** | **Example**             |
+|--------------------|--------------------|---------------|-------------------------|
+| Product Name       | Text               | Yes           | Widget Pro              |
+| Product Code       | Text               | Yes           | WDGT-001                |
+
+- **Output Parameters**:
+
+| **Parameter Name** | **Parameter Type** |
+|--------------------|--------------------|
+| Product            | Entity(Product)    |
+
+#### Find Or Create Pricebook Entry
+
+- **Description**: Searches for a pricebook entry by product and pricebook. If found, returns it. If not found, creates a new pricebook entry and returns it.
+- **Input Parameters**:
+
+| **Parameter Name** | **Parameter Type** | **Mandatory** | **Example**             |
+|--------------------|--------------------|---------------|-------------------------|
+| Pricebook2 Id      | Text               | Yes           | 01s5w00000AbCdEAAX      |
+| Product2 Id        | Text               | Yes           | 01t5w00000XyZaAAAX      |
+| Unit Price         | Number             | Yes           | 99.99                   |
+
+- **Output Parameters**:
+
+| **Parameter Name** | **Parameter Type**       |
+|--------------------|--------------------------|
+| Pricebook Entry    | Entity(Pricebook Entry)  |
 
 
 ## Entity Requests
@@ -1496,6 +1579,239 @@ Krista Salesforce Sales Module Extension supports the following entity requests:
     * Description: Deletes the given Id pricebook entry.
     * Input Parameters: key
 
+#### Order
+
+* Search Order
+    * Description: Returns list of orders.
+    * Input Parameters:
+
+| **Parameter Name** | **Parameter Type** | **Mandatory** | **Example**        |
+|--------------------|--------------------|---------------|--------------------|
+| Order Number       | Text               | No            | ORD-0001           |
+| Account Id         | Text               | No            | 0015w00002inu5PAAP |
+| Status             | Pick one           | No            | Draft              |
+
+* Output Parameters:
+
+| **Parameter Name** | **Parameter Type** |
+|--------------------|--------------------|
+| Order              | List&lt;Order&gt;    |
+
+* Get Order
+    * Description: Returns selected order.
+    * Input Parameters: NA
+    * Output Parameters:
+
+| **Parameter Name** | **Parameter Type** |
+|--------------------|--------------------|
+| Order              | Order              |
+
+* Create Order
+    * Description: Returns created order.
+    * Input Parameters:
+
+| **Parameter Name**         | **Parameter Type** | **Mandatory** | **Example**             |
+|----------------------------|--------------------|---------------|-------------------------|
+| ID                         | Text               | No            | 8015w00000XyzAbAAZ      |
+| Account Id                 | Text               | Yes           | 0015w00002inu5PAAP      |
+| Effective Date             | Date               | Yes           | 2024-01-15              |
+| Status                     | Pick one           | Yes           | Draft                   |
+| Description                | Text               | No            | Order description       |
+| Customer Authorized By Id  | Text               | No            | 0055w00000D9a8iAAC      |
+| Company Authorized By Id   | Text               | No            | 0055w00000D9a8iAAC      |
+| Type                       | Text               | No            | Standard                |
+| Billing Street             | Street             | No            | 123 Main St             |
+| Billing City               | City               | No            | San Francisco           |
+| Billing State              | State              | No            | CA                      |
+| Billing Postal Code        | Postal Code        | No            | 94105                   |
+| Billing Country            | Country            | No            | USA                     |
+| Shipping Street            | Street             | No            | 456 Oak Ave             |
+| Shipping City              | City               | No            | Los Angeles             |
+| Shipping State             | State              | No            | CA                      |
+| Shipping Postal Code       | Postal Code        | No            | 90001                   |
+| Shipping Country           | Country            | No            | USA                     |
+| Custom Fields              | FreeForm           | No            | {"PO_Number__c":"123"}  |
+
+* Output Parameters:
+
+| **Parameter Name** | **Parameter Type** |
+|--------------------|--------------------|
+| Order              | Order              |
+
+* Update Order
+    * Description: Returns updated order.
+    * Input Parameters:
+
+| **Parameter Name**         | **Parameter Type** | **Mandatory** | **Example**             |
+|----------------------------|--------------------|---------------|-------------------------|
+| ID                         | Text               | Yes           | 8015w00000XyzAbAAZ      |
+| Account Id                 | Text               | No            | 0015w00002inu5PAAP      |
+| Effective Date             | Date               | No            | 2024-01-15              |
+| Status                     | Pick one           | No            | Activated               |
+| Description                | Text               | No            | Updated description     |
+| Billing Street             | Street             | No            | 789 Pine St             |
+| Billing City               | City               | No            | Seattle                 |
+| Billing State              | State              | No            | WA                      |
+| Billing Postal Code        | Postal Code        | No            | 98101                   |
+| Billing Country            | Country            | No            | USA                     |
+| Shipping Street            | Street             | No            | 321 Elm St              |
+| Shipping City              | City               | No            | Portland                |
+| Shipping State             | State              | No            | OR                      |
+| Shipping Postal Code       | Postal Code        | No            | 97201                   |
+| Shipping Country           | Country            | No            | USA                     |
+| Custom Fields              | FreeForm           | No            | {"Status__c":"Processed"}|
+
+* Output Parameters:
+
+| **Parameter Name** | **Parameter Type** |
+|--------------------|--------------------|
+| Order              | Order              |
+
+* Delete Order Entry
+  * Description: Deletes the Order entry for given Id.
+  * Input Parameters: key
+
+#### Order Item
+
+* Search Order Item
+    * Description: Returns list of order items.
+    * Input Parameters:
+
+| **Parameter Name** | **Parameter Type** | **Mandatory** | **Example**        |
+|--------------------|--------------------|---------------|--------------------|
+| Order Id           | Text               | No            | 8015w00000XyzAbAAZ |
+| Product Id         | Text               | No            | 01t5w00000XyZaAAAX |
+
+* Output Parameters:
+
+| **Parameter Name** | **Parameter Type**   |
+|--------------------|----------------------|
+| Order Item         | List&lt;Order Item&gt; |
+
+* Get Order Item
+    * Description: Returns selected order item.
+    * Input Parameters: NA
+    * Output Parameters:
+
+| **Parameter Name** | **Parameter Type** |
+|--------------------|--------------------|
+| Order Item         | Order Item         |
+
+* Create Order Item
+    * Description: Returns created order item.
+    * Input Parameters:
+
+| **Parameter Name**     | **Parameter Type** | **Mandatory** | **Example**             |
+|------------------------|--------------------|---------------|-------------------------|
+| ID                     | Text               | No            | 8025w00000AbcDeAAZ      |
+| Order Id               | Text               | Yes           | 8015w00000XyzAbAAZ      |
+| Pricebook Entry Id     | Text               | Yes           | 01u5w00000AbCdEAAX      |
+| Product Id             | Text               | No            | 01t5w00000XyZaAAAX      |
+| Quantity               | Number             | Yes           | 5.0                     |
+| Unit Price             | Number             | Yes           | 99.99                   |
+| Description            | Text               | No            | Order item description  |
+| Service Date           | Date               | No            | 2024-02-01              |
+| End Date               | Date               | No            | 2024-03-01              |
+| Custom Fields          | FreeForm           | No            | {"Discount__c":"10"}    |
+
+* Output Parameters:
+
+| **Parameter Name** | **Parameter Type** |
+|--------------------|--------------------|
+| Order Item         | Order Item         |
+
+* Update Order Item
+    * Description: Returns updated order item.
+    * Input Parameters:
+
+| **Parameter Name**     | **Parameter Type** | **Mandatory** | **Example**             |
+|------------------------|--------------------|---------------|-------------------------|
+| ID                     | Text               | Yes           | 8025w00000AbcDeAAZ      |
+| Quantity               | Number             | No            | 10.0                    |
+| Unit Price             | Number             | No            | 89.99                   |
+| Description            | Text               | No            | Updated description     |
+| Service Date           | Date               | No            | 2024-02-15              |
+| End Date               | Date               | No            | 2024-03-15              |
+| Custom Fields          | FreeForm           | No            | {"Status__c":"Shipped"} |
+
+* Output Parameters:
+
+| **Parameter Name** | **Parameter Type** |
+|--------------------|--------------------|
+| Order Item         | Order Item         |
+
+* Delete Order Item Entry
+  * Description: Deletes the Order Item entry for given Id.
+  * Input Parameters: key
+
+#### Product
+
+* Search Product
+    * Description: Returns list of products.
+    * Input Parameters:
+
+| **Parameter Name** | **Parameter Type** | **Mandatory** | **Example**        |
+|--------------------|--------------------|---------------|--------------------|
+| Name               | Text               | No            | Widget Pro         |
+| Product Code       | Text               | No            | WDGT-001           |
+| Family             | Text               | No            | Hardware           |
+
+* Output Parameters:
+
+| **Parameter Name** | **Parameter Type** |
+|--------------------|--------------------|
+| Product            | List&lt;Product&gt;  |
+
+* Get Product
+    * Description: Returns selected product.
+    * Input Parameters: NA
+    * Output Parameters:
+
+| **Parameter Name** | **Parameter Type** |
+|--------------------|--------------------|
+| Product            | Product            |
+
+* Create Product
+    * Description: Returns created product.
+    * Input Parameters:
+
+| **Parameter Name** | **Parameter Type** | **Mandatory** | **Example**             |
+|--------------------|--------------------|---------------|-------------------------|
+| ID                 | Text               | No            | 01t5w00000XyZaAAAX      |
+| Name               | Text               | Yes           | Widget Pro              |
+| Product Code       | Text               | Yes           | WDGT-001                |
+| Description        | Text               | No            | High-quality widget     |
+| Is Active          | Switch             | No            | true                    |
+| Family             | Text               | No            | Hardware                |
+
+* Output Parameters:
+
+| **Parameter Name** | **Parameter Type** |
+|--------------------|--------------------|
+| Product            | Product            |
+
+* Update Product
+    * Description: Returns updated product.
+    * Input Parameters:
+
+| **Parameter Name** | **Parameter Type** | **Mandatory** | **Example**             |
+|--------------------|--------------------|---------------|-------------------------|
+| ID                 | Text               | Yes           | 01t5w00000XyZaAAAX      |
+| Name               | Text               | No            | Widget Pro Plus         |
+| Product Code       | Text               | No            | WDGT-001-P              |
+| Description        | Text               | No            | Enhanced widget         |
+| Is Active          | Switch             | No            | true                    |
+| Family             | Text               | No            | Hardware                |
+
+* Output Parameters:
+
+| **Parameter Name** | **Parameter Type** |
+|--------------------|--------------------|
+| Product            | Product            |
+
+* Delete Product Entry
+  * Description: Deletes the Product entry for given Id.
+  * Input Parameters: key
 
 #### Task
 

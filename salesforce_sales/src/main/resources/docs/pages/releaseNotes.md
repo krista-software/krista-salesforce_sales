@@ -10,6 +10,20 @@
 ## What's New
 
 ### 🆕 PO to Order Creation Support
+
+#### New Catalog Requests (5)
+1. **Find Or Create Account** - Searches for an account by name; creates new if not found
+2. **Upload PO File** - Upload Purchase Order files (PDF, Word, Excel) to Salesforce
+3. **Link File to Order** - Link uploaded files to Orders via ContentDocumentLink
+4. **Find Or Create Product** - Searches for product by code; creates new if not found
+5. **Find Or Create Pricebook Entry** - Searches for pricebook entry; creates new if not found
+
+#### New Entities (3)
+* **Order** - Full Order entity with billing/shipping addresses and custom field support
+* **Order Item** - Order line items with quantity, pricing, and service dates
+* **Product** - Product2 entity with product codes, families, and activation status
+
+#### Key Features
 * **Enhanced Salesforce Extension**: Full support for Purchase Order to Order creation workflow
 * **Account Management**: Create and manage Salesforce Accounts with dynamic custom fields
 * **Order Processing**: Create and update Orders with comprehensive field support
@@ -18,6 +32,11 @@
 * **Pricebook Entries**: Automated PricebookEntry creation for product pricing
 * **File Attachments**: Upload and link files to Orders via ContentVersion and ContentDocumentLink
 * **Dynamic Custom Fields**: Support for all Salesforce custom fields (`__c` suffix) without hardcoding
+
+#### New Catalog Areas
+* **AccountsManagementArea** - Account management with Find Or Create functionality
+* **OrderManagementArea** - Order, Product, and Pricebook Entry operations
+* **ContentArea** - File upload and custom field retrieval operations
 
 ### 🎯 Enhanced User Experience
 * **Improved Error Messages**: All error messages across the extension have been rewritten to be more user-friendly, actionable, and provide clear resolution steps
@@ -165,23 +184,28 @@
 
 ## Files Modified
 
-### Source Code (25 files)
-* 4 Catalog Area classes
-* 8 DAO Implementation classes
-* 9 Store classes
-* 3 Utility classes
-* 1 Manager class
+### Source Code (35+ files)
+* **7 Catalog Area classes** (4 existing + 3 new: AccountsManagementArea, OrderManagementArea, ContentArea)
+* **11 DAO Implementation classes** (8 existing + 3 new: OrderDaoImpl, OrderItemDaoImpl, ProductDaoImpl, ContentVersionDaoImpl, ContentDocumentLinkDaoImpl)
+* **12 Store classes** (9 existing + 3 new: OrderStore, OrderItemStore, ProductStore)
+* **3 Utility classes**
+* **1 Manager class**
+* **6 New Entity classes**: Order, OrderItem, Product, SFOrder, SFOrderItem, SFProduct
+* **3 New Catalog Type classes**: OrderCatalogType, OrderItemCatalogType, ProductCatalogType
 
 ### Test Files (3 files)
 * ValidatorsTest.java (45+ tests)
 * DatePlusTest.java (30+ tests)
 * SFHelperTest.java (30+ tests)
 
-### Documentation (11 files)
+### Documentation (13+ files)
 * Troubleshooting guide
-* 8 Catalog request pages
+* 8 Catalog request pages (updated with new error messages)
 * **NEW**: Architecture.md (comprehensive architecture documentation)
 * **NEW**: Salesforce_Sales_Complete_Documentation.docx (LLM-optimized reference)
+* **UPDATED**: supportedRequests.md - Added 5 new catalog requests and 3 new entities
+* **UPDATED**: _sidebar.md - Added navigation for new features
+* **NEW Entity Documentation**: Order, OrderItem, Product entity pages
 
 ### Build Configuration (2 files)
 * build.gradle
