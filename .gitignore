@@ -53,3 +53,4 @@ Thumbs.db
 *.mov
 *.wmv
 
+salesforce_sales/gradle.properties
