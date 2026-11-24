@@ -51,7 +51,7 @@ public class OrderDaoImpl implements OrderDao {
     
     // Define all fields to query from Salesforce Order object
     // Note: FIELDS(CUSTOM) retrieves ALL custom fields, so we don't need to list them explicitly
-    private static final String QUERY_FIELDS = "Id, OrderNumber, AccountId, EffectiveDate, Status, Description, " +
+    public static final String QUERY_FIELDS = "Id, OrderNumber, AccountId, EffectiveDate, Status, Description, " +
             "CustomerAuthorizedById, CompanyAuthorizedById, Type, " +
             "BillingStreet, BillingCity, BillingState, BillingPostalCode, BillingCountry, " +
             "ShippingStreet, ShippingCity, ShippingState, ShippingPostalCode, ShippingCountry, " +
@@ -236,7 +236,8 @@ public class OrderDaoImpl implements OrderDao {
      * @param query SOQL query string
      * @return List of Order objects
      */
-    private List<Order> getOrdersByQuery(String query) {
+    @Override
+    public List<Order> getOrdersByQuery(String query) {
         try {
             String response = salesforceManager.getRecordByQuery(query);
             SalesforceListResponse<SFOrder> orderList = ORDER_GSON.fromJson(response,

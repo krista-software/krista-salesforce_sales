@@ -18,6 +18,7 @@
 
 package app.krista.extensions.crm.sales.salesforce_sales.catalog.stores;
 
+import app.krista.extension.executor.QueryClause;
 import app.krista.extension.executor.SearchCondition;
 import app.krista.extension.executor.SearchQuery;
 import app.krista.extension.util.EntityStore;
@@ -28,7 +29,7 @@ import app.krista.extensions.crm.sales.salesforce_sales.impl.OpportunityDaoImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.OpportunityImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.model.SFOpportunity;
 import app.krista.extensions.crm.sales.salesforce_sales.service.OpportunityDao;
-import app.krista.extensions.crm.sales.salesforce_sales.util.OpportunityQueryBuilder;
+import app.krista.extensions.crm.sales.salesforce_sales.util.SoqlQueryHelper;
 import org.jvnet.hk2.annotations.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,8 +38,9 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.stream.Collectors;
+
+import static app.krista.extensions.crm.sales.salesforce_sales.impl.OpportunityDaoImpl.QUERY_FIELDS;
 
 @Service
 public class OpportunityStore implements EntityStore<Opportunity> {
@@ -116,21 +118,34 @@ public class OpportunityStore implements EntityStore<Opportunity> {
     @Override
     public List<Opportunity> search(SearchQuery searchQuery, long pageIndex, int pageSize) throws IOException {
         if (searchQuery == null || searchQuery.getSearchConditions() == null || searchQuery.getSearchConditions().isEmpty()) {
-            LOGGER.info("Search conditions cannot be null or empty");
+            return opportunityDao.getOpportunities(pageSize, pageIndex).stream().map(OpportunityCatalogType::fromSFOpportunity).collect(Collectors.toList());
         }
         List<SearchCondition> conditions = searchQuery.getSearchConditions();
-        String timeZone = salesforceSalesAttributes.getTimezone() != null ? salesforceSalesAttributes.getTimezone() : TimeZone.getDefault().getID();
+        List<QueryClause> clauses = searchQuery.getQueryClauses();
         try {
-            List<Opportunity> opportunities;
-            if (conditions.size() == 1) {
-                opportunities = opportunityDao.getOpportunities(pageSize, pageIndex).stream().map(OpportunityCatalogType::fromSFOpportunity).collect(Collectors.toList());
-            } else {
-                String query = OpportunityQueryBuilder.getQuery(conditions, pageSize, pageIndex, timeZone);
-                opportunities = opportunityDao.getOpportunitiesByQuery(query).stream().map(OpportunityCatalogType::fromSFOpportunity).collect(Collectors.toList());
+            // Single Id lookup optimization
+            for (SearchCondition sc : conditions) {
+                if ("Id".equalsIgnoreCase(sc.getFieldName()) && sc.getOperand() != null) {
+                    String id = String.valueOf(sc.getOperand()).trim();
+                    if (!id.isEmpty()) {
+                        Opportunity entity = get(id);
+                        return entity != null ? List.of(entity) : List.of();
+                    }
+                }
             }
-            return opportunities;
-        } catch (IllegalArgumentException cause) {
-            LOGGER.error(cause.getMessage(), cause);
+            String timeZone = salesforceSalesAttributes.getTimezone() != null
+                    ? salesforceSalesAttributes.getTimezone() : java.util.TimeZone.getDefault().getID();
+            String where = SoqlQueryHelper.buildWhereClause("opportunity", conditions, timeZone);
+            String orderBy = SoqlQueryHelper.buildOrderByClause("opportunity", clauses);
+            String pagination = SoqlQueryHelper.buildPaginationClause(pageSize, pageIndex);
+
+            if (where.isEmpty()) {
+                return opportunityDao.getOpportunities(pageSize, pageIndex).stream().map(OpportunityCatalogType::fromSFOpportunity).collect(Collectors.toList());
+            }
+            String query = "SELECT " + QUERY_FIELDS + " FROM Opportunity WHERE " + where + orderBy + pagination;
+            return opportunityDao.getOpportunitiesByQuery(query).stream().map(OpportunityCatalogType::fromSFOpportunity).collect(Collectors.toList());
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
             return List.of();
         }
     }

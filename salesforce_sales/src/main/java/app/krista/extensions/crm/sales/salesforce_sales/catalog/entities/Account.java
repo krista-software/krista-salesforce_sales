@@ -22,107 +22,109 @@ package app.krista.extensions.crm.sales.salesforce_sales.catalog.entities;
 import app.krista.extension.impl.anno.*;
 import app.krista.model.base.PhoneNumber;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
+@Searchable
 @Domain(id = "catEntryDomain_086f33da-aaea-4d0c-816f-3d5f20b4a273",
         name = "Sales",
         ecosystemId = "catEntryEcosystem_8a0e8ce7-6289-492f-9202-52284024280c",
         ecosystemName = "CRM",
         ecosystemVersion = "db320c64-6f6f-4c9e-8daa-41d3f796d6a6")
-@Entity(name = "Account", id = "localDomainEntity_f48532cb-46ca-44ed-9eab-462339f9a807", primaryKey = "Id", supportStore = true)
+@Entity(name = "Account", id = "localDomainEntity_f48532cb-46ca-44ed-9eab-462339f9a807", primaryKey = "Id", supportStore = true, description = "Represents a Salesforce account (company or organization). Contains Opportunities where Opportunity.Account Id matches Account.Id. Contains Orders where Order.Account Id matches Account.Id. Contains Quotes where Quote.Account Id matches Account.Id. Contains Assets where Asset.Account Id matches Account.Id. Owner Id references User.Id.")
 public class Account {
 
     @Searchable
-    @Field(name = "Id", type = "Text", required = false)
+    @Field(name = "Id", type = "Text", required = false, description = "Unique Salesforce identifier for the account.")
     public String id;
 
     @Searchable
     @ToString
-    @Field(name = "Name", type = "Text")
+    @Field(name = "Name", type = "Text", description = "Name of the account. Referenced by Opportunity.Account Name.")
     public String name;
 
-    @Field(name = "Fax", type = "Text", required = false)
+    @Field(name = "Fax", type = "Text", required = false, description = "Fax number of the account.")
     public String fax;
 
-    @Field(name = "Account Number", type = "Text", required = false)
+    @Field(name = "Account Number", type = "Text", required = false, description = "Business account number.")
     public String accountNumber;
 
-    @Field(name = "Website", type = "Text", required = false)
+    @Field(name = "Website", type = "Text", required = false, description = "URL of the account's website.")
     public String website;
 
-    @Field(name = "Sic", type = "Text", required = false)
+    @Field(name = "Sic", type = "Text", required = false, description = "Standard Industrial Classification code.")
     public String sic;
 
-    @Field(name = "Owner Id", type = "Text", required = false)
+    @Field(name = "Owner Id", type = "Text", required = false, description = "Salesforce User Id of the account owner. References User.Id.")
     public String ownerId;
 
-    @Field(name = "Created By Id", type = "Text", required = false)
+    @Field(name = "Created By Id", type = "Text", required = false, description = "Salesforce User Id who created the account. References User.Id.")
     public String createdById;
 
-    @Field(name = "Clean Status", type = "Text", required = false)
+    @Field(name = "Clean Status", type = "Text", required = false, description = "Data.com clean status of the account.")
     public String cleanStatus;
 
-    @Field(name = "SLA Serial Number", type = "Text", required = false)
+    @Field(name = "SLA Serial Number", type = "Text", required = false, description = "SLA serial number for the account.")
     public String sLASerialNumber;
 
-    @Field(name = "Created Date", type = "Date", required = false)
+    @Field(name = "Created Date", type = "Date", required = false, description = "Date and time when the account was created.")
     public Long createdDate;
 
-    @Field(name = "Type", type = "PickOne", required = false)
+    @Field(name = "Type", type = "PickOne", required = false, description = "Type of account (e.g., Customer, Partner, Prospect).")
     public String type;
 
-    @Field(name = "Billing Street", type = "Street", required = false)
+    @Field(name = "Billing Street", type = "Street", required = false, description = "Billing address street of the account.")
     public String billingStreet;
 
-    @Field(name = "Billing City", type = "City", required = false)
+    @Field(name = "Billing City", type = "City", required = false, description = "Billing address city of the account.")
     public String billingCity;
 
-    @Field(name = "Billing State", type = "State", required = false)
+    @Field(name = "Billing State", type = "State", required = false, description = "Billing address state of the account.")
     public String billingState;
 
-    @Field(name = "Billing Postal Code", type = "PostalCode", required = false)
+    @Field(name = "Billing Postal Code", type = "PostalCode", required = false, description = "Billing address postal code of the account.")
     public String billingPostalCode;
 
-    @Field(name = "Billing Country", type = "Country", required = false)
+    @Field(name = "Billing Country", type = "Country", required = false, description = "Billing address country of the account.")
     public String billingCountry;
 
-    @Field(name = "Shipping Street", type = "Street", required = false)
+    @Field(name = "Shipping Street", type = "Street", required = false, description = "Shipping address street of the account.")
     public String shippingStreet;
 
-    @Field(name = "Shipping City", type = "City", required = false)
+    @Field(name = "Shipping City", type = "City", required = false, description = "Shipping address city of the account.")
     public String shippingCity;
 
-    @Field(name = "Shipping State", type = "State", required = false)
+    @Field(name = "Shipping State", type = "State", required = false, description = "Shipping address state of the account.")
     public String shippingState;
 
-    @Field(name = "Shipping Postal Code", type = "PostalCode", required = false)
+    @Field(name = "Shipping Postal Code", type = "PostalCode", required = false, description = "Shipping address postal code of the account.")
     public String shippingPostalCode;
 
-    @Field(name = "Shipping Country", type = "Country", required = false)
+    @Field(name = "Shipping Country", type = "Country", required = false, description = "Shipping address country of the account.")
     public String shippingCountry;
 
-    @Field(name = "Phone", type = "Phone", required = false)
+    @Field(name = "Phone", type = "Phone", required = false, description = "Primary phone number of the account.")
     public PhoneNumber phone;
 
-    @Field(name = "Industry", type = "PickOne", required = false)
+    @Field(name = "Industry", type = "PickOne", required = false, description = "Industry sector of the account.")
     public String industry;
 
-    @Field(name = "Number Of Employees", type = "Number", required = false)
+    @Field(name = "Number Of Employees", type = "Number", required = false, description = "Number of employees at the account.")
     public Double numberOfEmployees;
 
-    @Field(name = "Ownership", type = "PickOne", required = false)
+    @Field(name = "Ownership", type = "PickOne", required = false, description = "Ownership type of the account.")
     public String ownership;
 
-    @Field(name = "CustomerPriority", type = "PickOne", required = false)
+    @Field(name = "CustomerPriority", type = "PickOne", required = false, description = "Customer priority level.")
     public String customerPriority;
 
-    @Field(name = "SLA Expiration Date", type = "Date", required = false)
+    @Field(name = "SLA Expiration Date", type = "Date", required = false, description = "SLA expiration date for the account.")
     public Long sLAExpirationDate;
 
-    @Field(name = " Annual Revenue", type = "Number", required = false)
+    @Field(name = " Annual Revenue", type = "Number", required = false, description = "Annual revenue of the account.")
     public Double annualRevenue;
 
-    @Field(name = "Custom Fields", type = "FreeForm", required = false)
+    @Field(name = "Custom Fields", type = "FreeForm", required = false, description = "Dynamic custom fields from Salesforce (fields ending with __c).")
     public Map<String, Object> customFields;
 
     public static Account fromFields(Map<String, Object> account) {
@@ -164,6 +166,41 @@ public class Account {
         }
 
         return newAccount;
+    }
+
+    public Map<String, Object> toFields() {
+        Map<String, Object> fieldMap = new LinkedHashMap<>();
+        fieldMap.put("Id", id);
+        fieldMap.put("Name", name);
+        fieldMap.put("Fax", fax);
+        fieldMap.put("Account Number", accountNumber);
+        fieldMap.put("Website", website);
+        fieldMap.put("Sic", sic);
+        fieldMap.put("Owner Id", ownerId);
+        fieldMap.put("Created By Id", createdById);
+        fieldMap.put("Clean Status", cleanStatus);
+        fieldMap.put("SLA Serial Number", sLASerialNumber);
+        fieldMap.put("Created Date", createdDate);
+        fieldMap.put("Type", type);
+        fieldMap.put("Billing Street", billingStreet);
+        fieldMap.put("Billing City", billingCity);
+        fieldMap.put("Billing State", billingState);
+        fieldMap.put("Billing Postal Code", billingPostalCode);
+        fieldMap.put("Billing Country", billingCountry);
+        fieldMap.put("Shipping Street", shippingStreet);
+        fieldMap.put("Shipping City", shippingCity);
+        fieldMap.put("Shipping State", shippingState);
+        fieldMap.put("Shipping Postal Code", shippingPostalCode);
+        fieldMap.put("Shipping Country", shippingCountry);
+        fieldMap.put("Phone", phone);
+        fieldMap.put("Industry", industry);
+        fieldMap.put("Number Of Employees", numberOfEmployees);
+        fieldMap.put("Ownership", ownership);
+        fieldMap.put("CustomerPriority", customerPriority);
+        fieldMap.put("SLA Expiration Date", sLAExpirationDate);
+        fieldMap.put(" Annual Revenue", annualRevenue);
+        fieldMap.put("Custom Fields", customFields);
+        return fieldMap;
     }
 
 }

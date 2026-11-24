@@ -18,6 +18,7 @@
 
 package app.krista.extensions.crm.sales.salesforce_sales.catalog.stores;
 
+import app.krista.extension.executor.QueryClause;
 import app.krista.extension.executor.SearchCondition;
 import app.krista.extension.executor.SearchQuery;
 import app.krista.extension.util.EntityStore;
@@ -26,16 +27,18 @@ import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.Account
 import app.krista.extensions.crm.sales.salesforce_sales.impl.AccountDaoImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.AccountImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.model.SFAccount;
+import app.krista.extensions.crm.sales.salesforce_sales.util.SoqlQueryHelper;
 import org.jvnet.hk2.annotations.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static app.krista.extensions.crm.sales.salesforce_sales.impl.AccountDaoImpl.QUERY_FIELDS;
 
 @Service
 public class AccountStore implements EntityStore<Account> {
@@ -125,38 +128,35 @@ public class AccountStore implements EntityStore<Account> {
             }
         }
         List<SearchCondition> conditions = searchQuery.getSearchConditions();
+        List<QueryClause> clauses = searchQuery.getQueryClauses();
         try {
-            // If an explicit Account Id is provided, use it as the primary identifier.
-            // This is the correct path for update-by-Id (e.g. rename "vtt" → "vtt123").
-            for (SearchCondition condition : conditions) {
-                String matchPattern = condition.getOperand() != null ? String.valueOf(condition.getOperand()).trim() : "";
-                if ("Id".equalsIgnoreCase(condition.getFieldName()) && !matchPattern.isEmpty()) {
-                    Account account = get(matchPattern);
-                    return account != null ? List.of(account) : List.of();
-                }
-            }
-            // Otherwise search by Name
-            List<Account> accounts = new ArrayList<>();
-            boolean nameConditionFound = false;
-            for (SearchCondition condition : conditions) {
-                String matchPattern = condition.getOperand() != null ? String.valueOf(condition.getOperand()).trim() : "";
-                String selector = condition.getFieldName();
-                if ("Name".equalsIgnoreCase(selector)) {
-                    nameConditionFound = true;
-                    if (matchPattern.isEmpty()) {
-                        accounts = accountDao.getAccounts(Math.max(pageSize, 200), pageIndex).stream().map(AccountCatalogType::fromSFAccount).collect(Collectors.toList());
-                    } else {
-                        accounts = accountDao.getAccountByName(matchPattern, pageSize, pageIndex).stream().map(AccountCatalogType::fromSFAccount).collect(Collectors.toList());
+            // Single Id lookup optimization
+            for (SearchCondition sc : conditions) {
+                if ("Id".equalsIgnoreCase(sc.getFieldName()) && sc.getOperand() != null) {
+                    String id = String.valueOf(sc.getOperand()).trim();
+                    if (!id.isEmpty()) {
+                        Account account = get(id);
+                        return account != null ? List.of(account) : List.of();
                     }
                 }
-                // Unknown conditions (e.g. logicalName injected by framework) are intentionally ignored
             }
-            if (!nameConditionFound) {
-                return accountDao.getAccounts(Math.max(pageSize, 200), pageIndex).stream().map(AccountCatalogType::fromSFAccount).collect(Collectors.toList());
+            // Build SOQL using helpers
+            String where = SoqlQueryHelper.buildWhereClause("account", conditions);
+            String orderBy = SoqlQueryHelper.buildOrderByClause("account", clauses);
+            String pagination = SoqlQueryHelper.buildPaginationClause(pageSize, pageIndex);
+
+            if (where.isEmpty()) {
+                return accountDao.getAccounts(Math.max(pageSize, 200), pageIndex).stream()
+                        .map(AccountCatalogType::fromSFAccount)
+                        .collect(Collectors.toList());
             }
-            return accounts;
-        } catch (IllegalArgumentException cause) {
-            LOGGER.error(cause.getMessage(), cause);
+
+            String query = "SELECT " + QUERY_FIELDS + " FROM Account WHERE " + where + orderBy + pagination;
+            return accountDao.getAccountByQuery(query).stream()
+                    .map(AccountCatalogType::fromSFAccount)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
             return List.of();
         }
     }

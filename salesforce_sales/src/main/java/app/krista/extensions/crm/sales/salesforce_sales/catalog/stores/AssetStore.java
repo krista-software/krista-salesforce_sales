@@ -18,22 +18,25 @@
 
 package app.krista.extensions.crm.sales.salesforce_sales.catalog.stores;
 
+import app.krista.extension.executor.QueryClause;
 import app.krista.extension.executor.SearchCondition;
 import app.krista.extension.executor.SearchQuery;
 import app.krista.extension.util.EntityStore;
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.catalogtypes.AssetCatalogType;
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.Asset;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.AssetDaoImpl;
+import app.krista.extensions.crm.sales.salesforce_sales.util.SoqlQueryHelper;
 import org.jvnet.hk2.annotations.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static app.krista.extensions.crm.sales.salesforce_sales.impl.AssetDaoImpl.QUERY_FIELDS;
 
 @Service
 public class AssetStore implements EntityStore<Asset> {
@@ -100,24 +103,40 @@ public class AssetStore implements EntityStore<Asset> {
     @Override
     public List<Asset> search(SearchQuery searchQuery, long pageIndex, int pageSize) throws IOException {
         if (searchQuery == null || searchQuery.getSearchConditions() == null || searchQuery.getSearchConditions().isEmpty()) {
-            LOGGER.info("Search conditions cannot be null or empty");
+            return assetDao.getAssets(pageSize, pageIndex).stream()
+                    .map(AssetCatalogType::fromSFAsset)
+                    .collect(Collectors.toList());
         }
         List<SearchCondition> conditions = searchQuery.getSearchConditions();
+        List<QueryClause> clauses = searchQuery.getQueryClauses();
         try {
-            List<Asset> assets = new ArrayList<>();
-            for (SearchCondition condition : conditions) {
-                String matchPattern = condition.getOperand() != null ? String.valueOf(condition.getOperand()).trim() : "";
-                String selector = condition.getFieldName();
-                if ("Id".equalsIgnoreCase(selector)) {
-                    assets = assetDao.getAssetById(matchPattern, pageSize, pageIndex).stream().map(AssetCatalogType::fromSFAsset).collect(Collectors.toList());
+            // Single Id lookup optimization
+            for (SearchCondition sc : conditions) {
+                if ("Id".equalsIgnoreCase(sc.getFieldName()) && sc.getOperand() != null) {
+                    String id = String.valueOf(sc.getOperand()).trim();
+                    if (!id.isEmpty()) {
+                        Asset asset = get(id);
+                        return asset != null ? List.of(asset) : List.of();
+                    }
                 }
             }
-            if (conditions.size() == 1 && assets.isEmpty()) {
-                assets = assetDao.getAssets(pageSize, pageIndex).stream().map(AssetCatalogType::fromSFAsset).collect(Collectors.toList());
+            // Build SOQL using helpers
+            String where = SoqlQueryHelper.buildWhereClause("asset", conditions);
+            String orderBy = SoqlQueryHelper.buildOrderByClause("asset", clauses);
+            String pagination = SoqlQueryHelper.buildPaginationClause(pageSize, pageIndex);
+
+            if (where.isEmpty()) {
+                return assetDao.getAssets(pageSize, pageIndex).stream()
+                        .map(AssetCatalogType::fromSFAsset)
+                        .collect(Collectors.toList());
             }
-            return assets;
-        } catch (IllegalArgumentException cause) {
-            LOGGER.error(cause.getMessage(), cause);
+
+            String query = "SELECT " + QUERY_FIELDS + " FROM Asset WHERE " + where + orderBy + pagination;
+            return assetDao.getAssetByQuery(query).stream()
+                    .map(AssetCatalogType::fromSFAsset)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
             return List.of();
         }
     }

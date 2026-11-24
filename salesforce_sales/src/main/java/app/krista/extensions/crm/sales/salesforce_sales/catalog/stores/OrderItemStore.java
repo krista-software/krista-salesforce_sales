@@ -18,22 +18,25 @@
 
 package app.krista.extensions.crm.sales.salesforce_sales.catalog.stores;
 
+import app.krista.extension.executor.QueryClause;
 import app.krista.extension.executor.SearchCondition;
 import app.krista.extension.executor.SearchQuery;
 import app.krista.extension.util.EntityStore;
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.catalogtypes.OrderItemCatalogType;
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.OrderItem;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.OrderItemDaoImpl;
+import app.krista.extensions.crm.sales.salesforce_sales.util.SoqlQueryHelper;
 import org.jvnet.hk2.annotations.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static app.krista.extensions.crm.sales.salesforce_sales.impl.OrderItemDaoImpl.QUERY_FIELDS;
 
 /**
  * Entity store implementation for OrderItem catalog entity.
@@ -137,54 +140,32 @@ public class OrderItemStore implements EntityStore<OrderItem> {
     @Override
     public List<OrderItem> search(SearchQuery searchQuery, long pageIndex, int pageSize) throws IOException {
         if (searchQuery == null || searchQuery.getSearchConditions() == null || searchQuery.getSearchConditions().isEmpty()) {
-            LOGGER.info("Search conditions are null or empty, returning all order items");
-            try {
-                return orderItemDao.getOrderItems(pageSize, pageIndex).stream()
-                        .map(OrderItemCatalogType::fromSFOrderItem)
-                        .collect(Collectors.toList());
-            } catch (IllegalArgumentException cause) {
-                LOGGER.error(cause.getMessage(), cause);
-                return List.of();
-            }
+            return orderItemDao.getOrderItems(pageSize, pageIndex).stream().map(OrderItemCatalogType::fromSFOrderItem).collect(Collectors.toList());
         }
         List<SearchCondition> conditions = searchQuery.getSearchConditions();
+        List<QueryClause> clauses = searchQuery.getQueryClauses();
         try {
-            List<OrderItem> orderItems = new ArrayList<>();
-            boolean hasNonEmptyCondition = false;
-            for (SearchCondition condition : conditions) {
-                String matchPattern = condition.getOperand() != null ? String.valueOf(condition.getOperand()).trim() : "";
-                String selector = condition.getFieldName();
-
-                if (matchPattern.isEmpty()) {
-                    continue;
-                }
-
-                hasNonEmptyCondition = true;
-
-                if ("Order Id".equalsIgnoreCase(selector)) {
-                    orderItems = orderItemDao.getOrderItemsByOrderId(matchPattern, pageSize, pageIndex).stream()
-                            .map(OrderItemCatalogType::fromSFOrderItem)
-                            .collect(Collectors.toList());
-                } else if ("Product Id".equalsIgnoreCase(selector)) {
-                    orderItems = orderItemDao.getOrderItemsByProductId(matchPattern, pageSize, pageIndex).stream()
-                            .map(OrderItemCatalogType::fromSFOrderItem)
-                            .collect(Collectors.toList());
-                } else if ("Id".equalsIgnoreCase(selector)) {
-                    app.krista.extensions.crm.sales.salesforce_sales.service.OrderItem orderItem = orderItemDao.getOrderItemById(matchPattern);
-                    if (orderItem != null) {
-                        orderItems.add(OrderItemCatalogType.fromSFOrderItem(orderItem));
+            // Single Id lookup optimization
+            for (SearchCondition sc : conditions) {
+                if ("Id".equalsIgnoreCase(sc.getFieldName()) && sc.getOperand() != null) {
+                    String id = String.valueOf(sc.getOperand()).trim();
+                    if (!id.isEmpty()) {
+                        OrderItem entity = get(id);
+                        return entity != null ? List.of(entity) : List.of();
                     }
                 }
             }
-            if (!hasNonEmptyCondition) {
-                LOGGER.info("All search conditions are empty, returning all order items");
-                return orderItemDao.getOrderItems(pageSize, pageIndex).stream()
-                        .map(OrderItemCatalogType::fromSFOrderItem)
-                        .collect(Collectors.toList());
+            String where = SoqlQueryHelper.buildWhereClause("orderitem", conditions);
+            String orderBy = SoqlQueryHelper.buildOrderByClause("orderitem", clauses);
+            String pagination = SoqlQueryHelper.buildPaginationClause(pageSize, pageIndex);
+
+            if (where.isEmpty()) {
+                return orderItemDao.getOrderItems(pageSize, pageIndex).stream().map(OrderItemCatalogType::fromSFOrderItem).collect(Collectors.toList());
             }
-            return orderItems;
-        } catch (IllegalArgumentException cause) {
-            LOGGER.error(cause.getMessage(), cause);
+            String query = "SELECT " + QUERY_FIELDS + " FROM OrderItem WHERE " + where + orderBy + pagination;
+            return orderItemDao.getOrderItemsByQuery(query).stream().map(OrderItemCatalogType::fromSFOrderItem).collect(Collectors.toList());
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
             return List.of();
         }
     }

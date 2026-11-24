@@ -28,6 +28,7 @@ import java.util.TimeZone;
 
 import static app.krista.extensions.crm.sales.salesforce_sales.impl.OpportunityDaoImpl.QUERY_FIELDS;
 import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.AND;
+import static app.krista.extensions.crm.sales.salesforce_sales.util.SFHelper.soqlEscape;
 import static app.krista.extensions.crm.sales.salesforce_sales.util.DatePlus.getDateForGivenTimeZone;
 
 public final class OpportunityQueryBuilder {
@@ -105,18 +106,18 @@ public final class OpportunityQueryBuilder {
                                       String createdOnLessThan, String createdOnGreaterThan, String modifiedOnLessThan, String modifiedOnGreaterThan, String closeDate, long size, long page) {
         StringBuilder builder = new StringBuilder();
         builder.append("Select " + QUERY_FIELDS + " from Opportunity WHERE")
-                .append((isAvailable(name) ? " name LIKE '%" + name + "%' " + AND : ""))
-                .append((isAvailable(id) ? " Id = '" + id + "' " + AND : ""))
-                .append((isAvailable(stageName) ? " StageName LIKE '%" + stageName + "%' " + AND : ""))
-                .append((isAvailable(nextStep) ? " NextStep LIKE '%" + nextStep + "%' " + AND : ""))
-                .append((isAvailable(ownerId) ? " OwnerId = '" + ownerId + "' " + AND : ""))
-                .append((isAvailable(ownerName) ? " Owner.Name = '" + ownerName + "' " + AND : ""))
-                .append((isAvailable(accountId) ? " AccountId = '" + accountId + "' " + AND : ""))
-                .append((isAvailable(accountName) ? " Account.Name = '" + accountName + "' " + AND : ""))
-                .append((isAvailable(type) ? " Type = '" + type + "' " + AND : ""))
-                .append((isAvailable(leadSource) ? " LeadSource = '" + leadSource + "' " + AND : ""))
-                .append((isAvailable(partner) ? " Partner__c LIKE '%" + partner + "%' " + AND : ""))
-                .append((isAvailable(competition) ? " Competition__c LIKE '%" + competition + "%' " + AND : ""))
+                .append((isAvailable(name) ? " name LIKE '%" + soqlEscape(name) + "%' " + AND : ""))
+                .append((isAvailable(id) ? " Id = '" + soqlEscape(id) + "' " + AND : ""))
+                .append((isAvailable(stageName) ? " StageName LIKE '%" + soqlEscape(stageName) + "%' " + AND : ""))
+                .append((isAvailable(nextStep) ? " NextStep LIKE '%" + soqlEscape(nextStep) + "%' " + AND : ""))
+                .append((isAvailable(ownerId) ? " OwnerId = '" + soqlEscape(ownerId) + "' " + AND : ""))
+                .append((isAvailable(ownerName) ? " Owner.Name = '" + soqlEscape(ownerName) + "' " + AND : ""))
+                .append((isAvailable(accountId) ? " AccountId = '" + soqlEscape(accountId) + "' " + AND : ""))
+                .append((isAvailable(accountName) ? " Account.Name = '" + soqlEscape(accountName) + "' " + AND : ""))
+                .append((isAvailable(type) ? " Type = '" + soqlEscape(type) + "' " + AND : ""))
+                .append((isAvailable(leadSource) ? " LeadSource = '" + soqlEscape(leadSource) + "' " + AND : ""))
+                .append((isAvailable(partner) ? " Partner__c LIKE '%" + soqlEscape(partner) + "%' " + AND : ""))
+                .append((isAvailable(competition) ? " Competition__c LIKE '%" + soqlEscape(competition) + "%' " + AND : ""))
                 .append((isAvailable(amount) ? " amount = " + amount + AND : ""))
                 .append((isAvailable(amountLessThan) ? " amount < " + amountLessThan + AND : ""))
                 .append((isAvailable(amountGreaterThan) ? " amount > " + amountGreaterThan + AND : ""))

@@ -18,6 +18,7 @@
 
 package app.krista.extensions.crm.sales.salesforce_sales.catalog.stores;
 
+import app.krista.extension.executor.QueryClause;
 import app.krista.extension.executor.SearchCondition;
 import app.krista.extension.executor.SearchQuery;
 import app.krista.extension.util.EntityStore;
@@ -27,7 +28,7 @@ import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.Task;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.TaskDaoImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.TaskImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.model.SFTask;
-import app.krista.extensions.crm.sales.salesforce_sales.util.TaskQueryBuilder;
+import app.krista.extensions.crm.sales.salesforce_sales.util.SoqlQueryHelper;
 import org.jvnet.hk2.annotations.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,19 +37,12 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.stream.Collectors;
-
-import static app.krista.extensions.crm.sales.salesforce_sales.util.DatePlus.getDateForGivenTimeZoneWithQueryOperand;
 
 @Service
 public class TaskStore implements EntityStore<Task> {
 
-    private static final String DUE_DATE = "Due Date";
-    private static final String TITLE = "Title";
-    private static final String EQUALS = "equals";
-    private static final String CONTAINS = "contains";
-    private static final String ASSIGNED_TO_NAME = "Assigned To Name";
+    private static final String QUERY_FIELDS = "Id, OwnerId, Owner.Name, Subject, Priority, ActivityDate, Description, Status, AccountId, WhatId, WhoId, Account.Name, What.Name, What.Type";
     private final TaskDaoImpl taskDao;
     private final SalesforceSalesAttributes salesforceSalesAttributes;
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskStore.class);
@@ -129,42 +123,36 @@ public class TaskStore implements EntityStore<Task> {
     @Override
     public List<Task> search(SearchQuery searchQuery, long pageIndex, int pageSize) throws IOException {
         if (searchQuery == null || searchQuery.getSearchConditions() == null || searchQuery.getSearchConditions().isEmpty()) {
-            LOGGER.info("Search conditions cannot be null or empty");
+            return taskDao.getTasks(pageSize, pageIndex).stream().map(TaskCatalogType::fromSFTask).collect(Collectors.toList());
         }
         List<SearchCondition> conditions = searchQuery.getSearchConditions();
-        String timeZone = salesforceSalesAttributes.getTimezone() != null ? salesforceSalesAttributes.getTimezone() : TimeZone.getDefault().getID();
+        List<QueryClause> clauses = searchQuery.getQueryClauses();
         try {
-            List<Task> tasks;
-            if (conditions.size() == 1) {
-                tasks = taskDao.getTasks(pageSize, pageIndex).stream().map(TaskCatalogType::fromSFTask).collect(Collectors.toList());
-            } else {
-                String query = createQuery(pageIndex, pageSize, conditions, timeZone);
-
-                tasks = taskDao.getTasksByQuery(query).stream().map(TaskCatalogType::fromSFTask).collect(Collectors.toList());
+            // Single Id lookup optimization
+            for (SearchCondition sc : conditions) {
+                if ("Id".equalsIgnoreCase(sc.getFieldName()) && sc.getOperand() != null) {
+                    String id = String.valueOf(sc.getOperand()).trim();
+                    if (!id.isEmpty()) {
+                        Task entity = get(id);
+                        return entity != null ? List.of(entity) : List.of();
+                    }
+                }
             }
-            return tasks;
-        } catch (IllegalArgumentException cause) {
-            LOGGER.error(cause.getMessage(), cause);
+            String timeZone = salesforceSalesAttributes.getTimezone() != null
+                    ? salesforceSalesAttributes.getTimezone() : java.util.TimeZone.getDefault().getID();
+            String where = SoqlQueryHelper.buildWhereClause("task", conditions, timeZone);
+            String orderBy = SoqlQueryHelper.buildOrderByClause("task", clauses);
+            String pagination = SoqlQueryHelper.buildPaginationClause(pageSize, pageIndex);
+
+            if (where.isEmpty()) {
+                return taskDao.getTasks(pageSize, pageIndex).stream().map(TaskCatalogType::fromSFTask).collect(Collectors.toList());
+            }
+            String query = "SELECT " + QUERY_FIELDS + " FROM Task WHERE " + where + orderBy + pagination;
+            return taskDao.getTasksByQuery(query).stream().map(TaskCatalogType::fromSFTask).collect(Collectors.toList());
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
             return List.of();
         }
-    }
-
-    private static String createQuery(long pageIndex, int pageSize, List<SearchCondition> conditions, String timeZone) {
-        return TaskQueryBuilder.builder()
-                .assignedToNameEquals(getStringConditionValue(conditions, ASSIGNED_TO_NAME, EQUALS))
-                .assignedToNameContains(getStringConditionValue(conditions, ASSIGNED_TO_NAME, CONTAINS))
-                .priority(getStringConditionValue(conditions, "Priority"))
-                .status(getStringConditionValue(conditions, "Status"))
-                .titleEquals(getStringConditionValue(conditions, TITLE, EQUALS))
-                .titleContains(getStringConditionValue(conditions, TITLE, CONTAINS))
-                .titleStartsWith(getStringConditionValue(conditions, TITLE, "startswith"))
-                .titleEndsWith(getStringConditionValue(conditions, TITLE, "endswith"))
-                .dueDateEquals(getDateForGivenTimeZoneWithQueryOperand(conditions, DUE_DATE, EQUALS, timeZone))
-                .dueDateLessThan(getDateForGivenTimeZoneWithQueryOperand(conditions, DUE_DATE, "lt", timeZone))
-                .dueDateGreaterThan(getDateForGivenTimeZoneWithQueryOperand(conditions, DUE_DATE, "gt", timeZone))
-                .size(pageSize)
-                .page(pageIndex)
-                .build();
     }
 
     @Override
@@ -175,24 +163,6 @@ public class TaskStore implements EntityStore<Task> {
     @Override
     public List<String> lookup(Map<String, Object> map, List<String> list) throws IOException {
         return null;
-    }
-
-    private static String getStringConditionValue(List<SearchCondition> conditions, String fieldName) {
-        for (SearchCondition con : conditions) {
-            if (fieldName.equalsIgnoreCase(con.getFieldName())) {
-                return con.getOperand() != null ? String.valueOf(con.getOperand()).trim() : "";
-            }
-        }
-        return "";
-    }
-
-    private static String getStringConditionValue(List<SearchCondition> conditions, String fieldName, String queryOperand) {
-        for (SearchCondition con : conditions) {
-            if (fieldName.equalsIgnoreCase(con.getFieldName()) && con.getOperator().toString().equalsIgnoreCase(queryOperand)) {
-                return con.getOperand() != null ? String.valueOf(con.getOperand()).trim() : "";
-            }
-        }
-        return "";
     }
 
 }

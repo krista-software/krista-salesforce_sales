@@ -19,6 +19,7 @@
 package app.krista.extensions.crm.sales.salesforce_sales.util;
 
 import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.AND;
+import static app.krista.extensions.crm.sales.salesforce_sales.util.SFHelper.soqlEscape;
 
 public final class TaskQueryBuilder {
 
@@ -134,14 +135,14 @@ public final class TaskQueryBuilder {
                                String dueDateLessThan, String dueDateGreaterThan, long size, long page) {
         StringBuilder builder = new StringBuilder();
         builder.append("Select " + Query_Fields + " from Task WHERE")
-                .append((isAvailable(assignedToNameEquals) ? " Owner.Name = '" + assignedToNameEquals + "' " + AND : ""))
-                .append((isAvailable(assignedToNameContains) ? " Owner.Name LIKE '%" + assignedToNameContains + "%' " + AND : ""))
-                .append((isAvailable(priority) ? " Priority = '" + priority + "' " + AND : ""))
-                .append((isAvailable(status) ? " Status = '" + status + "' " + AND : ""))
-                .append((isAvailable(titleEquals) ? " Subject = '" + titleEquals + "' " + AND : ""))
-                .append((isAvailable(titleContains) ? " Subject LIKE '%" + titleContains + "%' " + AND : ""))
-                .append((isAvailable(titleStartsWith) ? " Subject LIKE '" + titleStartsWith + "%' " + AND : ""))
-                .append((isAvailable(titleEndsWith) ? " Subject LIKE '%" + titleEndsWith + "' " + AND : ""))
+                .append((isAvailable(assignedToNameEquals) ? " Owner.Name = '" + soqlEscape(assignedToNameEquals) + "' " + AND : ""))
+                .append((isAvailable(assignedToNameContains) ? " Owner.Name LIKE '%" + soqlEscape(assignedToNameContains) + "%' " + AND : ""))
+                .append((isAvailable(priority) ? " Priority = '" + soqlEscape(priority) + "' " + AND : ""))
+                .append((isAvailable(status) ? " Status = '" + soqlEscape(status) + "' " + AND : ""))
+                .append((isAvailable(titleEquals) ? " Subject = '" + soqlEscape(titleEquals) + "' " + AND : ""))
+                .append((isAvailable(titleContains) ? " Subject LIKE '%" + soqlEscape(titleContains) + "%' " + AND : ""))
+                .append((isAvailable(titleStartsWith) ? " Subject LIKE '" + soqlEscape(titleStartsWith) + "%' " + AND : ""))
+                .append((isAvailable(titleEndsWith) ? " Subject LIKE '%" + soqlEscape(titleEndsWith) + "' " + AND : ""))
                 .append((isAvailable(dueDateEquals) ? " ActivityDate = " + dueDateEquals + AND : ""))
                 .append((isAvailable(dueDateLessThan) ? " ActivityDate < " + dueDateLessThan + AND : ""))
                 .append((isAvailable(dueDateGreaterThan) ? " ActivityDate > " + dueDateGreaterThan + AND : ""));

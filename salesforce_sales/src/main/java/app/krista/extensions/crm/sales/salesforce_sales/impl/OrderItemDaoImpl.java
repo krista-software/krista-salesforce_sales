@@ -51,7 +51,7 @@ public class OrderItemDaoImpl implements OrderItemDao {
     
     // Define all fields to query from Salesforce OrderItem object
     // Note: FIELDS(CUSTOM) retrieves ALL custom fields, so we don't need to list them explicitly
-    private static final String QUERY_FIELDS = "Id, OrderId, PricebookEntryId, Product2Id, " +
+    public static final String QUERY_FIELDS = "Id, OrderId, PricebookEntryId, Product2Id, " +
             "Quantity, UnitPrice, TotalPrice, ListPrice, Description, OrderItemNumber, " +
             "ServiceDate, EndDate, CreatedDate, CreatedById, LastModifiedDate, LastModifiedById, FIELDS(CUSTOM)";
 
@@ -190,7 +190,8 @@ public class OrderItemDaoImpl implements OrderItemDao {
      * @param query SOQL query string
      * @return List of OrderItem objects
      */
-    private List<OrderItem> getOrderItemsByQuery(String query) {
+    @Override
+    public List<OrderItem> getOrderItemsByQuery(String query) {
         try {
             String response = salesforceManager.getRecordByQuery(query);
             Type listType = new TypeToken<SalesforceListResponse<SFOrderItem>>() {}.getType();

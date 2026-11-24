@@ -18,6 +18,7 @@
 
 package app.krista.extensions.crm.sales.salesforce_sales.catalog.stores;
 
+import app.krista.extension.executor.QueryClause;
 import app.krista.extension.executor.SearchCondition;
 import app.krista.extension.executor.SearchQuery;
 import app.krista.extension.util.EntityStore;
@@ -26,6 +27,7 @@ import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.Lead;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.LeadDaoImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.LeadImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.model.SFLead;
+import app.krista.extensions.crm.sales.salesforce_sales.util.SoqlQueryHelper;
 import org.jvnet.hk2.annotations.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +39,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static app.krista.extensions.crm.sales.salesforce_sales.impl.LeadDaoImpl.QUERY_FIELDS;
-import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.AND;
 
 @Service
 public class LeadStore implements EntityStore<Lead> {
@@ -113,23 +114,40 @@ public class LeadStore implements EntityStore<Lead> {
     @Override
     public List<Lead> search(SearchQuery searchQuery, long pageIndex, int pageSize) throws IOException {
         if (searchQuery == null || searchQuery.getSearchConditions() == null || searchQuery.getSearchConditions().isEmpty()) {
-            LOGGER.info("Search conditions cannot be null or empty");
+            return leadDao.getLeads(pageSize, pageIndex).stream()
+                    .map(LeadCatalogType::fromSFLead)
+                    .collect(Collectors.toList());
         }
         List<SearchCondition> conditions = searchQuery.getSearchConditions();
+        List<QueryClause> clauses = searchQuery.getQueryClauses();
         try {
-            String name = getStringConditionValue(conditions, "Name");
-            String ownerId = getStringConditionValue(conditions, "Owner Id");
-            String status = getStringConditionValue(conditions, "Status");
-            List<Lead> leads;
-            if (conditions.size() == 1) {
-                leads = leadDao.getLeads(pageSize, pageIndex).stream().map(LeadCatalogType::fromSFLead).collect(Collectors.toList());
-            } else {
-                String query = createQuery(name, ownerId, status, pageSize, pageIndex);
-                leads = leadDao.getLeadsByQuery(query).stream().map(LeadCatalogType::fromSFLead).collect(Collectors.toList());
+            // Single Id lookup optimization
+            for (SearchCondition sc : conditions) {
+                if ("Id".equalsIgnoreCase(sc.getFieldName()) && sc.getOperand() != null) {
+                    String id = String.valueOf(sc.getOperand()).trim();
+                    if (!id.isEmpty()) {
+                        Lead lead = get(id);
+                        return lead != null ? List.of(lead) : List.of();
+                    }
+                }
             }
-            return leads;
-        } catch (IllegalArgumentException cause) {
-            LOGGER.error(cause.getMessage(), cause);
+            // Build SOQL using helpers
+            String where = SoqlQueryHelper.buildWhereClause("lead", conditions);
+            String orderBy = SoqlQueryHelper.buildOrderByClause("lead", clauses);
+            String pagination = SoqlQueryHelper.buildPaginationClause(pageSize, pageIndex);
+
+            if (where.isEmpty()) {
+                return leadDao.getLeads(pageSize, pageIndex).stream()
+                        .map(LeadCatalogType::fromSFLead)
+                        .collect(Collectors.toList());
+            }
+
+            String query = "SELECT " + QUERY_FIELDS + " FROM Lead WHERE " + where + orderBy + pagination;
+            return leadDao.getLeadsByQuery(query).stream()
+                    .map(LeadCatalogType::fromSFLead)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
             return List.of();
         }
     }
@@ -142,32 +160,5 @@ public class LeadStore implements EntityStore<Lead> {
     @Override
     public List<String> lookup(Map<String, Object> map, List<String> list) {
         return null;
-    }
-
-    private String getStringConditionValue(List<SearchCondition> conditions, String fieldName) {
-        for (SearchCondition con : conditions) {
-            if (fieldName.equalsIgnoreCase(con.getFieldName())) {
-                return con.getOperand() != null ? String.valueOf(con.getOperand()).trim() : "";
-            }
-        }
-        return "";
-    }
-
-    private String createQuery(String name, String ownerId, String status, long size, long page) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Select " + QUERY_FIELDS + " from Lead WHERE").
-                append((isAvailable(name) ? " name LIKE '%" + name + "%'" + AND : "")).
-                append((isAvailable(ownerId) ? " ownerId = '" + ownerId + "'" + AND : "")).
-                append((isAvailable(status) ? " status LIKE '%" + status + "%'" + AND : ""));
-        if (builder.substring(builder.length() - "WHERE".length()).equals("WHERE"))
-            builder.setLength(builder.lastIndexOf("WHERE"));
-        if (builder.substring(builder.length() - AND.length()).equals(AND))
-            builder.setLength(builder.lastIndexOf(AND));
-        builder.append(" ORDER BY LastModifiedDate LIMIT ").append(size).append(" OFFSET ").append(Math.max((page - 1) * size, 0));
-        return builder.toString();
-    }
-
-    private static boolean isAvailable(String s) {
-        return s != null && !s.isBlank();
     }
 }

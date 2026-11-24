@@ -39,7 +39,7 @@ import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.GS
 @Service
 public class PriceBookEntryDaoImpl implements PriceBookEntryDao {
 
-    private static final String QUERY_FIELDS = "Id, Name, Pricebook2Id, Product2Id, UnitPrice, IsActive, CreatedDate, LastModifiedDate, ProductCode";
+    public static final String QUERY_FIELDS = "Id, Name, Pricebook2Id, Product2Id, UnitPrice, IsActive, CreatedDate, LastModifiedDate, ProductCode";
     private static final String PRICEBOOK_ENTRY = "PricebookEntry";
     private final SalesforceManager salesforceManager;
     private static final Logger LOGGER = LoggerFactory.getLogger(PriceBookEntryDaoImpl.class);
@@ -90,7 +90,8 @@ public class PriceBookEntryDaoImpl implements PriceBookEntryDao {
         salesforceManager.updateRecord(updatedPricebookEntry.id, GSON.toJson(diff), PRICEBOOK_ENTRY);
     }
 
-    private List<PriceBookEntry> getPriceBookEntryByQuery(String query) {
+    @Override
+    public List<PriceBookEntry> getPriceBookEntryByQuery(String query) {
         String response = salesforceManager.getRecordByQuery(query);
         SalesforceListResponse<SFPricebookEntry> oppList =
                 GSON.fromJson(response, new TypeToken<SalesforceListResponse<SFPricebookEntry>>() {

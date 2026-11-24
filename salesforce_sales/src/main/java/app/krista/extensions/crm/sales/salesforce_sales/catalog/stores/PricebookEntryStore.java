@@ -18,6 +18,7 @@
 
 package app.krista.extensions.crm.sales.salesforce_sales.catalog.stores;
 
+import app.krista.extension.executor.QueryClause;
 import app.krista.extension.executor.SearchCondition;
 import app.krista.extension.executor.SearchQuery;
 import app.krista.extension.util.EntityStore;
@@ -26,16 +27,18 @@ import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.Pricebo
 import app.krista.extensions.crm.sales.salesforce_sales.impl.PriceBookEntryDaoImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.PriceBookEntryImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.model.SFPricebookEntry;
+import app.krista.extensions.crm.sales.salesforce_sales.util.SoqlQueryHelper;
 import org.jvnet.hk2.annotations.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static app.krista.extensions.crm.sales.salesforce_sales.impl.PriceBookEntryDaoImpl.QUERY_FIELDS;
 
 @Service
 public class PricebookEntryStore implements EntityStore<PricebookEntry> {
@@ -111,24 +114,32 @@ public class PricebookEntryStore implements EntityStore<PricebookEntry> {
     @Override
     public List<PricebookEntry> search(SearchQuery searchQuery, long pageIndex, int pageSize) throws IOException {
         if (searchQuery == null || searchQuery.getSearchConditions() == null || searchQuery.getSearchConditions().isEmpty()) {
-            LOGGER.info("Search conditions cannot be null or empty");
+            return priceBookEntryDao.getPriceBookEntries(pageSize, pageIndex).stream().map(PricebookEntryCatalogType::fromSFPriceBookEntry).collect(Collectors.toList());
         }
         List<SearchCondition> conditions = searchQuery.getSearchConditions();
+        List<QueryClause> clauses = searchQuery.getQueryClauses();
         try {
-            List<PricebookEntry> pricebookEntries = new ArrayList<>();
-            for (SearchCondition condition : conditions) {
-                String matchPattern = condition.getOperand() != null ? String.valueOf(condition.getOperand()).trim() : "";
-                String selector = condition.getFieldName();
-                if ("Name".equalsIgnoreCase(selector)) {
-                    pricebookEntries = priceBookEntryDao.getPriceBookEntryByName(matchPattern, pageSize, pageIndex).stream().map(PricebookEntryCatalogType::fromSFPriceBookEntry).collect(Collectors.toList());
+            // Single Id lookup optimization
+            for (SearchCondition sc : conditions) {
+                if ("Id".equalsIgnoreCase(sc.getFieldName()) && sc.getOperand() != null) {
+                    String id = String.valueOf(sc.getOperand()).trim();
+                    if (!id.isEmpty()) {
+                        PricebookEntry entity = get(id);
+                        return entity != null ? List.of(entity) : List.of();
+                    }
                 }
             }
-            if (conditions.size() == 1 && pricebookEntries.isEmpty()) {
-                pricebookEntries = priceBookEntryDao.getPriceBookEntries(pageSize, pageIndex).stream().map(PricebookEntryCatalogType::fromSFPriceBookEntry).collect(Collectors.toList());
+            String where = SoqlQueryHelper.buildWhereClause("pricebookentry", conditions);
+            String orderBy = SoqlQueryHelper.buildOrderByClause("pricebookentry", clauses);
+            String pagination = SoqlQueryHelper.buildPaginationClause(pageSize, pageIndex);
+
+            if (where.isEmpty()) {
+                return priceBookEntryDao.getPriceBookEntries(pageSize, pageIndex).stream().map(PricebookEntryCatalogType::fromSFPriceBookEntry).collect(Collectors.toList());
             }
-            return pricebookEntries;
-        } catch (IllegalArgumentException cause) {
-            LOGGER.error(cause.getMessage(), cause);
+            String query = "SELECT " + QUERY_FIELDS + " FROM PricebookEntry WHERE " + where + orderBy + pagination;
+            return priceBookEntryDao.getPriceBookEntryByQuery(query).stream().map(PricebookEntryCatalogType::fromSFPriceBookEntry).collect(Collectors.toList());
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
             return List.of();
         }
     }

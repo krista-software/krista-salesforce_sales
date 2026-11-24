@@ -41,7 +41,7 @@ import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.GS
 public class AssetDaoImpl implements AssetDao {
 
     private static final String ASSET = "Asset";
-    private static final String QUERY_FIELDS = " Id,ContactId,AccountId,RootAssetId,IsCompetitorProduct,CreatedDate,CreatedById,LastModifiedDate,IsDeleted,Name,OwnerId ";
+    public static final String QUERY_FIELDS = " Id,ContactId,AccountId,RootAssetId,IsCompetitorProduct,CreatedDate,CreatedById,LastModifiedDate,IsDeleted,Name,OwnerId ";
     private final SalesforceManager salesforceManager;
     private static final Logger LOGGER = LoggerFactory.getLogger(AssetDaoImpl.class);
 
@@ -90,7 +90,7 @@ public class AssetDaoImpl implements AssetDao {
         salesforceManager.deleteRecordById(id, ASSET);
     }
 
-    private List<Asset> getAssetByQuery(String query) {
+    public List<Asset> getAssetByQuery(String query) {
         String response = salesforceManager.getRecordByQuery(query);
         SalesforceListResponse<SFAsset> oppList = GSON.fromJson(response, new TypeToken<SalesforceListResponse<SFAsset>>() {
         }.getType());

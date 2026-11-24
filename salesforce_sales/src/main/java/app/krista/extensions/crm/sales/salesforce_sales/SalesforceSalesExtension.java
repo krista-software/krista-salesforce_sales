@@ -38,7 +38,7 @@ import java.util.Map;
 @Field.Boolean(value = SalesforceSalesAttributes.SANDBOX, required = false)
 @Field.Text(value = SalesforceSalesAttributes.TIME_ZONE, required = false)
 @ChangeLog(file = "docs/pages/releaseNotes.md")
-@Extension(version = "2.0.17", name = "Salesforce sales", description = "Integrating Salesforce with Krista")
+@Extension(version = "2.0.18", name = "Salesforce sales", description = "Integrating Salesforce with Krista")
 @Java(version = Java.Version.JAVA_21)
 @StaticResource(path = "docs", file = "docs")
 public final class SalesforceSalesExtension {

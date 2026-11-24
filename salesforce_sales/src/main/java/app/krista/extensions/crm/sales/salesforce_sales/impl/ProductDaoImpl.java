@@ -47,7 +47,7 @@ public class ProductDaoImpl implements ProductDao {
     private static final String PRODUCT = "Product2";
 
     // Define all fields to query from Salesforce Product2 object
-    private static final String QUERY_FIELDS = "Id, Name, ProductCode, Description, IsActive, Family, " +
+    public static final String QUERY_FIELDS = "Id, Name, ProductCode, Description, IsActive, Family, " +
             "CreatedDate, CreatedById, LastModifiedDate, LastModifiedById";
 
     private final SalesforceManager salesforceManager;
@@ -179,7 +179,8 @@ public class ProductDaoImpl implements ProductDao {
      * @param query SOQL query string
      * @return List of products
      */
-    private List<Product> getProductsByQuery(String query) {
+    @Override
+    public List<Product> getProductsByQuery(String query) {
         String response = salesforceManager.getRecordByQuery(query);
         SalesforceListResponse<SFProduct> listResponse = GSON.fromJson(response,
                 new TypeToken<SalesforceListResponse<SFProduct>>() {}.getType());

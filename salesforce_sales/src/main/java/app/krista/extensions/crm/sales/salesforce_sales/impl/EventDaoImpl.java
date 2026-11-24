@@ -40,7 +40,7 @@ import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.GS
 public class EventDaoImpl implements EventDao {
 
     private static final String EVENT = "Event";
-    private static final String QUERY_FIELDS = "Id, WhoId, Subject, Location, StartDateTime, EndDateTime, Description, AccountId, OwnerId, IsPrivate, ShowAs, IsGroupEvent, CreatedDate, LastModifiedDate";
+    public static final String QUERY_FIELDS = "Id, WhoId, Subject, Location, StartDateTime, EndDateTime, Description, AccountId, OwnerId, IsPrivate, ShowAs, IsGroupEvent, CreatedDate, LastModifiedDate";
     private final SalesforceManager salesforceManager;
     private static final Logger LOGGER = LoggerFactory.getLogger(EventDaoImpl.class);
 
@@ -90,7 +90,7 @@ public class EventDaoImpl implements EventDao {
         salesforceManager.updateRecord(updatedEvent.id, GSON.toJson(diff), EVENT);
     }
 
-    private List<Event> getEventByQuery(String query) {
+    public List<Event> getEventByQuery(String query) {
         String res = salesforceManager.getRecordByQuery(query);
         SalesforceListResponse<SFEvent> oppList =
                 GSON.fromJson(res, new TypeToken<SalesforceListResponse<SFEvent>>() {

@@ -1,5 +1,49 @@
 # Release Notes - Krista Salesforce Sale Module Extension
 
+## Version 2.0.18
+
+- **Developer Name** : Ganesh Gawali
+- **Krista Service APIs Java** : 1.0.124
+- **Global Catalog Version** : GC-2026.04.02
+- **Release Date** : April 2026
+
+## What's New
+
+### 🔍 Centralized SOQL Query Engine (KE-3134)
+
+#### New Utility Classes (2)
+1. **SoqlFieldMapping** - Centralized registry mapping user-friendly field names to SOQL field names and types for all 12 entities (Account, Lead, Opportunity, Order, OrderItem, Product, PricebookEntry, Task, Event, Quote, Asset, User). Supports 5 field types: TEXT, EXACT, COMPARABLE, DATE, IDENTITY.
+2. **SoqlQueryHelper** - Builds SOQL WHERE, ORDER BY, and pagination clauses from SearchCondition/QueryClause objects with type-aware query construction, automatic IN/NOT IN grouping, and epoch-to-date conversion with timezone support.
+
+#### Store Layer Refactored (12 stores)
+All entity store `search()` methods refactored from hand-rolled, per-entity query building to a uniform pattern using `SoqlQueryHelper`:
+* AccountStore, AssetStore, EventStore, LeadStore, OpportunityStore, OrderStore, OrderItemStore, PricebookEntryStore, ProductStore, QuoteStore, TaskStore, UserStore
+
+#### Entity Enrichment (14 entities)
+* Added `@Searchable` annotation at class level on all entities
+* Added `description` attributes on `@Entity` and every `@Field` — documenting relationships and cross-entity references
+* Added `toFields()` method on all entities (reverse of `fromFields()`)
+* Lead entity: `supportStore` changed from `false` to `true`
+
+### 🔒 SOQL Injection Prevention
+* `SoqlQueryHelper` enforces type-aware validation: `soqlEscape()` for strings, regex validation for numeric/date fields
+* `OpportunityQueryBuilder` and `TaskQueryBuilder` now use `soqlEscape()` on all string values
+
+### ⚙️ DAO Layer Improvements
+* `QUERY_FIELDS` constants made `public` in AccountDaoImpl, AssetDaoImpl, EventDaoImpl, OrderDaoImpl, OrderItemDaoImpl, PriceBookEntryDaoImpl, ProductDaoImpl
+* `getXxxByQuery()` methods made `public` to support centralized query execution
+* New interface methods: `OrderDao.getOrdersByQuery()`, `OrderItemDao.getOrderItemsByQuery()`, `PriceBookEntryDao.getPriceBookEntryByQuery()`, `ProductDao.getProductsByQuery()`
+
+### 🧪 Test Coverage
+* **SoqlFieldMappingTest** — 32 tests covering all entities, field types, case insensitivity, null/unknown handling, and ORDER BY fields
+* **SoqlQueryHelperTest** — 42 tests covering all operators, injection prevention, date validation, epoch conversion, pagination, and end-to-end scenarios
+
+### Build Changes
+* **Krista API**: 1.0.121 → 1.0.124
+* **Extension Version**: 2.0.17 → 2.0.18
+
+---
+
 ## Version 2.0.17
 
 - **Developer Name** : Vrushali Gaikwad

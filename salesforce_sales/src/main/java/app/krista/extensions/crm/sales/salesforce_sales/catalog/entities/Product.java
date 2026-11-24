@@ -20,6 +20,7 @@ package app.krista.extensions.crm.sales.salesforce_sales.catalog.entities;
 
 import app.krista.extension.impl.anno.*;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -31,42 +32,44 @@ import java.util.Map;
         ecosystemId = "catEntryEcosystem_8a0e8ce7-6289-492f-9202-52284024280c",
         ecosystemName = "CRM",
         ecosystemVersion = "db320c64-6f6f-4c9e-8daa-41d3f796d6a6")
-@Entity(name = "Product", id = "localDomainEntity_c3d4e5f6-7a8b-9c0d-1e2f-3a4b5c6d7e8f", primaryKey = "Id", supportStore = true)
+@Entity(name = "Product", id = "localDomainEntity_c3d4e5f6-7a8b-9c0d-1e2f-3a4b5c6d7e8f", primaryKey = "Id", supportStore = true,
+        description = "Represents a product in the Salesforce product catalog (Product2). Referenced by OrderItem.Product Id and PricebookEntry.Product Id. Created By Id and Last Modified By Id reference User.Id.")
+@Searchable
 public class Product {
-    
-    @Field(name = "Id", type = "Text", required = false)
+
+    @Field(name = "Id", type = "Text", required = false, description = "Unique Salesforce identifier for the product. Referenced by OrderItem.Product Id and PricebookEntry.Product Id.")
     public String id;
-    
-    @Field(name = "Name", type = "Text", required = true)
+
+    @Field(name = "Name", type = "Text", required = true, description = "Name of the product.")
     @ToString
     public String name;
-    
-    @Field(name = "Product Code", type = "Text", required = true)
+
+    @Field(name = "Product Code", type = "Text", required = true, description = "Unique product code identifier.")
     @Searchable
     public String productCode;
-    
-    @Field(name = "Description", type = "Text", required = false)
+
+    @Field(name = "Description", type = "Text", required = false, description = "Description of the product.")
     public String description;
-    
-    @Field.Boolean(name = "Is Active", required = false)
+
+    @Field.Boolean(name = "Is Active", required = false, description = "Whether the product is currently active.")
     public Boolean isActive;
-    
-    @Field(name = "Family", type = "Text", required = false)
+
+    @Field(name = "Family", type = "Text", required = false, description = "Product family or category.")
     @Searchable
     public String family;
-    
-    @Field(name = "Created Date", type = "Date", required = false)
+
+    @Field(name = "Created Date", type = "Date", required = false, description = "Date when the product was created.")
     public Long createdDate;
-    
-    @Field(name = "Created By Id", type = "Text", required = false)
+
+    @Field(name = "Created By Id", type = "Text", required = false, description = "User who created the product. References User.Id.")
     public String createdById;
-    
-    @Field(name = "Last Modified Date", type = "Date", required = false)
+
+    @Field(name = "Last Modified Date", type = "Date", required = false, description = "Date when the product was last modified.")
     public Long lastModifiedDate;
-    
-    @Field(name = "Last Modified By Id", type = "Text", required = false)
+
+    @Field(name = "Last Modified By Id", type = "Text", required = false, description = "User who last modified the product. References User.Id.")
     public String lastModifiedById;
-    
+
     /**
      * Converts a Map of field values to Product entity.
      * Used for creating products from catalog requests.
@@ -88,5 +91,24 @@ public class Product {
         product.lastModifiedById = (String) fields.get("Last Modified By Id");
         return product;
     }
-}
 
+    /**
+     * Converts this Product entity to a Map of field values.
+     *
+     * @return Map containing product field values in declaration order
+     */
+    public Map<String, Object> toFields() {
+        Map<String, Object> fields = new LinkedHashMap<>();
+        fields.put("Id", id);
+        fields.put("Name", name);
+        fields.put("Product Code", productCode);
+        fields.put("Description", description);
+        fields.put("Is Active", isActive);
+        fields.put("Family", family);
+        fields.put("Created Date", createdDate);
+        fields.put("Created By Id", createdById);
+        fields.put("Last Modified Date", lastModifiedDate);
+        fields.put("Last Modified By Id", lastModifiedById);
+        return fields;
+    }
+}

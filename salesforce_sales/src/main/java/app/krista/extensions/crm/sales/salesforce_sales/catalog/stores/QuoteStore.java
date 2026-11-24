@@ -18,6 +18,7 @@
 
 package app.krista.extensions.crm.sales.salesforce_sales.catalog.stores;
 
+import app.krista.extension.executor.QueryClause;
 import app.krista.extension.executor.SearchCondition;
 import app.krista.extension.executor.SearchQuery;
 import app.krista.extension.util.EntityStore;
@@ -26,6 +27,7 @@ import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.Quote;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.QuoteDaoImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.QuoteImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.model.SFQuote;
+import app.krista.extensions.crm.sales.salesforce_sales.util.SoqlQueryHelper;
 import org.jvnet.hk2.annotations.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +39,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static app.krista.extensions.crm.sales.salesforce_sales.impl.QuoteDaoImpl.QUERY_FIELDS;
-import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.AND;
 
 @Service
 public class QuoteStore implements EntityStore<Quote> {
@@ -112,24 +113,32 @@ public class QuoteStore implements EntityStore<Quote> {
     @Override
     public List<Quote> search(SearchQuery searchQuery, long pageIndex, int pageSize) throws IOException {
         if (searchQuery == null || searchQuery.getSearchConditions() == null || searchQuery.getSearchConditions().isEmpty()) {
-            LOGGER.info("Search conditions cannot be null or empty");
+            return quoteDao.getQuotes(pageSize, pageIndex).stream().map(QuoteCatalogType::fromSFQuote).collect(Collectors.toList());
         }
         List<SearchCondition> conditions = searchQuery.getSearchConditions();
+        List<QueryClause> clauses = searchQuery.getQueryClauses();
         try {
-            String name = getConditionValue(conditions, "Name");
-            String accountId = getConditionValue(conditions, "Account Id");
-            String status = getConditionValue(conditions, "Status");
-            String opportunityId = getConditionValue(conditions, "Opportunity Id");
-            List<Quote> quotes;
-            if (conditions.size() == 1) {
-                quotes = quoteDao.getQuotes(pageSize, pageIndex).stream().map(QuoteCatalogType::fromSFQuote).collect(Collectors.toList());
-            } else {
-                String query = createQuery(name, opportunityId, accountId, status, pageSize, pageIndex);
-                quotes = quoteDao.getQuotesByQuery(query).stream().map(QuoteCatalogType::fromSFQuote).collect(Collectors.toList());
+            // Single Id lookup optimization
+            for (SearchCondition sc : conditions) {
+                if ("Id".equalsIgnoreCase(sc.getFieldName()) && sc.getOperand() != null) {
+                    String id = String.valueOf(sc.getOperand()).trim();
+                    if (!id.isEmpty()) {
+                        Quote entity = get(id);
+                        return entity != null ? List.of(entity) : List.of();
+                    }
+                }
             }
-            return quotes;
-        } catch (IllegalArgumentException cause) {
-            LOGGER.error(cause.getMessage(), cause);
+            String where = SoqlQueryHelper.buildWhereClause("quote", conditions);
+            String orderBy = SoqlQueryHelper.buildOrderByClause("quote", clauses);
+            String pagination = SoqlQueryHelper.buildPaginationClause(pageSize, pageIndex);
+
+            if (where.isEmpty()) {
+                return quoteDao.getQuotes(pageSize, pageIndex).stream().map(QuoteCatalogType::fromSFQuote).collect(Collectors.toList());
+            }
+            String query = "SELECT " + QUERY_FIELDS + " FROM Quote WHERE " + where + orderBy + pagination;
+            return quoteDao.getQuotesByQuery(query).stream().map(QuoteCatalogType::fromSFQuote).collect(Collectors.toList());
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
             return List.of();
         }
     }
@@ -145,33 +154,5 @@ public class QuoteStore implements EntityStore<Quote> {
             return quoteDao.getQuoteStatuses();
         }
         return List.of("error");
-    }
-
-    private String getConditionValue(List<SearchCondition> conditions, String fieldName) {
-        for (SearchCondition con : conditions) {
-            if (fieldName.equalsIgnoreCase(con.getFieldName())) {
-                return con.getOperand() != null ? String.valueOf(con.getOperand()).trim() : "";
-            }
-        }
-        return "";
-    }
-
-    private String createQuery(String name, String opportunityId, String accountId, String status, long size, long page) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Select " + QUERY_FIELDS + " from Quote WHERE").
-                append((isAvailable(name) ? " name LIKE '%" + name + "%'" + AND : "")).
-                append((isAvailable(opportunityId) ? " opportunityId = '" + opportunityId + "'" + AND : "")).
-                append((isAvailable(accountId) ? " accountId LIKE '%" + accountId + "%'" + AND : "")).
-                append((isAvailable(status) ? " status LIKE '%" + status + "%'" + AND : ""));
-        if (builder.substring(builder.length() - "WHERE".length()).equals("WHERE"))
-            builder.setLength(builder.lastIndexOf("WHERE"));
-        if (builder.substring(builder.length() - AND.length()).equals(AND))
-            builder.setLength(builder.lastIndexOf(AND));
-        builder.append(" ORDER BY LastModifiedDate LIMIT ").append(size).append(" OFFSET ").append(Math.max((page - 1) * size, 0));
-        return builder.toString();
-    }
-
-    private static boolean isAvailable(String s) {
-        return s != null && !s.isBlank();
     }
 }

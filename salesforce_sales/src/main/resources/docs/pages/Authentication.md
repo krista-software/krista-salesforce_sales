@@ -127,8 +127,8 @@ grant_type=authorization_code
 **Response Example**:
 ```json
 {
-  "access_token": "REDACTED_SECRET_1q6y8PIW4eWze9JksNEkWUl.Cju7m4",
-  "refresh_token": "REDACTED_SECRET_0H8qGOQqvJQ",
+  "access_token": "00D5w000000abcd!AR8AQP0jITN80ESEsj5EbaZTFG0RNBaT1cyWk7TrqoDjoNIWQ2ME_sTZzBjfmOE6zMHq6y8PIW4eWze9JksNEkWUl.Cju7m4",
+  "refresh_token": "REDACTED_SECRET",
   "instance_url": "https://mycompany.my.salesforce.com",
   "id": "https://login.salesforce.com/id/00D5w000000abcdEAA/0055w000000abcdAAA",
   "token_type": "Bearer",
@@ -156,7 +156,7 @@ Host: login.salesforce.com
 Content-Type: application/x-www-form-urlencoded
 
 grant_type=refresh_token
-&refresh_token=REDACTED_SECRET_2
+&refresh_token=5Aep861TSESvWeug_xvFHRBTTbf_YrTWgEyjBJo7Xr34...
 &client_id=3MVG9fTLmJ60pJ5...
 &client_secret=1234567890ABCDEF...
 ```
@@ -204,7 +204,7 @@ grant_type=password
 **Response Example**:
 ```json
 {
-  "access_token": "REDACTED_SECRET_3",
+  "access_token": "00D5w000000abcd!AR8AQServiceAccountToken...",
   "instance_url": "https://mycompany.my.salesforce.com",
   "id": "https://login.salesforce.com/id/00D5w000000abcdEAA/0055w000000serviceAAA",
   "token_type": "Bearer",

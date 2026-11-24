@@ -69,6 +69,14 @@ public interface PriceBookEntryDao {
     List<PriceBookEntry> getPriceBookEntryByProductAndPricebook(String product2Id, String pricebook2Id);
 
     /**
+     * Returns list of {@link PriceBookEntry} objects from Salesforce by executing the given SOQL query.
+     *
+     * @param query SOQL query string
+     * @return list of pricebook entries
+     */
+    List<PriceBookEntry> getPriceBookEntryByQuery(String query);
+
+    /**
      * Update {@link PriceBookEntry} to salesforce from provided input fields
      *
      * @param priceBookEntry {@link PriceBookEntry} object of salesforce to be updated

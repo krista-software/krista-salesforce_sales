@@ -41,7 +41,7 @@ public class AccountDaoImpl implements AccountDao {
 
     public static final String ACCOUNT = "Account";
     // Note: FIELDS(CUSTOM) retrieves ALL custom fields, so we don't need to list them explicitly
-    private static final String QUERY_FIELDS = "id, createdDate, phone, type, website, Name, ownership, AccountNumber, Industry, NumberOfEmployees, fax, sic, ownerId, createdById, cleanStatus, " +
+    public static final String QUERY_FIELDS = "id, createdDate, phone, type, website, Name, ownership, AccountNumber, Industry, NumberOfEmployees, fax, sic, ownerId, createdById, cleanStatus, " +
             "BillingStreet, BillingCity, BillingState, BillingCountry, BillingPostalCode, ShippingStreet, ShippingCity, ShippingState, ShippingPostalCode, ShippingCountry, AnnualRevenue, FIELDS(CUSTOM)";
 
     // Gson instance with custom deserializer for SFAccount to handle dynamic custom fields
@@ -108,7 +108,7 @@ public class AccountDaoImpl implements AccountDao {
         salesforceManager.updateRecord(updatedAccount.id, GSON.toJson(diff), ACCOUNT);
     }
 
-    private List<Account> getAccountByQuery(String query) {
+    public List<Account> getAccountByQuery(String query) {
         String response = salesforceManager.getRecordByQuery(query);
         SalesforceListResponse<SFAccount> accountList =
                 ACCOUNT_GSON.fromJson(response, new TypeToken<SalesforceListResponse<SFAccount>>() {

@@ -87,6 +87,14 @@ public interface ProductDao {
     void updateProduct(Product product);
     
     /**
+     * Returns list of {@link Product} objects from Salesforce by executing the given SOQL query.
+     *
+     * @param query SOQL query string
+     * @return List of products
+     */
+    List<Product> getProductsByQuery(String query);
+
+    /**
      * Deletes a product by its ID.
      *
      * @param productId Salesforce Product ID

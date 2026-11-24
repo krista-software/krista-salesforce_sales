@@ -96,6 +96,14 @@ public interface OrderDao {
     void updateOrder(Order order);
     
     /**
+     * Returns list of {@link Order} objects from Salesforce by executing the given SOQL query.
+     *
+     * @param query SOQL query string
+     * @return {@link List<Order>} list of orders
+     */
+    List<Order> getOrdersByQuery(String query);
+
+    /**
      * Deletes an {@link Order} from Salesforce.
      *
      * @param id Salesforce ID of the order to delete

@@ -18,12 +18,14 @@
 
 package app.krista.extensions.crm.sales.salesforce_sales.catalog.stores;
 
+import app.krista.extension.executor.QueryClause;
 import app.krista.extension.executor.SearchCondition;
 import app.krista.extension.executor.SearchQuery;
 import app.krista.extension.util.EntityStore;
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.catalogtypes.UserCatalogType;
 import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.User;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.UserDaoImpl;
+import app.krista.extensions.crm.sales.salesforce_sales.util.SoqlQueryHelper;
 import org.jvnet.hk2.annotations.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,8 +35,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static app.krista.extensions.crm.sales.salesforce_sales.util.Constants.AND;
 
 @Service
 public class UserStore implements EntityStore<User> {
@@ -102,24 +102,33 @@ public class UserStore implements EntityStore<User> {
     @Override
     public List<User> search(SearchQuery searchQuery, long pageIndex, int pageSize) throws IOException {
         if (searchQuery == null || searchQuery.getSearchConditions() == null || searchQuery.getSearchConditions().isEmpty()) {
-            LOGGER.info("Search conditions cannot be null or empty");
+            return userDaoImpl.getUsers(pageSize, pageIndex).stream().map(UserCatalogType::fromSFUser).collect(Collectors.toList());
         }
         List<SearchCondition> conditions = searchQuery.getSearchConditions();
+        List<QueryClause> clauses = searchQuery.getQueryClauses();
         try {
-            String name = getStringConditionValue(conditions, "Name");
-            String userName = getStringConditionValue(conditions, "User Name");
-            String email = getStringConditionValue(conditions, "Email");
-            List<User> users;
-            if (conditions.size() == 1) {
-                users = userDaoImpl.getUsers(pageSize, pageIndex).stream().map(UserCatalogType::fromSFUser).collect(Collectors.toList());
-            } else {
-                String query = createQuery(name, userName, email, pageSize, pageIndex);
-                users = userDaoImpl.getUsersByQuery(query).stream().map(UserCatalogType::fromSFUser).collect(Collectors.toList());
+            // Single Id lookup optimization
+            for (SearchCondition sc : conditions) {
+                if ("Id".equalsIgnoreCase(sc.getFieldName()) && sc.getOperand() != null) {
+                    String id = String.valueOf(sc.getOperand()).trim();
+                    if (!id.isEmpty()) {
+                        User entity = get(id);
+                        return entity != null ? List.of(entity) : List.of();
+                    }
+                }
             }
-            return users;
-        } catch (IllegalArgumentException cause) {
-            LOGGER.error(cause.getMessage(), cause);
-            return null;
+            String where = SoqlQueryHelper.buildWhereClause("user", conditions);
+            String orderBy = SoqlQueryHelper.buildOrderByClause("user", clauses);
+            String pagination = SoqlQueryHelper.buildPaginationClause(pageSize, pageIndex);
+
+            if (where.isEmpty()) {
+                return userDaoImpl.getUsers(pageSize, pageIndex).stream().map(UserCatalogType::fromSFUser).collect(Collectors.toList());
+            }
+            String query = "SELECT " + QUERY_FIELDS + " FROM User WHERE " + where + orderBy + pagination;
+            return userDaoImpl.getUsersByQuery(query).stream().map(UserCatalogType::fromSFUser).collect(Collectors.toList());
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return List.of();
         }
     }
 
@@ -131,32 +140,5 @@ public class UserStore implements EntityStore<User> {
     @Override
     public List<String> lookup(Map<String, Object> map, List<String> list) {
         return null;
-    }
-
-    private String getStringConditionValue(List<SearchCondition> conditions, String fieldName) {
-        for (SearchCondition con : conditions) {
-            if (fieldName.equalsIgnoreCase(con.getFieldName())) {
-                return con.getOperand() != null ? String.valueOf(con.getOperand()).trim() : "";
-            }
-        }
-        return "";
-    }
-
-    private String createQuery(String name, String userName, String email, long size, long page) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Select " + QUERY_FIELDS + " from User WHERE").
-                append((isAvailable(name) ? " name LIKE '%" + name + "%'" + AND : "")).
-                append((isAvailable(userName) ? " userName LIKE '%" + userName + "%'" + AND : "")).
-                append((isAvailable(email) ? " email LIKE '%" + email + "%'" + AND : ""));
-        if (builder.substring(builder.length() - "WHERE".length()).equals("WHERE"))
-            builder.setLength(builder.lastIndexOf("WHERE"));
-        if (builder.substring(builder.length() - AND.length()).equals(AND))
-            builder.setLength(builder.lastIndexOf(AND));
-        builder.append(" ORDER BY LastModifiedDate LIMIT ").append(size).append(" OFFSET ").append(Math.max((page - 1) * size, 0));
-        return builder.toString();
-    }
-
-    private static boolean isAvailable(String s) {
-        return s != null && !s.isBlank();
     }
 }

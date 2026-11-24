@@ -18,6 +18,7 @@
 
 package app.krista.extensions.crm.sales.salesforce_sales.catalog.stores;
 
+import app.krista.extension.executor.QueryClause;
 import app.krista.extension.executor.SearchCondition;
 import app.krista.extension.executor.SearchQuery;
 import app.krista.extension.util.EntityStore;
@@ -26,16 +27,18 @@ import app.krista.extensions.crm.sales.salesforce_sales.catalog.entities.Event;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.EventDaoImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.impl.EventImpl;
 import app.krista.extensions.crm.sales.salesforce_sales.model.SFEvent;
+import app.krista.extensions.crm.sales.salesforce_sales.util.SoqlQueryHelper;
 import org.jvnet.hk2.annotations.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static app.krista.extensions.crm.sales.salesforce_sales.impl.EventDaoImpl.QUERY_FIELDS;
 
 @Service
 public class EventStore implements EntityStore<Event> {
@@ -112,27 +115,40 @@ public class EventStore implements EntityStore<Event> {
     @Override
     public List<Event> search(SearchQuery searchQuery, long pageIndex, int pageSize) throws IOException {
         if (searchQuery == null || searchQuery.getSearchConditions() == null || searchQuery.getSearchConditions().isEmpty()) {
-            LOGGER.info("Search conditions cannot be null or empty");
+            return eventDao.getEvents(pageSize, pageIndex).stream()
+                    .map(EventCatalogType::fromSFEvent)
+                    .collect(Collectors.toList());
         }
         List<SearchCondition> conditions = searchQuery.getSearchConditions();
+        List<QueryClause> clauses = searchQuery.getQueryClauses();
         try {
-            List<Event> events = new ArrayList<>();
-            String leadId = getConditionValue(conditions, "Lead Id");
-            for (SearchCondition condition : conditions) {
-                String matchPattern = condition.getOperand() != null ? String.valueOf(condition.getOperand()).trim() : "";
-                String selector = condition.getFieldName();
-                if ("Subject".equalsIgnoreCase(selector)) {
-                    events = eventDao.getEventBySubject(matchPattern, leadId, pageSize, pageIndex).stream().map(EventCatalogType::fromSFEvent).collect(Collectors.toList());
-                } else if ("Lead Id".equalsIgnoreCase(selector)) {
-                    events = eventDao.getEventByLeadId(matchPattern, pageSize, pageIndex).stream().map(EventCatalogType::fromSFEvent).collect(Collectors.toList());
+            // Single Id lookup optimization
+            for (SearchCondition sc : conditions) {
+                if ("Id".equalsIgnoreCase(sc.getFieldName()) && sc.getOperand() != null) {
+                    String id = String.valueOf(sc.getOperand()).trim();
+                    if (!id.isEmpty()) {
+                        Event event = get(id);
+                        return event != null ? List.of(event) : List.of();
+                    }
                 }
             }
-            if (conditions.size() == 1 && events.isEmpty()) {
-                events = eventDao.getEvents(pageSize, pageIndex).stream().map(EventCatalogType::fromSFEvent).collect(Collectors.toList());
+            // Build SOQL using helpers
+            String where = SoqlQueryHelper.buildWhereClause("event", conditions);
+            String orderBy = SoqlQueryHelper.buildOrderByClause("event", clauses);
+            String pagination = SoqlQueryHelper.buildPaginationClause(pageSize, pageIndex);
+
+            if (where.isEmpty()) {
+                return eventDao.getEvents(pageSize, pageIndex).stream()
+                        .map(EventCatalogType::fromSFEvent)
+                        .collect(Collectors.toList());
             }
-            return events;
-        } catch (IllegalArgumentException cause) {
-            LOGGER.error(cause.getMessage(), cause);
+
+            String query = "SELECT " + QUERY_FIELDS + " FROM Event WHERE " + where + orderBy + pagination;
+            return eventDao.getEventByQuery(query).stream()
+                    .map(EventCatalogType::fromSFEvent)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
             return List.of();
         }
     }
@@ -145,14 +161,5 @@ public class EventStore implements EntityStore<Event> {
     @Override
     public List<String> lookup(Map<String, Object> map, List<String> list) {
         return null;
-    }
-
-    private String getConditionValue(List<SearchCondition> conditions, String fieldName) {
-        for (SearchCondition con : conditions) {
-            if (fieldName.equalsIgnoreCase(con.getFieldName())) {
-                return con.getOperand() != null ? String.valueOf(con.getOperand()).trim() : "";
-            }
-        }
-        return "";
     }
 }

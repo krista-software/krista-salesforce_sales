@@ -64,7 +64,7 @@ public class SFHelperTest {
         // Real-world scenario: Configuration missing username
         SalesforceSalesAttributes attrs = new SalesforceSalesAttributes(
                 "testClientId", "testClientSecret", "https://test.salesforce.com",
-                null, "password123", "securityToken456",
+                null, "password123", "REDACTED_SECRET",
                 false, "https://test.krista.ai", "America/New_York"
         );
         boolean result = SFHelper.validateUsingOAuth(false, attrs);
@@ -76,7 +76,7 @@ public class SFHelperTest {
         // Real-world scenario: Configuration with empty username
         SalesforceSalesAttributes attrs = new SalesforceSalesAttributes(
                 "testClientId", "testClientSecret", "https://test.salesforce.com",
-                "", "password123", "securityToken456",
+                "", "password123", "REDACTED_SECRET",
                 false, "https://test.krista.ai", "America/New_York"
         );
         boolean result = SFHelper.validateUsingOAuth(false, attrs);
@@ -88,7 +88,7 @@ public class SFHelperTest {
         // Real-world scenario: Configuration with whitespace-only username
         SalesforceSalesAttributes attrs = new SalesforceSalesAttributes(
                 "testClientId", "testClientSecret", "https://test.salesforce.com",
-                "   ", "password123", "securityToken456",
+                "   ", "password123", "REDACTED_SECRET",
                 false, "https://test.krista.ai", "America/New_York"
         );
         boolean result = SFHelper.validateUsingOAuth(false, attrs);
